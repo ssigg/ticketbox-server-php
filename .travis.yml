@@ -8,3 +8,7 @@ before_script:
 
 script:
     phpunit --configuration tests/phpunit.xml --coverage-clover coverage.xml tests
+
+addons:
+    code_climate:
+        repo_token: ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
