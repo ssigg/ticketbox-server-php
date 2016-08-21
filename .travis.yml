@@ -8,6 +8,8 @@ before_script:
 
 script:
     phpunit --configuration tests/phpunit.xml --coverage-clover coverage.xml tests
+    CODECLIMATE_REPO_TOKEN=ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
+    ./vendor/bin/test-reporter
 
 addons:
     code_climate:
