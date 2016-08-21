@@ -1,0 +1,9 @@
+Hi {$firstname} {$lastname}
+
+Reserved Seats
+==============
+{foreach $seats as $seat}
+{$seat['name']}: {$seat['price']}.-- {if $seat['is_reduced']}(reduced){/if}
+{/foreach}
+
+Total: {$total}.--

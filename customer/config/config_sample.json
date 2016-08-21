@@ -1,0 +1,29 @@
+{
+    "displayErrorDetails": false,
+    "addContentLengthHeader": false,
+    "Spot": {
+        "dbsyntax": "sqlite",
+        "path": "../data/database.db",
+        "driver": "pdo_sqlite"
+    },
+    "Mailer": {
+        "from": "From <from@example.com>",
+        "replyTo": {
+            "name": "Reply To",
+            "email": "reply@example.com"
+        },
+        "confirmation": {
+            "subject": "Ticket reservation confirmation"
+        },
+        "notification": {
+            "subject": "Ticket reservation notification",
+            "listeners": [
+                "listener1@example.com",
+                "listener2@example.com"
+            ]
+        }
+    },
+    "Reservations": {
+        "lifetimeInSeconds": 600
+    }
+}

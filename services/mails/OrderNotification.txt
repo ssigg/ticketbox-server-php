@@ -1,0 +1,9 @@
+{$firstname} {$lastname} issued an order. The seats listed below are now reserved but not purchased.
+
+Reserved Seats
+==============
+{foreach $seats as $seat}
+{$seat['name']}: {$seat['price']}.--
+{/foreach}
+
+Total: {$total}.--
