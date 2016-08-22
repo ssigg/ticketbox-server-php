@@ -36,7 +36,8 @@ class DeleteReservationAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $seats = $this->db->mapper('Model\Seat')->where([ 'id' => $args['seatId'] ]);
-        $this->reserver->release($seats);
+        $event = $this->db->mapper('Model\Event')->first([ 'id' => $args['eventId'] ]);
+        $this->reserver->release($seats, $event);
         return $response->withJson(200);
     }
 }

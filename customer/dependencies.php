@@ -63,5 +63,5 @@ $container['mailer'] = function($container) {
 
 $container['mail'] = function($container) {
     $mail = new Services\Mail($container['template'], $container['mailer'], $container['settings']['Mailer']);
-    return $mailer;
+    return $mail;
 };

@@ -20,7 +20,7 @@ $app->get('/blocks/{id}', Actions\GetBlockAction::class);
 
 $app->post('/reservations', Actions\CreateReservationAction::class);
 
-$app->delete('/reservations/{seatId}', Actions\DeleteReservationAction::class);
+$app->delete('/reservations/{seatId}/{eventId}', Actions\DeleteReservationAction::class);
 
 $app->put('/reservations/addReduction/{seatId}', Actions\AddReductionToReservationAction::class);
 

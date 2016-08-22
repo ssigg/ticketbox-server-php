@@ -4,7 +4,7 @@ namespace Services;
 
 interface SeatReserverInterface {
     function reserve($seats, $event);
-    function release($seats);
+    function release($seats, $event);
     function addReduction($seat);
     function removeReduction($seat);
     function order($firstname, $lastname, $email);
@@ -39,9 +39,9 @@ class SeatReserver implements SeatReserverInterface {
         }
     }
 
-    public function release($seats) {
+    public function release($seats, $event) {
         foreach ($seats as $seat) {
-            $this->reservationMapper->delete([ 'seat_id' => $seat->id, 'token' => $this->token ]);
+            $this->reservationMapper->delete([ 'seat_id' => $seat->id, 'event_id' => $event->id, 'token' => $this->token ]);
         }
     }
 

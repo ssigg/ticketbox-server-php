@@ -63,9 +63,10 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->getEntityMock(),
             $this->getEntityMock()
         ];
+        $event = $this->getEntityMock();
 
         $this->reservationMapperMock->expects($this->exactly(count($seats)))->method('delete');
-        $reserver->release($seats);
+        $reserver->release($seats, $event);
     }
 
     public function testAddReductionModifiesReservation() {

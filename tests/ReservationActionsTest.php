@@ -34,7 +34,7 @@ class ReservationActionsTest extends DatabaseTestBase {
         $reserverMock = $this->container->get('seatReserver');
 
         $reserverMock->expects($this->once())->method('release');
-        $action($request, $response, [ 'seatId' => 42 ]); 
+        $action($request, $response, [ 'seatId' => 42, 'eventId' => 2 ]); 
     }
 
     public function testUseReserverToAddReductionToReservation() {
