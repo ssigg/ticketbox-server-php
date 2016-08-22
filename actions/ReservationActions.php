@@ -42,7 +42,7 @@ class DeleteReservationAction {
     }
 }
 
-class AddReductionToReservationAction {
+class ChangeReductionForReservationAction {
     private $db;
     private $reserver;
 
@@ -53,23 +53,10 @@ class AddReductionToReservationAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $seat = $this->db->mapper('Model\Seat')->first([ 'id' => $args['seatId'] ]);
-        $this->reserver->addReduction($seat);
-        return $response->withJson(200);
-    }
-}
-
-class RemoveReductionFromReservationAction {
-    private $db;
-    private $reserver;
-
-    public function __construct(ContainerInterface $container) {
-        $this->db = $container->get('database');
-        $this->reserver = $container->get('seatReserver');
-    }
-
-    public function __invoke(Request $request, Response $response, $args = []) {
-        $seat = $this->db->mapper('Model\Seat')->first([ 'id' => $args['seatId'] ]);
-        $this->reserver->removeReduction($seat);
+        $event = $this->db->mapper('Model\Event')->first([ 'id' => $args['eventId'] ]);
+        $data = $request->getParsedBody();
+        $reductionValue = $data['isReduced'];
+        $this->reserver->changeReduction($seat, $event, $reductionValue);
         return $response->withJson(200);
     }
 }

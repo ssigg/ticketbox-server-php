@@ -5,8 +5,7 @@ namespace Services;
 interface SeatReserverInterface {
     function reserve($seats, $event);
     function release($seats, $event);
-    function addReduction($seat);
-    function removeReduction($seat);
+    function changeReduction($seat, $event, $value);
     function order($firstname, $lastname, $email);
 }
 
@@ -45,12 +44,12 @@ class SeatReserver implements SeatReserverInterface {
         }
     }
 
-    public function addReduction($seat) {
-        $this->changeReductionTo($seat, true);
-    }
-
-    public function removeReduction($seat) {
-        $this->changeReductionTo($seat, false);
+    public function changeReduction($seat, $event, $value) {
+        $reservation = $this->reservationMapper->first([ 'seat_id' => $seat->get('id'), 'event_id' => $event->get('id'), 'token' => $this->token ]);
+        if ($reservation != null) {
+            $reservation->is_reduced = $value;
+            $this->reservationMapper->update($reservation);
+        }
     }
 
     public function order($firstname, $lastname, $email) {
@@ -70,13 +69,5 @@ class SeatReserver implements SeatReserverInterface {
             return $order;
         }
         return null;
-    }
-
-    private function changeReductionTo($seat, $value) {
-        $reservation = $this->reservationMapper->first([ 'seat_id' => $seat->get('id'), 'token' => $this->token ]);
-        if ($reservation != null) {
-            $reservation->is_reduced = $value;
-            $this->reservationMapper->update($reservation);
-        }
     }
 }

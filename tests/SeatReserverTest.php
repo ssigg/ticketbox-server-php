@@ -69,7 +69,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver->release($seats, $event);
     }
 
-    public function testAddReductionModifiesReservation() {
+    public function testChangeReductionModifiesReservation() {
         $this->tokenProviderMock
             ->method('provide')
             ->willReturn('token');
@@ -79,32 +79,14 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
         
         $seat = $this->getEntityMock();
+        $event = $this->getEntityMock();
 
         $this->reservationMapperMock
             ->method('first')
             ->willReturn($this->getEntityMock());
 
         $this->reservationMapperMock->expects($this->once())->method('update');
-        $reserver->addReduction($seat);
-    }
-
-    public function testRemoveReductionModifiesReservation() {
-        $this->tokenProviderMock
-            ->method('provide')
-            ->willReturn('token');
-        $settings = [
-            'lifetimeInSeconds' => 0
-        ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
-        
-        $seat = $this->getEntityMock();
-
-        $this->reservationMapperMock
-            ->method('first')
-            ->willReturn($this->getEntityMock());
-
-        $this->reservationMapperMock->expects($this->once())->method('update');
-        $reserver->removeReduction($seat);
+        $reserver->changeReduction($seat, $event, true);
     }
 
     public function testOrderWithoutReservationsDoesNothing() {
