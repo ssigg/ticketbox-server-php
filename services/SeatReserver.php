@@ -23,15 +23,6 @@ class SeatReserver implements SeatReserverInterface {
         $this->settings = $settings;
     }
 
-    public function getReservedSeats() {
-        $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
-        $seats = [];
-        foreach ($reservations as $reservation) {
-            $seats[] = $this->seatMapper->first([ 'id' => $reservation->seat_id ]);
-        }
-        return $seats;
-    }
-
     public function reserve($seats, $event) {
         $oldestLockTime = time() - $this->settings['lifetimeInSeconds'];
         $this->reservationMapper->delete(['timestamp :lt' => $oldestLockTime, 'order_id' => null]);

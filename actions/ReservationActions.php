@@ -30,6 +30,7 @@ class DeleteReservationAction {
     private $reserver;
 
     public function __construct(ContainerInterface $container) {
+        $this->db = $container->get('database');
         $this->reserver = $container->get('seatReserver');
     }
 

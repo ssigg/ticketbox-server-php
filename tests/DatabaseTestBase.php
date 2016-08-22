@@ -38,6 +38,25 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
         return $request;
     }
 
+    protected function getPutRequest($path, $data) {
+        $environment = \Slim\Http\Environment::mock([
+            'REQUEST_METHOD' => 'PUT',
+            'REQUEST_URI' => $path]
+        );
+        $request = \Slim\Http\Request::createFromEnvironment($environment);
+        $request = $request->withParsedBody($data);
+        return $request;
+    }
+
+    protected function getDeleteRequest($path) {
+        $environment = \Slim\Http\Environment::mock([
+            'REQUEST_METHOD' => 'DELETE',
+            'REQUEST_URI' => $path]
+        );
+        $request = \Slim\Http\Request::createFromEnvironment($environment);
+        return $request;
+    }
+
     private function createContainer() {
         $spot = $this->configureSpot();
         $container = new \Slim\Container;

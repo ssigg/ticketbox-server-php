@@ -106,6 +106,28 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver->removeReduction($seat);
     }
 
+    public function testOrderWithoutReservationsDoesNothing() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token');
+        
+        $reservations = [ ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->willReturn($reservations);
+        $this->orderMapperMock
+            ->method('create')
+            ->willReturn($this->getEntityMock());
+        
+        $settings = [
+            'lifetimeInSeconds' => 0
+        ];
+        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        
+        $this->orderMapperMock->expects($this->never())->method('create');
+        $reserver->order('John', 'Doe', 'john.doe@example.com');
+    }
+
     public function testOrderCreatesOrder() {
         $this->tokenProviderMock
             ->method('provide')
