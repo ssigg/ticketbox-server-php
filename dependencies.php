@@ -1,26 +1,27 @@
 <?php
 
-require '../model/Event.php';
-require '../model/Block.php';
-require '../model/Category.php';
-require '../model/Eventblock.php';
-require '../model/Order.php';
-require '../model/Reservation.php';
-require '../model/Seat.php';
+require 'model/Event.php';
+require 'model/Block.php';
+require 'model/Category.php';
+require 'model/Eventblock.php';
+require 'model/Order.php';
+require 'model/Reservation.php';
+require 'model/Seat.php';
 
-require '../services/ReservationConverter.php';
-require '../services/TokenProvider.php';
-require '../services/SeatReserver.php';
-require '../services/SeatConverter.php';
-require '../services/Mail.php';
+require 'services/ReservationConverter.php';
+require 'services/TokenProvider.php';
+require 'services/SeatReserver.php';
+require 'services/SeatConverter.php';
+require 'services/Mail.php';
 
-require '../actions/EventActions.php';
-require '../actions/BlockActions.php';
-require '../actions/ReservationActions.php';
-require '../actions/OrderActions.php';
+require 'actions/EventActions.php';
+require 'actions/BlockActions.php';
+require 'actions/ReservationActions.php';
+require 'actions/OrderActions.php';
+
+$container = $app->getContainer();
 
 $container['orm'] = function($container) {
-    // Configure spot ORM
     $spotConfig = new \Spot\Config();
     $spotConfig->addConnection('sqlite', $container['settings']['Spot']);
     $spot = new \Spot\Locator($spotConfig);
