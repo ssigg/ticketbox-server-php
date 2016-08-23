@@ -10,6 +10,9 @@ class OrderActionsTest extends DatabaseTestBase {
         $reserverMock = $this->getMockBuilder(SeatReserverInterface::class)
             ->setMethods(['order'])
             ->getMock();
+        $reserverMock
+            ->method('order')
+            ->willReturn(new OrderStub());
         $this->container['seatReserver'] = $reserverMock;
     }
 
@@ -27,7 +30,7 @@ class OrderActionsTest extends DatabaseTestBase {
         $reserverMock = $this->container->get('seatReserver');
 
         $reserverMock->expects($this->once())->method('order');
-        $action($request, $response, []); 
+        $action($request, $response, []);
     }
 
     public function testSendOrderConfirmation() {
@@ -62,5 +65,23 @@ class OrderActionsTest extends DatabaseTestBase {
 
         $mailMock->expects($this->once())->method('sendOrderNotification');
         $action($request, $response, []);
+    }
+}
+
+class OrderStub {
+    public $reservations;
+
+    public function __construct() {
+        $this->reservations = [
+            new ExpandedReservationMock()
+        ];
+    }
+}
+
+class ExpandedReservationMock {
+    public $price;
+
+    public function __construct() {
+        $this->price = 1;
     }
 }
