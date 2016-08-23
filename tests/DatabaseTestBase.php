@@ -60,7 +60,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
     private function createContainer() {
         $spot = $this->configureSpot();
         $container = new \Slim\Container;
-        $container['database'] = $spot;
+        $container['orm'] = $spot;
         return $container;
     }
 

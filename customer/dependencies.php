@@ -19,7 +19,7 @@ require '../actions/BlockActions.php';
 require '../actions/ReservationActions.php';
 require '../actions/OrderActions.php';
 
-$container['database'] = function($container) {
+$container['orm'] = function($container) {
     // Configure spot ORM
     $spotConfig = new \Spot\Config();
     $spotConfig->addConnection('sqlite', $container['settings']['Spot']);
@@ -33,10 +33,10 @@ $container['session'] = function($container) {
 };
 
 $container['reservationConverter'] = function($container) {
-    $eventMapper = $container['database']->mapper('Model\Event');
-    $seatMapper = $container['database']->mapper('Model\Seat');
-    $eventblockMapper = $container['database']->mapper('Model\Eventblock');
-    $categoryMapper = $container['database']->mapper('Model\Category');
+    $eventMapper = $container['orm']->mapper('Model\Event');
+    $seatMapper = $container['orm']->mapper('Model\Seat');
+    $eventblockMapper = $container['orm']->mapper('Model\Eventblock');
+    $categoryMapper = $container['orm']->mapper('Model\Category');
     $converter = new Services\ReservationConverter($eventMapper, $seatMapper, $eventblockMapper, $categoryMapper);
     return $converter;
 };
@@ -47,8 +47,8 @@ $container['tokenProvider'] = function($container) {
 };
 
 $container['seatReserver'] = function($container) {
-    $orderMapper = $container['database']->mapper('Model\Order');
-    $reservationMapper = $container['database']->mapper('Model\Reservation');
+    $orderMapper = $container['orm']->mapper('Model\Order');
+    $reservationMapper = $container['orm']->mapper('Model\Reservation');
     $reservationConverter = $container['reservationConverter'];
     $tokenProvider = $container['tokenProvider'];
     $reserver = new Services\SeatReserver(
@@ -61,7 +61,7 @@ $container['seatReserver'] = function($container) {
 };
 
 $container['seatConverter'] = function($container) {
-    $reservationMapper = $container['database']->mapper('Model\Reservation');
+    $reservationMapper = $container['orm']->mapper('Model\Reservation');
     $tokenProvider = $container['tokenProvider'];
     $converter = new Services\SeatConverter($reservationMapper, $tokenProvider, $container['settings']['Reservations']);
     return $converter;
