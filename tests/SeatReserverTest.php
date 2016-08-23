@@ -3,6 +3,7 @@
 class SeatReserverTest extends \PHPUnit_Framework_TestCase {
     private $orderMapperMock;
     private $reservationMapperMock;
+    private $reservationConverterMock;
     private $tokenProviderMock;
 
     protected function setUp() {
@@ -11,6 +12,9 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->getMockForAbstractClass();
         $this->reservationMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
             ->setMethods(['where', 'first', 'update', 'delete', 'create'])
+            ->getMockForAbstractClass();
+        $this->reservationConverterMock = $this->getMockBuilder(Services\ReservationConverterInterface::class)
+            ->setMethods(['convert'])
             ->getMockForAbstractClass();
         $this->tokenProviderMock = $this->getMockBuilder(Services\TokenProviderInterface::class)
             ->setMethods(['provide'])
@@ -26,7 +30,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
     }
 
     public function testReserveCreatesAReservationForEachSeat() {
@@ -36,7 +45,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
         
         $seats = [
             $this->getEntityMock(),
@@ -56,7 +70,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
         
         $seats = [
             $this->getEntityMock(),
@@ -76,7 +95,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
         
         $seat = $this->getEntityMock();
         $event = $this->getEntityMock();
@@ -105,7 +129,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
         
         $this->orderMapperMock->expects($this->never())->method('create');
         $reserver->order('John', 'Doe', 'john.doe@example.com');
@@ -131,7 +160,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
         
         $this->orderMapperMock->expects($this->once())->method('create');
         $reserver->order('John', 'Doe', 'john.doe@example.com');
@@ -156,7 +190,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $settings = [
             'lifetimeInSeconds' => 0
         ];
-        $reserver = new Services\SeatReserver($this->orderMapperMock, $this->reservationMapperMock, $this->tokenProviderMock, $settings);
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
         $reserver->order('John', 'Doe', 'john.doe@example.com');

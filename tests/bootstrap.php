@@ -15,6 +15,7 @@ require dirname(__DIR__) . '/actions/ReservationActions.php';
 require dirname(__DIR__) . '/actions/OrderActions.php';
 
 // Register services
+require dirname(__DIR__) . '/services/ReservationConverter.php';
 require dirname(__DIR__) . '/services/TokenProvider.php';
 require dirname(__DIR__) . '/services/SeatReserver.php';
 require dirname(__DIR__) . '/services/SeatConverter.php';

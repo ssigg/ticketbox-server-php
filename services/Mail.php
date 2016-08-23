@@ -7,8 +7,8 @@ use Nette\Mail\Message;
 use Latte\Engine;
 
 interface MailInterface {
-    function sendOrderConfirmation($firstname, $lastname, $email, $seats, $totalPrice);
-    function sendOrderNotification($firstname, $lastname, $email, $seats, $totalPrice);
+    function sendOrderConfirmation($firstname, $lastname, $email, $reservations, $totalPrice);
+    function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice);
 }
 
 class Mail implements MailInterface {
@@ -22,12 +22,12 @@ class Mail implements MailInterface {
         $this->settings = $settings;
     }
 
-    public function sendOrderConfirmation($firstname, $lastname, $email, $seats, $totalPrice) {
+    public function sendOrderConfirmation($firstname, $lastname, $email, $reservations, $totalPrice) {
         $params = [
             'firstname' => $firstname,
             'lastname' => $lastname,
             'email' => $email,
-            'seats' => $seats,
+            'reservations' => $reservations,
             'total' => $totalPrice
         ];
 
@@ -44,11 +44,11 @@ class Mail implements MailInterface {
         $this->mailer->send($message);
     }
 
-    public function sendOrderNotification($firstname, $lastname, $email, $seats, $totalPrice) {
+    public function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice) {
         $params = [
             'firstname' => $firstname,
             'lastname' => $lastname,
-            'seats' => $seats,
+            'reservations' => $reservations,
             'total' => $totalPrice
         ];
 

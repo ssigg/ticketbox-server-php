@@ -8,6 +8,7 @@ require '../model/Order.php';
 require '../model/Reservation.php';
 require '../model/Seat.php';
 
+require '../services/ReservationConverter.php';
 require '../services/TokenProvider.php';
 require '../services/SeatReserver.php';
 require '../services/SeatConverter.php';
@@ -31,6 +32,15 @@ $container['session'] = function($container) {
     return $session;
 };
 
+$container['reservationConverter'] = function($container) {
+    $eventMapper = $container['database']->mapper('Model\Event');
+    $seatMapper = $container['database']->mapper('Model\Seat');
+    $eventblockMapper = $container['database']->mapper('Model\Eventblock');
+    $categoryMapper = $container['database']->mapper('Model\Category');
+    $converter = new Services\ReservationConverter($eventMapper, $seatMapper, $eventblockMapper, $categoryMapper);
+    return $converter;
+};
+
 $container['tokenProvider'] = function($container) {
     $provider = new Services\TokenProvider($container['session']);
     return $provider;
@@ -39,8 +49,14 @@ $container['tokenProvider'] = function($container) {
 $container['seatReserver'] = function($container) {
     $orderMapper = $container['database']->mapper('Model\Order');
     $reservationMapper = $container['database']->mapper('Model\Reservation');
+    $reservationConverter = $container['reservationConverter'];
     $tokenProvider = $container['tokenProvider'];
-    $reserver = new Services\SeatReserver($orderMapper, $reservationMapper, $tokenProvider, $container['settings']['Reservations']);
+    $reserver = new Services\SeatReserver(
+        $orderMapper,
+        $reservationMapper,
+        $reservationConverter,
+        $tokenProvider,
+        $container['settings']['Reservations']);
     return $reserver;
 };
 

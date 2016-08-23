@@ -21,8 +21,13 @@ class CreateOrderAction {
 
         $order = $this->reserver->order($data['firstname'], $data['lastname'], $data['email']);
 
-        $this->mail->sendOrderNotification($data['firstname'], $data['lastname'], $data['email'], [], 0);
-        $this->mail->sendOrderConfirmation($data['firstname'], $data['lastname'], $data['email'], [], 0);
+        $totalPrice = 0;
+        foreach ($order->reservations as $reservation) {
+            $totalPrice += $reservation->price;
+        }
+
+        $this->mail->sendOrderNotification($data['firstname'], $data['lastname'], $data['email'], $order->reservations, $totalPrice);
+        $this->mail->sendOrderConfirmation($data['firstname'], $data['lastname'], $data['email'], $order->reservations, $totalPrice);
 
         return $response->withJson($order, 201);
     }

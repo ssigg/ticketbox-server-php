@@ -12,14 +12,21 @@ interface SeatReserverInterface {
 class SeatReserver implements SeatReserverInterface {
     private $orderMapper;
     private $reservationMapper;
+    private $reservationConverter;
     private $token;
     private $settings;
     
-    public function __construct(\Spot\MapperInterface $orderMapper, \Spot\MapperInterface $reservationMapper, TokenProviderInterface $tokenProvider, $settings) {
-        $this->orderMapper = $orderMapper;
-        $this->reservationMapper = $reservationMapper;
-        $this->token = $tokenProvider->provide();
-        $this->settings = $settings;
+    public function __construct(
+        \Spot\MapperInterface $orderMapper,
+        \Spot\MapperInterface $reservationMapper,
+        ReservationConverterInterface $reservationConverter,
+        TokenProviderInterface $tokenProvider,
+        $settings) {
+            $this->orderMapper = $orderMapper;
+            $this->reservationMapper = $reservationMapper;
+            $this->reservationConverter = $reservationConverter;
+            $this->token = $tokenProvider->provide();
+            $this->settings = $settings;
     }
 
     public function reserve($seats, $event) {
@@ -62,6 +69,7 @@ class SeatReserver implements SeatReserverInterface {
                 'timestamp' => time()
             ];
             $order = $this->orderMapper->create($data);
+            $order->reservations = $this->reservationConverter->convert($reservations);
             foreach ($reservations as $reservation) {
                 $reservation->order_id = $order->get('id');
                 $this->reservationMapper->update($reservation);

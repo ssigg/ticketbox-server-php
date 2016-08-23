@@ -7,8 +7,8 @@ class Eventblock extends \Spot\Entity {
     public static function fields() {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
-            'event_id' => ['type' => 'integer', 'required' => true],
-            'block_id' => ['type' => 'integer', 'required' => true],
+            'event_id' => ['type' => 'integer', 'required' => true, 'unique' => 'eventblock'],
+            'block_id' => ['type' => 'integer', 'required' => true, 'unique' => 'eventblock'],
             'category_id' => ['type' => 'integer', 'required' => true]
         ];
     }
