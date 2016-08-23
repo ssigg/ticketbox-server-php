@@ -31,7 +31,7 @@ class Mail implements MailInterface {
             'total' => $totalPrice
         ];
 
-        $template = __DIR__ . '/mails/OrderConfirmation.txt';
+        $template = __DIR__ . '/../customer/config/OrderConfirmation.txt';
         $body = $this->engine->renderToString($template, $params);
 
         $message = new Message;
@@ -52,7 +52,7 @@ class Mail implements MailInterface {
             'total' => $totalPrice
         ];
 
-        $body = $this->engine->renderToString(__DIR__ . '/mails/OrderNotification.txt', $params);
+        $body = $this->engine->renderToString(__DIR__ . '/../customer/config/OrderNotification.txt', $params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
             $message = new Message;
