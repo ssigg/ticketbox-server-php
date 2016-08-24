@@ -15,11 +15,13 @@ $app->get('/events/{id}', Actions\GetEventAction::class);
 
 $app->get('/blocks/{id}', Actions\GetBlockAction::class);
 
+$app->get('/reservations', Actions\ListReservationsAction::class);
+
 $app->post('/reservations', Actions\CreateReservationAction::class);
 
-$app->put('/reservations/{seatId}/{eventId}', Actions\ChangeReductionForReservationAction::class);
+$app->put('/reservations/{id}', Actions\ChangeReductionForReservationAction::class);
 
-$app->delete('/reservations/{seatId}/{eventId}', Actions\DeleteReservationAction::class);
+$app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 
 $app->post('/orders', Actions\CreateOrderAction::class);
 // =============================================================

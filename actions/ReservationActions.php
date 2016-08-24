@@ -7,6 +7,21 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
+class ListReservationsAction {
+    private $orm;
+    private $reserver;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->reserver = $container->get('seatReserver');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $reservations = $this->reserver->getReservations();
+        return $response->withJson($reservations, 200);
+    }
+}
+
 class CreateReservationAction {
     private $orm;
     private $reserver;
@@ -18,10 +33,10 @@ class CreateReservationAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
-        $seats = $this->orm->mapper('Model\Seat')->where([ 'id' => $data['seatId'] ]);
-        $event = $this->orm->mapper('Model\Event')->first([ 'id' => $data['eventId'] ]);
-        $this->reserver->reserve($seats, $event);
-        return $response->withJson(201);
+        $seat = $this->orm->mapper('Model\Seat')->get($data['seatId']);
+        $event = $this->orm->mapper('Model\Event')->get($data['eventId']);
+        $reservation = $this->reserver->reserve($seat, $event);
+        return $response->withJson($reservation, 201);
     }
 }
 
@@ -35,9 +50,7 @@ class DeleteReservationAction {
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
-        $seats = $this->orm->mapper('Model\Seat')->where([ 'id' => $args['seatId'] ]);
-        $event = $this->orm->mapper('Model\Event')->first([ 'id' => $args['eventId'] ]);
-        $this->reserver->release($seats, $event);
+        $this->reserver->release($args['id']);
         return $response->withJson(200);
     }
 }
@@ -52,11 +65,9 @@ class ChangeReductionForReservationAction {
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
-        $seat = $this->orm->mapper('Model\Seat')->first([ 'id' => $args['seatId'] ]);
-        $event = $this->orm->mapper('Model\Event')->first([ 'id' => $args['eventId'] ]);
         $data = $request->getParsedBody();
         $reductionValue = $data['isReduced'];
-        $this->reserver->changeReduction($seat, $event, $reductionValue);
-        return $response->withJson(200);
+        $reservation = $this->reserver->changeReduction($args['id'], $reductionValue);
+        return $response->withJson($reservation, 200);
     }
 }

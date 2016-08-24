@@ -38,10 +38,20 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
     }
 
-    public function testReserveCreatesAReservationForEachSeat() {
+    public function testGetReservationsReserveGetsExpandedReservations() {
+        $seatMocks = [
+            $this->getEntityMock(),
+            $this->getEntityMock()
+        ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->willReturn($seatMocks);
         $this->tokenProviderMock
             ->method('provide')
             ->willReturn('token');
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
         $settings = [
             'lifetimeInSeconds' => 0
         ];
@@ -52,18 +62,13 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->tokenProviderMock,
             $settings);
         
-        $seats = [
-            $this->getEntityMock(),
-            $this->getEntityMock(),
-            $this->getEntityMock()
-        ];
-        $event = $this->getEntityMock();
-
-        $this->reservationMapperMock->expects($this->exactly(count($seats)))->method('create');
-        $reserver->reserve($seats, $event);
+        $this->reservationMapperMock->expects($this->once())->method('where');
+        $this->reservationConverterMock->expects($this->once())->method('convert');
+        $reservations = $reserver->getReservations();
+        $this->assertSame(count($seatMocks), count($reservations));
     }
 
-    public function testReleaseDeletesReservationForEachSeat() {
+    public function testReserveCreatesReservation() {
         $this->tokenProviderMock
             ->method('provide')
             ->willReturn('token');
@@ -77,15 +82,32 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->tokenProviderMock,
             $settings);
         
-        $seats = [
-            $this->getEntityMock(),
-            $this->getEntityMock(),
-            $this->getEntityMock()
-        ];
+        $seat = $this->getEntityMock();
         $event = $this->getEntityMock();
 
-        $this->reservationMapperMock->expects($this->exactly(count($seats)))->method('delete');
-        $reserver->release($seats, $event);
+        $this->reservationMapperMock->expects($this->once())->method('create');
+        $reserver->reserve($seat, $event);
+    }
+
+    public function testReleaseDeletesReservation() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token');
+        $settings = [
+            'lifetimeInSeconds' => 0
+        ];
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
+        
+        $reservationId = 1;
+        $event = $this->getEntityMock();
+
+        $this->reservationMapperMock->expects($this->once())->method('delete');
+        $reserver->release($reservationId, $event);
     }
 
     public function testChangeReductionModifiesReservation() {

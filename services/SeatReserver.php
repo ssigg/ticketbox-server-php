@@ -3,9 +3,10 @@
 namespace Services;
 
 interface SeatReserverInterface {
+    function getReservations();
     function reserve($seats, $event);
-    function release($seats, $event);
-    function changeReduction($seat, $event, $value);
+    function release($reservationId);
+    function changeReduction($reservationId, $value);
     function order($firstname, $lastname, $email);
 }
 
@@ -29,34 +30,39 @@ class SeatReserver implements SeatReserverInterface {
             $this->settings = $settings;
     }
 
-    public function reserve($seats, $event) {
-        $oldestLockTime = time() - $this->settings['lifetimeInSeconds'];
-        $this->reservationMapper->delete(['timestamp :lt' => $oldestLockTime, 'order_id' => null]);
-        foreach ($seats as $seat) {
-            $data = [
-                'token' => $this->token,
-                'seat_id' => $seat->get('id'),
-                'event_id' => $event->get('id'),
-                'timestamp' => time(),
-                'is_reduced' => false,
-                'is_sold' => false
-            ];
-            $this->reservationMapper->create($data);
-        }
+    public function getReservations() {
+        $this->deleteStaleReservations();
+        $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
+        $expandedReservations = $this->reservationConverter->convert($reservations);
+        return $expandedReservations;
     }
 
-    public function release($seats, $event) {
-        foreach ($seats as $seat) {
-            $this->reservationMapper->delete([ 'seat_id' => $seat->id, 'event_id' => $event->id, 'token' => $this->token ]);
-        }
+    public function reserve($seat, $event) {
+        $this->deleteStaleReservations();
+        $data = [
+            'token' => $this->token,
+            'seat_id' => $seat->get('id'),
+            'event_id' => $event->get('id'),
+            'timestamp' => time(),
+            'is_reduced' => false,
+            'is_sold' => false
+        ];
+        $reservation = $this->reservationMapper->create($data);
+        return $reservation;
     }
 
-    public function changeReduction($seat, $event, $value) {
-        $reservation = $this->reservationMapper->first([ 'seat_id' => $seat->get('id'), 'event_id' => $event->get('id'), 'token' => $this->token ]);
+    public function release($reservationId) {
+        $this->reservationMapper->delete([ 'id' => $reservationId, 'token' => $this->token ]);
+    }
+
+    public function changeReduction($reservationId, $value) {
+        $this->deleteStaleReservations();
+        $reservation = $this->reservationMapper->first([ 'id' => $reservationId, 'token' => $this->token, 'order_id' => null]);
         if ($reservation != null) {
             $reservation->is_reduced = $value;
             $this->reservationMapper->update($reservation);
         }
+        return $reservation;
     }
 
     public function order($firstname, $lastname, $email) {
@@ -77,5 +83,10 @@ class SeatReserver implements SeatReserverInterface {
             return $order;
         }
         return null;
+    }
+
+    private function deleteStaleReservations() {
+        $oldestLockTime = time() - $this->settings['lifetimeInSeconds'];
+        $this->reservationMapper->delete(['timestamp :lt' => $oldestLockTime, 'order_id' => null]);
     }
 }

@@ -4,9 +4,21 @@ class ReservationActionsTest extends DatabaseTestBase {
     protected function setUp() {
         parent::setUp();
         $reserverMock = $this->getMockBuilder(SeatReserverInterface::class)
-            ->setMethods(['reserve', 'release', 'changeReduction'])
+            ->setMethods(['getReservations', 'reserve', 'release', 'changeReduction'])
             ->getMock();
         $this->container['seatReserver'] = $reserverMock;
+    }
+
+    public function testListReservationsAction() {
+        $action = new Actions\ListReservationsAction($this->container);
+
+        $request = $this->getGetRequest('/reservations');
+        $response = new \Slim\Http\Response();
+
+        $reserverMock = $this->container->get('seatReserver');
+
+        $reserverMock->expects($this->once())->method('getReservations');
+        $action($request, $response, []);
     }
 
     public function testUseReserverToCreateReservation() {
@@ -34,7 +46,7 @@ class ReservationActionsTest extends DatabaseTestBase {
         $reserverMock = $this->container->get('seatReserver');
 
         $reserverMock->expects($this->once())->method('release');
-        $action($request, $response, [ 'seatId' => 42, 'eventId' => 2 ]); 
+        $action($request, $response, [ 'id' => 42 ]); 
     }
 
     public function testUseReserverToChangeReductionToReservation() {
@@ -49,6 +61,6 @@ class ReservationActionsTest extends DatabaseTestBase {
         $reserverMock = $this->container->get('seatReserver');
 
         $reserverMock->expects($this->once())->method('changeReduction');
-        $action($request, $response, [ 'seatId' => 42, 'eventId' => 2 ]); 
+        $action($request, $response, [ 'id' => 42 ]); 
     }
 }
