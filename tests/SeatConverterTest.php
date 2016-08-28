@@ -38,6 +38,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $convertedSeats = $this->converter->convert($seats, $eventblock);
         $this->assertSame('free', $convertedSeats[0]->state);
+        $this->assertSame(null, $convertedSeats[0]->reservation_id);
     }
 
     public function testConvertReservedSeat() {
@@ -52,6 +53,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $reservationMock = $this->getEntityMock();
         $map = [
+            ['id', 42],            
             ['token', 'token2'],
             ['order_id', null]
         ];
@@ -63,7 +65,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
             ->willReturn($reservationMock);
 
         $convertedSeats = $this->converter->convert($seats, $eventblock);
-        $this->assertSame('reserved', $convertedSeats[0]->state);
+        $this->assertSame(null, $convertedSeats[0]->reservation_id);
     }
 
     public function testConvertReservedByMyselfSeat() {
@@ -78,6 +80,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $reservationMock = $this->getEntityMock();
         $map = [
+            ['id', 42],            
             ['token', 'token1'],
             ['order_id', null]
         ];
@@ -90,6 +93,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $convertedSeats = $this->converter->convert($seats, $eventblock);
         $this->assertSame('reservedbymyself', $convertedSeats[0]->state);
+        $this->assertSame(42, $convertedSeats[0]->reservation_id);
     }
 
     public function testConvertOrderedSeat() {
@@ -104,6 +108,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $reservationMock = $this->getEntityMock();
         $map = [
+            ['id', 42],
             ['token', 'token2'],
             ['order_id', 1]
         ];
@@ -116,6 +121,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $convertedSeats = $this->converter->convert($seats, $eventblock);
         $this->assertSame('ordered', $convertedSeats[0]->state);
+        $this->assertSame(null, $convertedSeats[0]->reservation_id);
     }
 
     public function testConvertOrderedByMyselfSeat() {
@@ -130,6 +136,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $reservationMock = $this->getEntityMock();
         $map = [
+            ['id', 42],
             ['token', 'token1'],
             ['order_id', 1]
         ];
@@ -142,6 +149,7 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
 
         $convertedSeats = $this->converter->convert($seats, $eventblock);
         $this->assertSame('ordered', $convertedSeats[0]->state);
+        $this->assertSame(null, $convertedSeats[0]->reservation_id);
     }
 
     private function getEntityMock() {

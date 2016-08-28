@@ -31,25 +31,29 @@ class SeatConverter implements SeatConverterInterface {
     private function convertOneSeat($seat, $eventblock) {
         $reservation = $this->reservationMapper->first([ 'seat_id' => $seat->id, 'event_id' => $eventblock->get('event_id') ]);
         $state = null;
+        $reservationId = null;
         if ($reservation == null) {
             $state = 'free';
         } else if ($reservation->get('order_id') != null) {
             $state = 'ordered';
         } else if ($reservation->get('token') == $this->tokenProvider->provide()) {
             $state = 'reservedbymyself';
+            $reservationId = $reservation->get('id');
         } else  {
             $state = 'reserved';
         }
-        return new SeatWithState($seat, $state);
+        return new SeatWithState($seat, $state, $reservationId);
     }
 }
 
 class SeatWithState {
     public $seat;
     public $state;
+    public $reservation_id;
 
-    public function __construct($seat, $state) {
+    public function __construct($seat, $state, $reservationId) {
         $this->seat = $seat;
         $this->state = $state;
+        $this->reservation_id = $reservationId;
     }
 }
