@@ -25,8 +25,8 @@ class ReservationActionsTest extends DatabaseTestBase {
         $action = new Actions\CreateReservationAction($this->container);
 
         $data = [
-            "seatId" => 2,
-            "eventId" => 42
+            "seat_id" => 2,
+            "event_id" => 42
         ];
         $request = $this->getPostRequest('/reservations', $data);
         $response = new \Slim\Http\Response();

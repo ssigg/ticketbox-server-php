@@ -33,8 +33,8 @@ class CreateReservationAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
-        $seat = $this->orm->mapper('Model\Seat')->get($data['seatId']);
-        $event = $this->orm->mapper('Model\Event')->get($data['eventId']);
+        $seat = $this->orm->mapper('Model\Seat')->get($data['seat_id']);
+        $event = $this->orm->mapper('Model\Event')->get($data['event_id']);
         $reservation = $this->reserver->reserve($seat, $event);
         return $response->withJson($reservation, 201);
     }

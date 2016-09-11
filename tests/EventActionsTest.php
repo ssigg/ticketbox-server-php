@@ -31,7 +31,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","blocks":[{"id":1,"event_id":null,"block_id":null,"category_id":null}]}',
+            '{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","blocks":[{"id":1,"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1"}}]}',
             (string)$response->getBody());
     }
 }

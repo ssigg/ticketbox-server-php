@@ -33,11 +33,35 @@ class GetEventAction {
         $event = $eventMapper->get($args['id']);
         if ($event != null) {
             $eventblockMapper = $this->orm->mapper('Model\Eventblock');
-            $eventBlocks = $eventblockMapper->select('id')->where(['event_id' => $event->id]);
-            $event->blocks = $eventBlocks->toArray();
+            $eventblocks = $eventblockMapper->where(['event_id' => $event->id]);
+            $blocks = [];
+            foreach($eventblocks as $eventblock) {
+                $blocks[] = $this->convertOneEventblock($eventblock);
+            }
+            $event->blocks = $blocks;
             return $response->withJson($event, 200);
         } else {
             return $response->withStatus(404);
         }
+    }
+
+    private function convertOneEventblock($eventblock) {
+        $blockMapper = $this->orm->mapper('Model\Block');
+        $categoryMapper = $this->orm->mapper('Model\Category');
+        $block = $blockMapper->get($eventblock->get('block_id'));
+        $category = $categoryMapper->get($eventblock->get('category_id'));
+        $expandedEventblock = new ExpandedEventblock($eventblock->get('id'), $category, $block);
+        return $expandedEventblock;
+    }
+}
+
+class ExpandedEventblock {
+    public $id;
+    public $category;
+    public $block;
+    public function __construct($id, $category, $block) {
+        $this->id = $id;
+        $this->category = $category;
+        $this->block = $block;
     }
 }
