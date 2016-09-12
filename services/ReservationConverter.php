@@ -22,6 +22,7 @@ class ReservationConverter implements ReservationConverterInterface {
     public function convert($reservations) {
         $expandedReservations = [];
         foreach ($reservations as $reservation) {
+            $id = $reservation->get('id');
             $eventId = $reservation->get('event_id');
             $event = $this->eventMapper->get($eventId);
             $seat = $this->seatMapper->get($reservation->get('seat_id'));
@@ -29,20 +30,22 @@ class ReservationConverter implements ReservationConverterInterface {
             $category = $this->categoryMapper->get($eventblock->get('category_id'));
             $isReduced = $reservation->get('is_reduced');
             $price = $isReduced ? $category->get('price_reduced') : $category->get('price');
-            $expandedReservations[] = new ExpandedReservation($event, $seat, $category, $isReduced, $price);
+            $expandedReservations[] = new ExpandedReservation($id, $event, $seat, $category, $isReduced, $price);
         }
         return $expandedReservations;
     }
 }
 
 class ExpandedReservation {
+    public $id;
     public $event;
     public $seat;
     public $category;
     public $isReduced;
     public $price;
 
-    public function __construct($event, $seat, $category, $isReduced, $price) {
+    public function __construct($id, $event, $seat, $category, $isReduced, $price) {
+        $this->id = $id;
         $this->event = $event;
         $this->seat = $seat;
         $this->category = $category;

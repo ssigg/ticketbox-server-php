@@ -25,10 +25,12 @@ class ListReservationsAction {
 class CreateReservationAction {
     private $orm;
     private $reserver;
+    private $reservationConverter;
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
         $this->reserver = $container->get('seatReserver');
+        $this->reservationConverter = $container->get('reservationConverter');
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
@@ -36,7 +38,8 @@ class CreateReservationAction {
         $seat = $this->orm->mapper('Model\Seat')->get($data['seat_id']);
         $event = $this->orm->mapper('Model\Event')->get($data['event_id']);
         $reservation = $this->reserver->reserve($seat, $event);
-        return $response->withJson($reservation, 201);
+        $expandedReservation = $this->reservationConverter->convert([ $reservation ])[0];
+        return $response->withJson($expandedReservation, 201);
     }
 }
 
@@ -58,16 +61,19 @@ class DeleteReservationAction {
 class ChangeReductionForReservationAction {
     private $orm;
     private $reserver;
+    private $reservationConverter;
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
         $this->reserver = $container->get('seatReserver');
+        $this->reservationConverter = $container->get('reservationConverter');
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
         $reductionValue = $data['isReduced'];
         $reservation = $this->reserver->changeReduction($args['id'], $reductionValue);
-        return $response->withJson($reservation, 200);
+        $expandedReservation = $this->reservationConverter->convert([ $reservation ])[0];
+        return $response->withJson($expandedReservation, 200);
     }
 }

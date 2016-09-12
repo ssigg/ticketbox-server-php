@@ -7,6 +7,11 @@ class ReservationActionsTest extends DatabaseTestBase {
             ->setMethods(['getReservations', 'reserve', 'release', 'changeReduction'])
             ->getMock();
         $this->container['seatReserver'] = $reserverMock;
+
+        $reservationConverterMock = $this->getMockBuilder(ReservationConverterInterface::class)
+            ->setMethods(['convert'])
+            ->getMock();
+        $this->container['reservationConverter'] = $reservationConverterMock;
     }
 
     public function testListReservationsAction() {
@@ -32,8 +37,11 @@ class ReservationActionsTest extends DatabaseTestBase {
         $response = new \Slim\Http\Response();
 
         $reserverMock = $this->container->get('seatReserver');
-
         $reserverMock->expects($this->once())->method('reserve');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock->expects($this->once())->method('convert');
+        
         $action($request, $response, []); 
     }
 

@@ -24,6 +24,8 @@ class GetBlockAction {
             $eventblock->block = $blockMapper->get($eventblock->block_id);
             $categoryMapper = $this->orm->mapper('Model\Category');
             $eventblock->category = $categoryMapper->get($eventblock->category_id);
+            $eventMapper = $this->orm->mapper('Model\Event');
+            $eventblock->event = $eventMapper->get($eventblock->event_id);
             $seatMapper = $this->orm->mapper('Model\Seat');
             $seats = $seatMapper->where(['block_id' => $eventblock->block_id]);
             $convertedSeats = $this->seatConverter->convert($seats, $eventblock);
