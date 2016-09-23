@@ -18,7 +18,7 @@ class Reservation extends \Spot\Entity {
     }
 
     public static function events(\Spot\EventEmitter $eventEmitter) {
-        $eventEmitter->on('afterValidate', function (Entity $reservation, Mapper $mapper) {
+        $eventEmitter->on('afterValidate', function (\Spot\Entity $reservation, \Spot\Mapper $mapper) {
             if ($reservation->order_kind == null) {
                 return true;
             } else if ($reservation->order_kind == 'reservation') {

@@ -19,8 +19,6 @@ class CreateBoxofficePurchaseAction {
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
-        $data = $request->getParsedBody();
-
         $purchase = $this->reserver->boxofficePurchase($this->boxofficeSettings['name']);
 
         $totalPrice = 0;

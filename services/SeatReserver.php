@@ -48,8 +48,7 @@ class SeatReserver implements SeatReserverInterface {
             'seat_id' => $seat->get('id'),
             'event_id' => $event->get('id'),
             'timestamp' => time(),
-            'is_reduced' => false,
-            'is_sold' => false
+            'is_reduced' => false
         ];
         $reservation = $this->reservationMapper->create($data);
         return $reservation;
