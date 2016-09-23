@@ -7,11 +7,13 @@ interface SeatReserverInterface {
     function reserve($seats, $event);
     function release($reservationId);
     function changeReduction($reservationId, $value);
-    function order($firstname, $lastname, $email);
+    function order($title, $firstname, $lastname, $email);
+    function boxofficePurchase($boxofficeName);
 }
 
 class SeatReserver implements SeatReserverInterface {
     private $orderMapper;
+    private $boxofficePurchaseMapper;
     private $reservationMapper;
     private $reservationConverter;
     private $token;
@@ -19,11 +21,13 @@ class SeatReserver implements SeatReserverInterface {
     
     public function __construct(
         \Spot\MapperInterface $orderMapper,
+        \Spot\MapperInterface $boxofficePurchaseMapper,
         \Spot\MapperInterface $reservationMapper,
         ReservationConverterInterface $reservationConverter,
         TokenProviderInterface $tokenProvider,
         $settings) {
             $this->orderMapper = $orderMapper;
+            $this->boxofficePurchaseMapper = $boxofficePurchaseMapper;
             $this->reservationMapper = $reservationMapper;
             $this->reservationConverter = $reservationConverter;
             $this->token = $tokenProvider->provide();
@@ -65,10 +69,11 @@ class SeatReserver implements SeatReserverInterface {
         return $reservation;
     }
 
-    public function order($firstname, $lastname, $email) {
+    public function order($title, $firstname, $lastname, $email) {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
             $data = [
+                'title' => $title,
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'email' => $email,
@@ -77,10 +82,30 @@ class SeatReserver implements SeatReserverInterface {
             $order = $this->orderMapper->create($data);
             $order->reservations = $this->reservationConverter->convert($reservations);
             foreach ($reservations as $reservation) {
+                $reservation->order_kind = 'reservation';
                 $reservation->order_id = $order->get('id');
                 $this->reservationMapper->update($reservation);
             }
             return $order;
+        }
+        return null;
+    }
+
+    public function boxofficePurchase($boxofficeName) {
+        $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
+        if (count($reservations) > 0) {
+            $data = [
+                'boxoffice' => $boxofficeName,
+                'timestamp' => time()
+            ];
+            $purchase = $this->boxofficePurchaseMapper->create($data);
+            $purchase->reservations = $this->reservationConverter->convert($reservations);
+            foreach ($reservations as $reservation) {
+                $reservation->order_kind = 'boxoffice-purchase';
+                $reservation->order_id = $purchase->get('id');
+                $this->reservationMapper->update($reservation);
+            }
+            return $purchase;
         }
         return null;
     }

@@ -13,6 +13,7 @@ require dirname(__DIR__) . '/actions/EventActions.php';
 require dirname(__DIR__) . '/actions/BlockActions.php';
 require dirname(__DIR__) . '/actions/ReservationActions.php';
 require dirname(__DIR__) . '/actions/OrderActions.php';
+require dirname(__DIR__) . '/actions/PurchaseActions.php';
 
 // Register services
 require dirname(__DIR__) . '/services/ReservationConverter.php';

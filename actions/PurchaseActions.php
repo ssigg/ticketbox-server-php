@@ -7,28 +7,29 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
-class CreateOrderAction {
+class CreateBoxofficePurchaseAction {
     private $mail;
     private $reserver;
+    private $boxofficeSettings;
 
     public function __construct(ContainerInterface $container) {
         $this->mail = $container->get('mail');
         $this->reserver = $container->get('seatReserver');
+        $this->boxofficeSettings = $container->get('settings')['boxoffice'];
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
 
-        $order = $this->reserver->order($data['title'], $data['firstname'], $data['lastname'], $data['email']);
+        $purchase = $this->reserver->boxofficePurchase($this->boxofficeSettings['name']);
 
         $totalPrice = 0;
-        foreach ($order->reservations as $reservation) {
+        foreach ($purchase->reservations as $reservation) {
             $totalPrice += $reservation->price;
         }
 
-        $this->mail->sendOrderNotification($data['firstname'], $data['lastname'], $data['email'], $order->reservations, $totalPrice);
-        $this->mail->sendOrderConfirmation($data['title'], $data['firstname'], $data['lastname'], $data['email'], $order->reservations, $totalPrice);
+        $this->mail->sendBoxofficePurchaseNotification($this->boxofficeSettings['name'], $purchase->reservations, $totalPrice);
 
-        return $response->withJson($order, 201);
+        return $response->withJson($purchase, 201);
     }
 }

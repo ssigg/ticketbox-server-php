@@ -13,7 +13,21 @@ class Reservation extends \Spot\Entity {
             'is_reduced' => ['type' => 'boolean', 'required' => true],
             'timestamp' => ['type' => 'integer', 'required' => true],
             'order_id' => ['type' => 'integer', 'required' => false],
-            'is_sold' => ['type' => 'boolean', 'required' => true]
+            'order_kind' => ['type' => 'string', 'required' => false]
         ];
+    }
+
+    public static function events(\Spot\EventEmitter $eventEmitter) {
+        $eventEmitter->on('afterValidate', function (Entity $reservation, Mapper $mapper) {
+            if ($reservation->order_kind == null) {
+                return true;
+            } else if ($reservation->order_kind == 'reservation') {
+                return true;
+            } else if ($reservation->order_kind == 'boxoffice-purchase') {
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 } 

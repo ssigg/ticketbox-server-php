@@ -20,11 +20,12 @@ class OrderActionsTest extends DatabaseTestBase {
         $action = new Actions\CreateOrderAction($this->container);
 
         $data = [
+            "title" => "Mr.",
             "firstname" => "John",
             "lastname" => "Doe",
             "email" => "john.doe@example.com"
         ];
-        $request = $this->getPostRequest('/events', $data);
+        $request = $this->getPostRequest('/orders', $data);
         $response = new \Slim\Http\Response();
 
         $reserverMock = $this->container->get('seatReserver');
@@ -37,11 +38,12 @@ class OrderActionsTest extends DatabaseTestBase {
         $action = new Actions\CreateOrderAction($this->container);
 
         $data = [
+            "title" => "Mr.",
             "firstname" => "John",
             "lastname" => "Doe",
             "email" => "john.doe@example.com"
         ];
-        $request = $this->getPostRequest('/events', $data);
+        $request = $this->getPostRequest('/orders', $data);
         $response = new \Slim\Http\Response();
 
         $mailMock = $this->container->get('mail');
@@ -54,11 +56,12 @@ class OrderActionsTest extends DatabaseTestBase {
         $action = new Actions\CreateOrderAction($this->container);
 
         $data = [
+            "title" => "Mr.",
             "firstname" => "John",
             "lastname" => "Doe",
             "email" => "john.doe@example.com"
         ];
-        $request = $this->getPostRequest('/events', $data);
+        $request = $this->getPostRequest('/orders', $data);
         $response = new \Slim\Http\Response();
 
         $mailMock = $this->container->get('mail');
@@ -73,12 +76,12 @@ class OrderStub {
 
     public function __construct() {
         $this->reservations = [
-            new ExpandedReservationMock()
+            new OrderActionsTestExpandedReservationMock()
         ];
     }
 }
 
-class ExpandedReservationMock {
+class OrderActionsTestExpandedReservationMock {
     public $price;
 
     public function __construct() {

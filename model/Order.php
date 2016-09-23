@@ -7,6 +7,7 @@ class Order extends \Spot\Entity {
     public static function fields() {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
+            'title' => ['type' => 'string', 'required' => true],
             'firstname' => ['type' => 'string', 'required' => true],
             'lastname' => ['type' => 'string', 'required' => true],
             'email' => ['type' => 'string', 'required' => true],

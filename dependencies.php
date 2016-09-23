@@ -49,11 +49,13 @@ $container['tokenProvider'] = function($container) {
 
 $container['seatReserver'] = function($container) {
     $orderMapper = $container['orm']->mapper('Model\Order');
+    $boxofficePurchaseMapper = $container['orm']->mapper('Model\BoxofficePurchase');
     $reservationMapper = $container['orm']->mapper('Model\Reservation');
     $reservationConverter = $container['reservationConverter'];
     $tokenProvider = $container['tokenProvider'];
     $reserver = new Services\SeatReserver(
         $orderMapper,
+        $boxofficePurchaseMapper,
         $reservationMapper,
         $reservationConverter,
         $tokenProvider,

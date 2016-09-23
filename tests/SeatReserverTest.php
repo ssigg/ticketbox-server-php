@@ -2,12 +2,16 @@
 
 class SeatReserverTest extends \PHPUnit_Framework_TestCase {
     private $orderMapperMock;
+    private $boxofficePurchaseMapperMock;
     private $reservationMapperMock;
     private $reservationConverterMock;
     private $tokenProviderMock;
 
     protected function setUp() {
         $this->orderMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
+            ->setMethods(['create'])
+            ->getMockForAbstractClass();
+        $this->boxofficePurchaseMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
             ->setMethods(['create'])
             ->getMockForAbstractClass();
         $this->reservationMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
@@ -32,6 +36,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -57,6 +62,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -77,6 +83,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -98,6 +105,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -119,6 +127,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -153,13 +162,14 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $settings);
         
         $this->orderMapperMock->expects($this->never())->method('create');
-        $reserver->order('John', 'Doe', 'john.doe@example.com');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com');
     }
 
     public function testOrderCreatesOrder() {
@@ -184,13 +194,14 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $settings);
         
         $this->orderMapperMock->expects($this->once())->method('create');
-        $reserver->order('John', 'Doe', 'john.doe@example.com');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com');
     }
 
     public function testOrderModifiesAllReservations() {
@@ -214,13 +225,105 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         ];
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
-        $reserver->order('John', 'Doe', 'john.doe@example.com');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com');
+    }
+
+    public function testBoxofficePurchaseWithoutReservationsDoesNothing() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token');
+        
+        $reservations = [ ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->willReturn($reservations);
+        $this->boxofficePurchaseMapperMock
+            ->method('create')
+            ->willReturn($this->getEntityMock());
+        
+        $settings = [
+            'lifetimeInSeconds' => 0
+        ];
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
+        
+        $this->boxofficePurchaseMapperMock->expects($this->never())->method('create');
+        $reserver->boxofficePurchase('Box office');
+    }
+
+    public function testBoxofficePurchaseCreatesBoxofficePurchase() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token');
+        
+        $reservations = [
+            $this->getEntityMock(),
+            $this->getEntityMock(),
+            $this->getEntityMock()
+        ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->willReturn($reservations);
+        $this->boxofficePurchaseMapperMock
+            ->method('create')
+            ->willReturn($this->getEntityMock());
+        
+        $settings = [
+            'lifetimeInSeconds' => 0
+        ];
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
+        
+        $this->boxofficePurchaseMapperMock->expects($this->once())->method('create');
+        $reserver->boxofficePurchase('Box office');
+    }
+
+    public function testBoxofficePurchaseModifiesAllReservations() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token');
+        
+        $reservations = [
+            $this->getEntityMock(),
+            $this->getEntityMock(),
+            $this->getEntityMock()
+        ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->willReturn($reservations);
+        $this->boxofficePurchaseMapperMock
+            ->method('create')
+            ->willReturn($this->getEntityMock());
+        $settings = [
+            'lifetimeInSeconds' => 0
+        ];
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
+
+        $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
+        $reserver->boxofficePurchase('Box office');
     }
 
     private function getEntityMock() {
