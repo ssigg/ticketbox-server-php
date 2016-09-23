@@ -5,6 +5,7 @@ require 'model/Block.php';
 require 'model/Category.php';
 require 'model/Eventblock.php';
 require 'model/Order.php';
+require 'model/BoxofficePurchase.php';
 require 'model/Reservation.php';
 require 'model/Seat.php';
 
@@ -18,6 +19,7 @@ require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
 require 'actions/ReservationActions.php';
 require 'actions/OrderActions.php';
+require 'actions/PurchaseActions.php';
 
 $container = $app->getContainer();
 
