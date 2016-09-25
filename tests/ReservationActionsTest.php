@@ -48,7 +48,7 @@ class ReservationActionsTest extends DatabaseTestBase {
     public function testUseReserverToDeleteReservation() {
         $action = new Actions\DeleteReservationAction($this->container);
 
-        $request = $this->getDeleteRequest('/reservations');
+        $request = $this->getDeleteRequest('/reservations/42');
         $response = new \Slim\Http\Response();
 
         $reserverMock = $this->container->get('seatReserver');

@@ -55,6 +55,63 @@ class GetEventAction {
     }
 }
 
+class CreateEventAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $data = $request->getParsedBody();
+        $mapper = $this->orm->mapper('Model\Event');
+        $event = $mapper->create($data);
+        return $response->withJson($event, 201);
+    }
+}
+
+class ChangeEventAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $data = $request->getParsedBody();
+        $mapper = $this->orm->mapper('Model\Event');
+
+        $event = $mapper->get($args['id']);
+        $event->name = $data['name'];
+        $event->location = $data['location'];
+        $event->dateandtime = $data['dateandtime'];
+        $mapper->update($event);
+
+        return $response->withJson($event, 200);
+    }
+}
+
+class DeleteEventAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $eventMapper = $this->orm->mapper('Model\Event');
+        $eventMapper->delete([ 'id' => $args['id']]);
+
+        $eventblockMapper = $this->orm->mapper('Model\Eventblock');
+        $eventblockMapper->delete([ 'event_id' => $args['id']]);
+
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+        $reservationMapper->delete(['event_id' => $args['id']]);
+        
+        return $response->withJson(200);
+    }
+}
+
 class ExpandedEventblock {
     public $id;
     public $category;

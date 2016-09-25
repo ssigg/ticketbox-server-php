@@ -93,8 +93,8 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             'location' => 'Location 1',
             'dateandtime' => 'Date and Time 1' ]);
 
-        $eventBlockMapper = $spot->mapper('Model\Eventblock');
-        $eventBlockMapper->create([
+        $eventblockMapper = $spot->mapper('Model\Eventblock');
+        $eventblockMapper->create([
             'event_id' => 1,
             'block_id' => 1,
             'category_id' => 1 ]);
@@ -122,6 +122,14 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             'y2' => 5.0,
             'x3' => 6.0,
             'y3' => 7.0 ]);
+
+        $reservationMapper = $spot->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'token' => 'abc',
+            'seat_id' => 1,
+            'event_id' => 1,
+            'is_reduced' => false,
+            'timestamp' => time()]);
 
         return $spot;
     }
