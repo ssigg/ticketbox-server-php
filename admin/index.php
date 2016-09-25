@@ -25,6 +25,9 @@ $app->put('/blocks/{id}', Actions\CreateBlockAction::class);
 
 $app->get('/reservations', Actions\ListReservationsAction::class);
 
+$app->post('/seats', Actions\CreateSeatsAction::class);
+
+$app->delete('/seats/{id}', Actions\DeleteSeatAction::class);
 // =============================================================
 
 $app->run();

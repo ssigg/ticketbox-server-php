@@ -11,6 +11,7 @@ $autoloader = require dirname(__DIR__) . '/vendor/autoload.php';
 // Register actions
 require dirname(__DIR__) . '/actions/EventActions.php';
 require dirname(__DIR__) . '/actions/BlockActions.php';
+require dirname(__DIR__) . '/actions/SeatActions.php';
 require dirname(__DIR__) . '/actions/ReservationActions.php';
 require dirname(__DIR__) . '/actions/OrderActions.php';
 require dirname(__DIR__) . '/actions/PurchaseActions.php';
