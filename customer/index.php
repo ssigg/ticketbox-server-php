@@ -13,7 +13,7 @@ $app->get('/events', Actions\ListEventsAction::class);
 
 $app->get('/events/{id}', Actions\GetEventAction::class);
 
-$app->get('/blocks/{id}', Actions\GetBlockAction::class);
+$app->get('/eventblocks/{id}', Actions\GetEventblockAction::class);
 
 $app->get('/reservations', Actions\ListReservationsAction::class);
 

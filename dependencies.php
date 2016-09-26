@@ -17,6 +17,8 @@ require 'services/Mail.php';
 
 require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
+require 'actions/CategoryActions.php';
+require 'actions/EventblockActions.php';
 require 'actions/ReservationActions.php';
 require 'actions/OrderActions.php';
 require 'actions/PurchaseActions.php';
