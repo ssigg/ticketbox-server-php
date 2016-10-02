@@ -13,7 +13,7 @@ class BlockActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1"}]',
+            '[{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}]',
             (string)$response->getBody());
     }
 

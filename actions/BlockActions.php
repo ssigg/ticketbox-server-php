@@ -16,7 +16,7 @@ class ListBlocksAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $mapper = $this->orm->mapper('Model\Block');
-        $blocks = $mapper->all();
+        $blocks = $mapper->select(['id', 'name']);
         return $response->withJson($blocks, 200);
     }
 }
