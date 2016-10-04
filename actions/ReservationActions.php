@@ -38,8 +38,12 @@ class CreateReservationAction {
         $seat = $this->orm->mapper('Model\Seat')->get($data['seat_id']);
         $event = $this->orm->mapper('Model\Event')->get($data['event_id']);
         $reservation = $this->reserver->reserve($seat, $event);
-        $expandedReservation = $this->reservationConverter->convert([ $reservation ])[0];
-        return $response->withJson($expandedReservation, 201);
+        if ($reservation != null) {
+            $expandedReservation = $this->reservationConverter->convert([ $reservation ])[0];
+            return $response->withJson($expandedReservation, 201);
+        } else {
+            return $response->withStatus(409);
+        }
     }
 }
 

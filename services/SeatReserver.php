@@ -50,8 +50,12 @@ class SeatReserver implements SeatReserverInterface {
             'timestamp' => time(),
             'is_reduced' => false
         ];
-        $reservation = $this->reservationMapper->create($data);
-        return $reservation;
+        $result = $this->reservationMapper->insert($data);
+        if ($result) {
+            return $this->reservationMapper->get($result);
+        } else {
+            return null;
+        }
     }
 
     public function release($reservationId) {

@@ -15,7 +15,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->setMethods(['create'])
             ->getMockForAbstractClass();
         $this->reservationMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
-            ->setMethods(['where', 'first', 'update', 'delete', 'create'])
+            ->setMethods(['where', 'first', 'update', 'delete', 'insert', 'get'])
             ->getMockForAbstractClass();
         $this->reservationConverterMock = $this->getMockBuilder(Services\ReservationConverterInterface::class)
             ->setMethods(['convert'])
@@ -74,7 +74,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame(count($seatMocks), count($reservations));
     }
 
-    public function testReserveCreatesReservation() {
+    public function testReserveCreatesReservationSuccessful() {
         $this->tokenProviderMock
             ->method('provide')
             ->willReturn('token');
@@ -92,7 +92,33 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $seat = $this->getEntityMock();
         $event = $this->getEntityMock();
 
-        $this->reservationMapperMock->expects($this->once())->method('create');
+        $this->reservationMapperMock->method('insert')->willReturn(42);
+        $this->reservationMapperMock->expects($this->once())->method('insert');
+        $this->reservationMapperMock->expects($this->once())->method('get');
+        $reserver->reserve($seat, $event);
+    }
+
+    public function testReserveCreatesReservationUnsuccessful() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token');
+        $settings = [
+            'lifetimeInSeconds' => 0
+        ];
+        $reserver = new Services\SeatReserver(
+            $this->orderMapperMock,
+            $this->boxofficePurchaseMapperMock,
+            $this->reservationMapperMock,
+            $this->reservationConverterMock,
+            $this->tokenProviderMock,
+            $settings);
+        
+        $seat = $this->getEntityMock();
+        $event = $this->getEntityMock();
+
+        $this->reservationMapperMock->method('insert')->willReturn(false);
+        $this->reservationMapperMock->expects($this->once())->method('insert');
+        $this->reservationMapperMock->expects($this->never())->method('get');
         $reserver->reserve($seat, $event);
     }
 

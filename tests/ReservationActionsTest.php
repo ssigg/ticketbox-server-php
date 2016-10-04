@@ -26,7 +26,7 @@ class ReservationActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
-    public function testUseReserverToCreateReservation() {
+    public function testUseReserverToCreateReservationUnsuccessful() {
         $action = new Actions\CreateReservationAction($this->container);
 
         $data = [
@@ -37,6 +37,27 @@ class ReservationActionsTest extends DatabaseTestBase {
         $response = new \Slim\Http\Response();
 
         $reserverMock = $this->container->get('seatReserver');
+        $reserverMock->method('reserve')->willReturn(null);
+        $reserverMock->expects($this->once())->method('reserve');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock->expects($this->never())->method('convert');
+        
+        $action($request, $response, []); 
+    }
+
+    public function testUseReserverToCreateReservationSuccessful() {
+        $action = new Actions\CreateReservationAction($this->container);
+
+        $data = [
+            "seat_id" => 2,
+            "event_id" => 42
+        ];
+        $request = $this->getPostRequest('/reservations', $data);
+        $response = new \Slim\Http\Response();
+
+        $reserverMock = $this->container->get('seatReserver');
+        $reserverMock->method('reserve')->willReturn($this->getEntityMock());
         $reserverMock->expects($this->once())->method('reserve');
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -70,5 +91,11 @@ class ReservationActionsTest extends DatabaseTestBase {
 
         $reserverMock->expects($this->once())->method('changeReduction');
         $action($request, $response, [ 'id' => 42 ]); 
+    }
+
+    private function getEntityMock() {
+        $entityMock = $this->getMockBuilder(\Spot\EntityInterface::class)
+            ->getMockForAbstractClass();
+        return $entityMock;
     }
 }
