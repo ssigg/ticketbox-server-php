@@ -14,8 +14,8 @@ class ReservationActionsTest extends DatabaseTestBase {
         $this->container['reservationConverter'] = $reservationConverterMock;
     }
 
-    public function testListReservationsAction() {
-        $action = new Actions\ListReservationsAction($this->container);
+    public function testListMyReservationsAction() {
+        $action = new Actions\ListMyReservationsAction($this->container);
 
         $request = $this->getGetRequest('/reservations');
         $response = new \Slim\Http\Response();
