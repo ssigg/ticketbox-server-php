@@ -48,7 +48,8 @@ class GetEventAction {
     private function convertOneEventblock($eventblock) {
         $blockMapper = $this->orm->mapper('Model\Block');
         $categoryMapper = $this->orm->mapper('Model\Category');
-        $block = $blockMapper->select(['id', 'name'])->first(['id' => $eventblock->get('block_id')]);
+        $block = $blockMapper->get($eventblock->get('block_id'));
+        $block->seatplan_image_data_url = null;
         $category = $categoryMapper->get($eventblock->get('category_id'));
         $expandedEventblock = new ExpandedEventblock($eventblock->get('id'), $category, $block);
         return $expandedEventblock;
