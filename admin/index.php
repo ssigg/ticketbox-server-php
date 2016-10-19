@@ -17,6 +17,7 @@ $app->delete('/events/{id}', Actions\DeleteEventAction::class);
 
 $app->get('/eventblocks', Actions\ListEventblocksAction::class);
 $app->get('/eventblocks/{id}', Actions\GetEventblockAction::class);
+$app->post('/eventblocks', Actions\CreateEventblockAction::class);
 $app->put('/eventblocks/{id}', Actions\ChangeEventblockAction::class);
 $app->delete('/eventblocks/{id}', Actions\DeleteEventblockAction::class);
 
