@@ -22,6 +22,7 @@ require 'actions/EventblockActions.php';
 require 'actions/ReservationActions.php';
 require 'actions/OrderActions.php';
 require 'actions/PurchaseActions.php';
+require 'actions/SeatActions.php';
 
 $container = $app->getContainer();
 

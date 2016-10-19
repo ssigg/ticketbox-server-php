@@ -15,7 +15,7 @@ $app->get('/events/{id}', Actions\GetEventAction::class);
 
 $app->get('/eventblocks/{id}', Actions\GetEventblockAction::class);
 
-$app->get('/reservations', Actions\ListReservationsAction::class);
+$app->get('/reservations', Actions\ListMyReservationsAction::class);
 
 $app->post('/reservations', Actions\CreateReservationAction::class);
 

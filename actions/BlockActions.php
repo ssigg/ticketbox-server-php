@@ -21,6 +21,20 @@ class ListBlocksAction {
     }
 }
 
+class GetBlockAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $mapper = $this->orm->mapper('Model\Block');
+        $block = $mapper->get($args['id']);
+        return $response->withJson($block, 200);
+    }
+}
+
 class CreateBlockAction {
     private $orm;
 

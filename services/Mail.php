@@ -75,7 +75,7 @@ class Mail implements MailInterface {
             'total' => $totalPrice
         ];
 
-        $body = $this->engine->renderToString(__DIR__ . '/../customer/config/BoxofficePurchaseNotification.txt', $params);
+        $body = $this->engine->renderToString(__DIR__ . '/../boxoffice/config/BoxofficePurchaseNotification.txt', $params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
             $message = new Message;

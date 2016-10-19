@@ -31,8 +31,9 @@ $app->post('/categories', Actions\CreateCategoryAction::class);
 $app->put('/categories/{id}', Actions\ChangeCategoryAction::class);
 $app->delete('/categories/{id}', Actions\DeleteCategoryAction::class);
 
-$app->get('/reservations', Actions\ListReservationsAction::class);
+$app->get('/reservations', Actions\ListAllReservationsAction::class);
 
+$app->get('/seats', Actions\ListSeatsAction::class);
 $app->post('/seats', Actions\CreateSeatsAction::class);
 $app->delete('/seats/{id}', Actions\DeleteSeatAction::class);
 // =============================================================

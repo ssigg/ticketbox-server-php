@@ -7,7 +7,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
-class ListReservationsAction {
+class ListMyReservationsAction {
     private $orm;
     private $reserver;
 
@@ -18,6 +18,20 @@ class ListReservationsAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $reservations = $this->reserver->getReservations();
+        return $response->withJson($reservations, 200);
+    }
+}
+
+class ListAllReservationsAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $mapper = $this->orm->mapper('Model\Reservation');
+        $reservations = $mapper->all();
         return $response->withJson($reservations, 200);
     }
 }
