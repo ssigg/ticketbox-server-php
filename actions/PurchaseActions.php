@@ -19,7 +19,9 @@ class CreateBoxofficePurchaseAction {
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
-        $purchase = $this->reserver->boxofficePurchase($this->boxofficeSettings['name']);
+        $data = $request->getParsedBody();
+        
+        $purchase = $this->reserver->boxofficePurchase($this->boxofficeSettings['name'], $data['locale']);
 
         $totalPrice = 0;
         foreach ($purchase->reservations as $reservation) {

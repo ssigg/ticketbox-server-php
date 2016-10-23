@@ -8,7 +8,7 @@ interface SeatReserverInterface {
     function release($reservationId);
     function changeReduction($reservationId, $value);
     function order($title, $firstname, $lastname, $email, $locale);
-    function boxofficePurchase($boxofficeName);
+    function boxofficePurchase($boxofficeName, $locale);
 }
 
 class SeatReserver implements SeatReserverInterface {
@@ -95,11 +95,12 @@ class SeatReserver implements SeatReserverInterface {
         return null;
     }
 
-    public function boxofficePurchase($boxofficeName) {
+    public function boxofficePurchase($boxofficeName, $locale) {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
             $data = [
                 'boxoffice' => $boxofficeName,
+                'locale' => $locale,
                 'timestamp' => time()
             ];
             $purchase = $this->boxofficePurchaseMapper->create($data);

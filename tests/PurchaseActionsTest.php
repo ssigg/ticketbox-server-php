@@ -20,7 +20,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action = new Actions\CreateBoxofficePurchaseAction($this->container);
 
         $data = [
-            "boxoffice" => "Box office"
+            "boxoffice" => "Box office",
+            "locale" => "en"
         ];
         $request = $this->getPostRequest('/boxoffice-purchase', $data);
         $response = new \Slim\Http\Response();
@@ -35,7 +36,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action = new Actions\CreateBoxofficePurchaseAction($this->container);
 
         $data = [
-            "boxoffice" => "Box office"
+            "boxoffice" => "Box office",
+            "locale" => "en"
         ];
         $request = $this->getPostRequest('/boxoffice-purchase', $data);
         $response = new \Slim\Http\Response();

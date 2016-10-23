@@ -286,7 +286,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
         
         $this->boxofficePurchaseMapperMock->expects($this->never())->method('create');
-        $reserver->boxofficePurchase('Box office');
+        $reserver->boxofficePurchase('Box office', 'en');
     }
 
     public function testBoxofficePurchaseCreatesBoxofficePurchase() {
@@ -318,7 +318,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
         
         $this->boxofficePurchaseMapperMock->expects($this->once())->method('create');
-        $reserver->boxofficePurchase('Box office');
+        $reserver->boxofficePurchase('Box office', 'en');
     }
 
     public function testBoxofficePurchaseModifiesAllReservations() {
@@ -349,7 +349,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
-        $reserver->boxofficePurchase('Box office');
+        $reserver->boxofficePurchase('Box office', 'en');
     }
 
     private function getEntityMock() {
