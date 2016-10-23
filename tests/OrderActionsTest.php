@@ -23,7 +23,8 @@ class OrderActionsTest extends DatabaseTestBase {
             "title" => "Mr.",
             "firstname" => "John",
             "lastname" => "Doe",
-            "email" => "john.doe@example.com"
+            "email" => "john.doe@example.com",
+            "locale" => "en"
         ];
         $request = $this->getPostRequest('/orders', $data);
         $response = new \Slim\Http\Response();
@@ -41,7 +42,8 @@ class OrderActionsTest extends DatabaseTestBase {
             "title" => "Mr.",
             "firstname" => "John",
             "lastname" => "Doe",
-            "email" => "john.doe@example.com"
+            "email" => "john.doe@example.com",
+            "locale" => "en"
         ];
         $request = $this->getPostRequest('/orders', $data);
         $response = new \Slim\Http\Response();
@@ -59,7 +61,8 @@ class OrderActionsTest extends DatabaseTestBase {
             "title" => "Mr.",
             "firstname" => "John",
             "lastname" => "Doe",
-            "email" => "john.doe@example.com"
+            "email" => "john.doe@example.com",
+            "locale" => "en"
         ];
         $request = $this->getPostRequest('/orders', $data);
         $response = new \Slim\Http\Response();

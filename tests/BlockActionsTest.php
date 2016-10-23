@@ -17,6 +17,21 @@ class BlockActionsTest extends DatabaseTestBase {
             (string)$response->getBody());
     }
 
+    public function testGetBlockAction() {
+        $action = new Actions\GetBlockAction($this->container);
+
+        $request = $this->getGetRequest('/blocks/1');
+        $response = new \Slim\Http\Response();
+
+        $mapper = $this->container->orm->mapper('Model\Block');
+        
+        $response = $action($request, $response, [ 'id' => 1 ]);
+        
+        $this->assertSame(
+            '{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1"}',
+            (string)$response->getBody());
+    }
+
     public function testCreateBlockAction() {
         $action = new Actions\CreateBlockAction($this->container);
 

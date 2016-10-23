@@ -26,6 +26,30 @@ class ReservationActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
+    public function testListAllReservationsAction() {
+        $action = new Actions\ListAllReservationsAction($this->container);
+
+        $request = $this->getGetRequest('/reservations');
+        $response = new \Slim\Http\Response();
+
+        $reserverMock = $this->container->get('seatReserver');
+
+        $reserverMock->expects($this->never())->method('getReservations');
+        $response = $action($request, $response, []);
+        
+        $responseAsArray = json_decode((string)$response->getBody(), true);
+        $this->assertSame(1, count($responseAsArray));
+        
+        $reservation = $responseAsArray[0];
+        $this->assertSame(1, $reservation['id']);
+        $this->assertSame('abc', $reservation['token']);
+        $this->assertSame(1, $reservation['seat_id']);
+        $this->assertSame(1, $reservation['event_id']);
+        $this->assertSame(false, $reservation['is_reduced']);
+        $this->assertSame(null, $reservation['order_id']);
+        $this->assertSame(null, $reservation['order_kind']);
+    }
+
     public function testUseReserverToCreateReservationUnsuccessful() {
         $action = new Actions\CreateReservationAction($this->container);
 

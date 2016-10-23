@@ -195,7 +195,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
         
         $this->orderMapperMock->expects($this->never())->method('create');
-        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en');
     }
 
     public function testOrderCreatesOrder() {
@@ -227,7 +227,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
         
         $this->orderMapperMock->expects($this->once())->method('create');
-        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en');
     }
 
     public function testOrderModifiesAllReservations() {
@@ -258,7 +258,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
-        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en');
     }
 
     public function testBoxofficePurchaseWithoutReservationsDoesNothing() {

@@ -34,7 +34,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
         $mailerMock = $this->container->get('mailer');
         $mailerMock->expects($this->once())->method('send');
 
-        $mail->sendOrderConfirmation('Mr.', 'John', 'Doe', 'john.doe@example.com', [], 0);
+        $mail->sendOrderConfirmation('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en', [], 0);
     }
 
     public function testSendOrderNotification() {

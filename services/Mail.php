@@ -7,7 +7,7 @@ use Nette\Mail\Message;
 use Latte\Engine;
 
 interface MailInterface {
-    function sendOrderConfirmation($title, $firstname, $lastname, $email, $reservations, $totalPrice);
+    function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice);
     function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice);
     function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice);
 }
@@ -23,7 +23,7 @@ class Mail implements MailInterface {
         $this->settings = $settings;
     }
 
-    public function sendOrderConfirmation($title, $firstname, $lastname, $email, $reservations, $totalPrice) {
+    public function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice) {
         $params = [
             'title' => $title,
             'firstname' => $firstname,
@@ -33,7 +33,10 @@ class Mail implements MailInterface {
             'total' => $totalPrice
         ];
 
-        $template = __DIR__ . '/../customer/config/OrderConfirmation.txt';
+        $template = __DIR__ . '/../customer/config/OrderConfirmation_' . $locale . '.txt';
+        if (!is_file($template)) {
+            $template = __DIR__ . '/../customer/config/OrderConfirmation_default.txt';
+        }
         $body = $this->engine->renderToString($template, $params);
 
         $message = new Message;

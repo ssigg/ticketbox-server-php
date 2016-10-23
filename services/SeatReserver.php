@@ -7,7 +7,7 @@ interface SeatReserverInterface {
     function reserve($seats, $event);
     function release($reservationId);
     function changeReduction($reservationId, $value);
-    function order($title, $firstname, $lastname, $email);
+    function order($title, $firstname, $lastname, $email, $locale);
     function boxofficePurchase($boxofficeName);
 }
 
@@ -72,7 +72,7 @@ class SeatReserver implements SeatReserverInterface {
         return $reservation;
     }
 
-    public function order($title, $firstname, $lastname, $email) {
+    public function order($title, $firstname, $lastname, $email, $locale) {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
             $data = [
@@ -80,6 +80,7 @@ class SeatReserver implements SeatReserverInterface {
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'email' => $email,
+                'locale' => $locale,
                 'timestamp' => time()
             ];
             $order = $this->orderMapper->create($data);

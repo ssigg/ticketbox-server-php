@@ -19,7 +19,7 @@ class CreateOrderAction {
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
 
-        $order = $this->reserver->order($data['title'], $data['firstname'], $data['lastname'], $data['email']);
+        $order = $this->reserver->order($data['title'], $data['firstname'], $data['lastname'], $data['email'], $data['locale']);
 
         $totalPrice = 0;
         foreach ($order->reservations as $reservation) {
@@ -27,7 +27,7 @@ class CreateOrderAction {
         }
 
         $this->mail->sendOrderNotification($data['firstname'], $data['lastname'], $data['email'], $order->reservations, $totalPrice);
-        $this->mail->sendOrderConfirmation($data['title'], $data['firstname'], $data['lastname'], $data['email'], $order->reservations, $totalPrice);
+        $this->mail->sendOrderConfirmation($data['title'], $data['firstname'], $data['lastname'], $data['email'], $data['locale'], $order->reservations, $totalPrice);
 
         return $response->withJson($order, 201);
     }

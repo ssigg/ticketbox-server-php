@@ -5,6 +5,42 @@ class SeatActionsTest extends DatabaseTestBase {
         parent::setUp();
     }
 
+    public function testListSeatsAction() {
+        $action = new Actions\ListSeatsAction($this->container);
+
+        $request = $this->getGetRequest('/seats');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, []);
+        $this->assertSame(
+            '[{"id":1,"block_id":1,"name":"Seat 1","x0":0,"y0":1,"x1":2,"y1":3,"x2":4,"y2":5,"x3":6,"y3":7}]',
+            (string)$response->getBody());
+    }
+
+    public function testListSeatsOfNonEmptyBlockAction() {
+        $action = new Actions\ListSeatsAction($this->container);
+
+        $request = $this->getGetRequest('/seats?block_id=1');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, [ ]);
+        $this->assertSame(
+            '[{"id":1,"block_id":1,"name":"Seat 1","x0":0,"y0":1,"x1":2,"y1":3,"x2":4,"y2":5,"x3":6,"y3":7}]',
+            (string)$response->getBody());
+    }
+
+    public function testListSeatsOfEmptyBlockAction() {
+        $action = new Actions\ListSeatsAction($this->container);
+
+        $request = $this->getGetRequest('/seats?block_id=42');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, [ ]);
+        $this->assertSame(
+            '[]',
+            (string)$response->getBody());
+    }
+
     public function testCreateSeatAction() {
         $action = new Actions\CreateSeatsAction($this->container);
 
