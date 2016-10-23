@@ -23,6 +23,7 @@ require 'actions/ReservationActions.php';
 require 'actions/OrderActions.php';
 require 'actions/PurchaseActions.php';
 require 'actions/SeatActions.php';
+require 'actions/AdminActions.php';
 
 $container = $app->getContainer();
 

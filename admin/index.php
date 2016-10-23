@@ -37,6 +37,8 @@ $app->get('/reservations', Actions\ListAllReservationsAction::class);
 $app->get('/seats', Actions\ListSeatsAction::class);
 $app->post('/seats', Actions\CreateSeatsAction::class);
 $app->delete('/seats/{id}', Actions\DeleteSeatAction::class);
+
+$app->post('/migrate', Actions\MigrateAction::class);
 // =============================================================
 
 $app->run();
