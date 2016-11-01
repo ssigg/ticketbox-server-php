@@ -38,6 +38,10 @@ $app->get('/seats', Actions\ListSeatsAction::class);
 $app->post('/seats', Actions\CreateSeatsAction::class);
 $app->delete('/seats/{id}', Actions\DeleteSeatAction::class);
 
+$app->get('/orders', Actions\ListOrdersAction::class);
+
+$app->get('/boxoffice-purchases', Actions\ListBoxofficePurchasesAction::class);
+
 $app->post('/migrate', Actions\MigrateAction::class);
 // =============================================================
 
