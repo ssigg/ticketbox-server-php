@@ -110,7 +110,8 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
         $map = [
             ['id', 42],
             ['token', 'token2'],
-            ['order_id', 1]
+            ['order_id', 1],
+            ['order_kind', 'reservation']
         ];
         $reservationMock
             ->method('get')
@@ -138,7 +139,8 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
         $map = [
             ['id', 42],
             ['token', 'token1'],
-            ['order_id', 1]
+            ['order_id', 1],
+            ['order_kind', 'reservation']
         ];
         $reservationMock
             ->method('get')
