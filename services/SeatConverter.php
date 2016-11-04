@@ -35,7 +35,13 @@ class SeatConverter implements SeatConverterInterface {
         if ($reservation == null) {
             $state = 'free';
         } else if ($reservation->get('order_id') != null) {
-            $state = 'ordered';
+            if ($reservation->get('order_kind') == 'reservation') {
+                $state = 'ordered';
+            } else if ($reservation->get('order_kind') == 'boxoffice-purchase') {
+                $state = 'sold';
+            } else {
+                throw new Exception('Unknown Reservations->order_kind: ' + $reservation->get('order_kind'));
+            }
         } else if ($reservation->get('token') == $this->tokenProvider->provide()) {
             $state = 'reservedbymyself';
             $reservationId = $reservation->get('id');
