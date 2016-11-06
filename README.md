@@ -12,7 +12,7 @@ Use this server together with the web client available at https://github.com/ssi
 
 
 ## Installation
-* Copy `admin/config_sample` to `admin/config` and adjust the values
+* Copy `customer/config_sample` to `customer/config` and adjust the values
 * Copy `boxoffice/config_sample` to `boxoffice/config` and adjust the values
 * Copy `admin/config_sample` to `admin/config` and adjust the values
 * If you decide to use a server based database, set up the database
