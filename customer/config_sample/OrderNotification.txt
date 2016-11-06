@@ -3,7 +3,7 @@
 Reserved Seats
 ==============
 {foreach $reservations as $reservation}
-{$reservation->seat->name}: {$reservation->price}.-- {if $reservation->isReduced}(reduced){/if}
+{$reservation->seat->name}: {$reservation->price} $ {if $reservation->isReduced}(reduced){/if}
 {/foreach}
 
-Total: {$total}.--
+Total: {$total} $
