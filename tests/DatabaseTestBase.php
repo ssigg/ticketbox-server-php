@@ -128,6 +128,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             'token' => 'abc',
             'seat_id' => 1,
             'event_id' => 1,
+            'category_id' => 1,
             'is_reduced' => false,
             'timestamp' => time()]);
 

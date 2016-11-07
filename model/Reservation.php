@@ -10,10 +10,11 @@ class Reservation extends \Spot\Entity {
             'token' => ['type' => 'string', 'required' => true],
             'seat_id' => ['type' => 'integer', 'required' => true, 'unique' => 'eventseat'],
             'event_id' => ['type' => 'integer', 'required' => true, 'unique' => 'eventseat'],
+            'category_id' => ['type' => 'integer', 'required' => true],
             'is_reduced' => ['type' => 'boolean', 'required' => true],
-            'timestamp' => ['type' => 'integer', 'required' => true],
             'order_id' => ['type' => 'integer', 'required' => false],
-            'order_kind' => ['type' => 'string', 'required' => false]
+            'order_kind' => ['type' => 'string', 'required' => false],
+            'timestamp' => ['type' => 'integer', 'required' => true]
         ];
     }
 

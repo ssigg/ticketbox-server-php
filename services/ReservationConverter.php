@@ -26,8 +26,7 @@ class ReservationConverter implements ReservationConverterInterface {
             $eventId = $reservation->get('event_id');
             $event = $this->eventMapper->get($eventId);
             $seat = $this->seatMapper->get($reservation->get('seat_id'));
-            $eventblock = $this->eventblockMapper->first([ 'event_id' => $eventId, 'block_id' => $seat->get('block_id') ]);
-            $category = $this->categoryMapper->get($eventblock->get('category_id'));
+            $category = $this->categoryMapper->get($reservation->get('category_id'));
             $isReduced = $reservation->get('is_reduced');
             $price = $isReduced ? $category->get('price_reduced') : $category->get('price');
             $expandedReservations[] = new ExpandedReservation($id, $event, $seat, $category, $isReduced, $price);
