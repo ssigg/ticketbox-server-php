@@ -27,14 +27,12 @@ class ListAllReservationsAction {
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
-        $this->reservationConverter = $container->get('reservationConverter');
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $mapper = $this->orm->mapper('Model\Reservation');
         $reservations = $mapper->where([ 'order_id <>' => null ]);
-        $expandedReservations = $this->reservationConverter->convert($reservations);
-        return $response->withJson($expandedReservations, 200);
+        return $response->withJson($reservations, 200);
     }
 }
 

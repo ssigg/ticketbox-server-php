@@ -24,6 +24,8 @@ $app->put('/reservations/{id}', Actions\ChangeReductionForReservationAction::cla
 $app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 
 $app->post('/orders', Actions\CreateOrderAction::class);
+
+$app->get('/print', Actions\PrintTicketAction::class);
 // =============================================================
 
 $app->run();
