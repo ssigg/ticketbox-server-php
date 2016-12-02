@@ -154,6 +154,63 @@ class SeatConverterTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame(null, $convertedSeats[0]->reservation_id);
     }
 
+    public function testConvertSoldSeat() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token1');
+
+        $seats = [
+            $this->getEntityMock()
+        ];
+        $eventblock = $this->getEntityMock();
+
+        $reservationMock = $this->getEntityMock();
+        $map = [
+            ['id', 42],
+            ['token', 'token2'],
+            ['order_id', 1],
+            ['order_kind', 'boxoffice-purchase']
+        ];
+        $reservationMock
+            ->method('get')
+            ->will($this->returnValueMap($map));
+        $this->reservationMapperMock
+            ->method('first')
+            ->willReturn($reservationMock);
+
+        $convertedSeats = $this->converter->convert($seats, $eventblock);
+        $this->assertSame('sold', $convertedSeats[0]->state);
+        $this->assertSame(null, $convertedSeats[0]->reservation_id);
+    }
+
+    public function testConvertSeatWithUnknownState() {
+        $this->tokenProviderMock
+            ->method('provide')
+            ->willReturn('token1');
+
+        $seats = [
+            $this->getEntityMock()
+        ];
+        $eventblock = $this->getEntityMock();
+
+        $reservationMock = $this->getEntityMock();
+        $map = [
+            ['id', 42],
+            ['token', 'token2'],
+            ['order_id', 1],
+            ['order_kind', 'invalid-order-kind']
+        ];
+        $reservationMock
+            ->method('get')
+            ->will($this->returnValueMap($map));
+        $this->reservationMapperMock
+            ->method('first')
+            ->willReturn($reservationMock);
+        
+        $this->setExpectedException(\Exception::class);
+        $convertedSeats = $this->converter->convert($seats, $eventblock);
+    }
+
     private function getEntityMock() {
         $entityMock = $this->getMockBuilder(\Spot\EntityInterface::class)
             ->setMethods(['get'])

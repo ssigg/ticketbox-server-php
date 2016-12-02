@@ -27,27 +27,40 @@ class ReservationActionsTest extends DatabaseTestBase {
     }
 
     public function testListAllReservationsAction() {
+        $reservationMapper = $this->container['orm']->mapper('Model\Reservation');
+
+        $reservationMapper->create([
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'reservation',
+            'is_reduced' => false,
+            'timestamp' => time()]);
+
         $action = new Actions\ListAllReservationsAction($this->container);
 
         $request = $this->getGetRequest('/reservations');
         $response = new \Slim\Http\Response();
 
         $reserverMock = $this->container->get('seatReserver');
-
         $reserverMock->expects($this->never())->method('getReservations');
+
         $response = $action($request, $response, []);
-        
+
         $responseAsArray = json_decode((string)$response->getBody(), true);
         $this->assertSame(1, count($responseAsArray));
         
         $reservation = $responseAsArray[0];
-        $this->assertSame(1, $reservation['id']);
+        $this->assertSame(2, $reservation['id']);
         $this->assertSame('abc', $reservation['token']);
-        $this->assertSame(1, $reservation['seat_id']);
+        $this->assertSame(2, $reservation['seat_id']);
         $this->assertSame(1, $reservation['event_id']);
         $this->assertSame(false, $reservation['is_reduced']);
-        $this->assertSame(null, $reservation['order_id']);
-        $this->assertSame(null, $reservation['order_kind']);
+        $this->assertSame(1, $reservation['order_id']);
+        $this->assertSame('reservation', $reservation['order_kind']);
+
     }
 
     public function testUseReserverToCreateReservationUnsuccessful() {

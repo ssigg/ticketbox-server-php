@@ -12,12 +12,32 @@ class ListBoxofficePurchasesAction {
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
+        $this->reservationConverter = $container->get('reservationConverter');
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
-        $mapper = $this->orm->mapper('Model\BoxofficePurchase');
-        $boxofficePurchase = $mapper->all()->toArray();
-        return $response->withJson($boxofficePurchase, 200);
+        $boxofficePurchaseMapper = $this->orm->mapper('Model\BoxofficePurchase');
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+
+        $boxofficePurchases = $boxofficePurchaseMapper->all();
+
+        $event_id = $request->getQueryParam('event_id', null);
+        $expandedBoxofficePurchases = [];
+        foreach ($boxofficePurchases as $boxofficePurchase) {
+            $reservations = [];
+            if ($event_id != null) {
+                $reservations = $reservationMapper->where([ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase', 'event_id' => $event_id ]);
+            } else {
+                $reservations = $reservationMapper->where([ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase' ]);
+            }
+            if (count($reservations) > 0) {
+                $expandedReservations = $this->reservationConverter->convert($reservations);
+                $expandedBoxofficePurchase = new ExpandedBoxofficePurchase($boxofficePurchase, $expandedReservations);
+                $expandedBoxofficePurchases[] = $expandedBoxofficePurchase;
+            }
+        }
+
+        return $response->withJson($expandedBoxofficePurchases, 200);
     }
 }
 
@@ -45,5 +65,26 @@ class CreateBoxofficePurchaseAction {
         $this->mail->sendBoxofficePurchaseNotification($this->boxofficeSettings['name'], $purchase->reservations, $totalPrice);
 
         return $response->withJson($purchase, 201);
+    }
+}
+
+class ExpandedBoxofficePurchase {
+    public $id;
+    public $boxoffice;
+    public $locale;
+    public $timestamp;
+    public $reservations;
+    public $totalPrice;
+    public function __construct($boxofficePurchase, $reservations) {
+        $this->id = $boxofficePurchase->id;
+        $this->boxoffice = $boxofficePurchase->boxoffice;
+        $this->locale = $boxofficePurchase->locale;
+        $this->timestamp = $boxofficePurchase->timestamp;
+        $this->reservations = $reservations;
+
+        $this->totalPrice = 0;
+        foreach ($reservations as $reservation) {
+            $this->totalPrice += $reservation->price; 
+        }
     }
 }

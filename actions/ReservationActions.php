@@ -31,7 +31,7 @@ class ListAllReservationsAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $mapper = $this->orm->mapper('Model\Reservation');
-        $reservations = $mapper->all();
+        $reservations = $mapper->where([ 'order_id <>' => null ]);
         return $response->withJson($reservations, 200);
     }
 }
