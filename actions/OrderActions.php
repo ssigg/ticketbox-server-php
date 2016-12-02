@@ -21,12 +21,12 @@ class ListOrdersAction {
         $reservationMapper = $this->orm->mapper('Model\Reservation');
         $orders = $orderMapper->all();
 
-        $event_id = $request->getQueryParam('event_id', null);
+        $eventId = $request->getQueryParam('event_id', null);
         $expandedOrders = [];
         foreach ($orders as $order) {
             $reservations = [];
-            if ($event_id != null) {
-                $reservations = $reservationMapper->where([ 'order_id' => $order->id, 'order_kind' => 'reservation', 'event_id' => $event_id ]);
+            if ($eventId != null) {
+                $reservations = $reservationMapper->where([ 'order_id' => $order->id, 'order_kind' => 'reservation', 'event_id' => $eventId ]);
             } else {
                 $reservations = $reservationMapper->where([ 'order_id' => $order->id, 'order_kind' => 'reservation' ]);
             }

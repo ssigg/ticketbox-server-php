@@ -16,10 +16,10 @@ class ListSeatsAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $mapper = $this->orm->mapper('Model\Seat');
-        $block_id = $request->getQueryParam('block_id', null);
+        $blockId = $request->getQueryParam('block_id', null);
         $seats = [];
-        if ($block_id != null) {
-            $seats = $mapper->where([ 'block_id' => $block_id ]);
+        if ($blocId != null) {
+            $seats = $mapper->where([ 'block_id' => $blockId ]);
         } else {
             $seats = $mapper->all();
         }

@@ -21,12 +21,12 @@ class ListBoxofficePurchasesAction {
 
         $boxofficePurchases = $boxofficePurchaseMapper->all();
 
-        $event_id = $request->getQueryParam('event_id', null);
+        $eventId = $request->getQueryParam('event_id', null);
         $expandedBoxofficePurchases = [];
         foreach ($boxofficePurchases as $boxofficePurchase) {
             $reservations = [];
-            if ($event_id != null) {
-                $reservations = $reservationMapper->where([ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase', 'event_id' => $event_id ]);
+            if ($eventId != null) {
+                $reservations = $reservationMapper->where([ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase', 'event_id' => $eventId ]);
             } else {
                 $reservations = $reservationMapper->where([ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase' ]);
             }
