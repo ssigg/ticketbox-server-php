@@ -18,7 +18,7 @@ class ListSeatsAction {
         $mapper = $this->orm->mapper('Model\Seat');
         $blockId = $request->getQueryParam('block_id', null);
         $seats = [];
-        if ($blocId != null) {
+        if ($blockId != null) {
             $seats = $mapper->where([ 'block_id' => $blockId ]);
         } else {
             $seats = $mapper->all();
