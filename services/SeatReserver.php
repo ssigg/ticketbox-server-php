@@ -4,7 +4,7 @@ namespace Services;
 
 interface SeatReserverInterface {
     function getReservations();
-    function reserve($seats, $event);
+    function reserve($seats, $event, $category);
     function release($reservationId);
     function changeReduction($reservationId, $value);
     function order($title, $firstname, $lastname, $email, $locale);
@@ -41,12 +41,13 @@ class SeatReserver implements SeatReserverInterface {
         return $expandedReservations;
     }
 
-    public function reserve($seat, $event) {
+    public function reserve($seat, $event, $category) {
         $this->deleteStaleReservations();
         $data = [
             'token' => $this->token,
             'seat_id' => $seat->get('id'),
             'event_id' => $event->get('id'),
+            'category_id' => $category->get('id'),
             'timestamp' => time(),
             'is_reduced' => false
         ];

@@ -12,9 +12,6 @@
             "name": "Reply To",
             "email": "reply@example.com"
         },
-        "confirmation": {
-            "subject": "Ticket reservation confirmation"
-        },
         "notification": {
             "subject": "Ticket reservation notification",
             "listeners": [

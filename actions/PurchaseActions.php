@@ -54,6 +54,9 @@ class CreateBoxofficePurchaseAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
+        $boxofficeName = $data['boxofficeName'];
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf]
+        $customerEmail = isset($data['email']) ? $data['email'] : null; 
         
         $purchase = $this->reserver->boxofficePurchase($this->boxofficeSettings['name'], $data['locale']);
 
@@ -62,7 +65,7 @@ class CreateBoxofficePurchaseAction {
             $totalPrice += $reservation->price;
         }
 
-        $this->mail->sendBoxofficePurchaseNotification($this->boxofficeSettings['name'], $purchase->reservations, $totalPrice);
+        $this->mail->sendBoxofficePurchaseNotification($boxofficeName, $purchase->reservations, $totalPrice);
 
         return $response->withJson($purchase, 201);
     }

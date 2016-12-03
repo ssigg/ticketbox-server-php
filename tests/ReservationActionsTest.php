@@ -68,7 +68,8 @@ class ReservationActionsTest extends DatabaseTestBase {
 
         $data = [
             "seat_id" => 2,
-            "event_id" => 42
+            "event_id" => 42,
+            "category_id" => 32
         ];
         $request = $this->getPostRequest('/reservations', $data);
         $response = new \Slim\Http\Response();
@@ -88,7 +89,8 @@ class ReservationActionsTest extends DatabaseTestBase {
 
         $data = [
             "seat_id" => 2,
-            "event_id" => 42
+            "event_id" => 42,
+            "category_id" => 32
         ];
         $request = $this->getPostRequest('/reservations', $data);
         $response = new \Slim\Http\Response();
