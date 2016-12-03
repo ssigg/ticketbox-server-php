@@ -44,6 +44,7 @@ class SeatReserver implements SeatReserverInterface {
     public function reserve($seat, $event, $category) {
         $this->deleteStaleReservations();
         $data = [
+            'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
             'token' => $this->token,
             'seat_id' => $seat->get('id'),
             'event_id' => $event->get('id'),
