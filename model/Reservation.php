@@ -7,7 +7,7 @@ class Reservation extends \Spot\Entity {
     public static function fields() {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
-            'unique_id' => ['type' => 'string', 'required' => true],
+            'unique_id' => ['type' => 'string', 'required' => true, 'unique' => 'unique_id'],
             'token' => ['type' => 'string', 'required' => true],
             'seat_id' => ['type' => 'integer', 'required' => true, 'unique' => 'eventseat'],
             'event_id' => ['type' => 'integer', 'required' => true, 'unique' => 'eventseat'],

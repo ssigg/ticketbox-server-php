@@ -4,18 +4,22 @@ use Nette\Mail\IMailer;
 use Latte\Engine;
 
 class MailTest extends \PHPUnit_Framework_TestCase {
-    private $container;
+    private $mailerMock;
+    private $templateMock;
+    private $pdfTicketWriterMock;
 
-    protected function setUp() {
-        $this->container = new \Slim\Container;
-        $mailerMock = $this->getMockBuilder(IMailer::class)
+    protected function setUp() {        
+        $this->mailerMock = $this->getMockBuilder(IMailer::class)
             ->setMethods(['send'])
             ->getMock();
-        $this->container['mailer'] = $mailerMock;
-        $templateMock = $this->getMockBuilder(Engine::class)
+
+        $this->templateMock = $this->getMockBuilder(Engine::class)
             ->setMethods(['renderToString'])
             ->getMock();
-        $this->container['template'] = $templateMock;
+
+        $this->pdfTicketWriterMock = $this->getMockBuilder(Services\PdfTicketWriterInterface::class)
+            ->setMethods(['write'])
+            ->getMock();
     }
 
     public function testSendOrderConfirmation() {
@@ -29,10 +33,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
                 'email' => 'reply@example.com'
             ]
         ];
-        $mail = new Services\Mail($this->container->get('template'), $this->container->get('mailer'), $settings);
+        $mail = new Services\Mail($this->templateMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
-        $mailerMock = $this->container->get('mailer');
-        $mailerMock->expects($this->once())->method('send');
+        $this->mailerMock->expects($this->once())->method('send');
 
         $mail->sendOrderConfirmation('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en', [], 0);
     }
@@ -52,10 +55,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
                 'email' => 'reply@example.com'
             ]
         ];
-        $mail = new Services\Mail($this->container->get('template'), $this->container->get('mailer'), $settings);
+        $mail = new Services\Mail($this->templateMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
-        $mailerMock = $this->container->get('mailer');
-        $mailerMock->expects($this->exactly(2))->method('send');
+        $this->mailerMock->expects($this->exactly(2))->method('send');
 
         $mail->sendOrderNotification('John', 'Doe', 'john.doe@example.com', [], 0);
     }
@@ -73,16 +75,37 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             'replyTo' => [
                 'name' => 'Reply',
                 'email' => 'reply@example.com'
-            ],
-            'boxoffice' => [
-                'name' => 'Box office'
             ]
         ];
-        $mail = new Services\Mail($this->container->get('template'), $this->container->get('mailer'), $settings);
+        $mail = new Services\Mail($this->templateMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
-        $mailerMock = $this->container->get('mailer');
-        $mailerMock->expects($this->exactly(2))->method('send');
+        $this->mailerMock->expects($this->exactly(2))->method('send');
 
         $mail->sendBoxofficePurchaseNotification('Box office', [], 0);
+    }
+
+    public function testSendBoxofficePurchaseConfirmation() {
+        $settings = [
+            'from' => 'from@example.com',
+            'confirmation' => [
+                'subject' => 'Confirmation subject'
+            ],
+            'notification' => [
+                'subject' => 'Notification Subject',
+                'listeners' => [
+                    'listener.1@example.com',
+                    'listener.2@example.com'
+                ]
+            ],
+            'replyTo' => [
+                'name' => 'Reply',
+                'email' => 'reply@example.com'
+            ]
+        ];
+        $mail = new Services\Mail($this->templateMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+
+        $this->mailerMock->expects($this->once())->method('send');
+
+        $mail->sendBoxofficePurchaseConfirmation('Box office', 'john.doe@example.com', 'en', [ 'reservation' ], 0);
     }
 }

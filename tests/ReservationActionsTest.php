@@ -30,6 +30,7 @@ class ReservationActionsTest extends DatabaseTestBase {
         $reservationMapper = $this->container['orm']->mapper('Model\Reservation');
 
         $reservationMapper->create([
+            'unique_id' => 'unique',
             'token' => 'abc',
             'seat_id' => 2,
             'event_id' => 1,

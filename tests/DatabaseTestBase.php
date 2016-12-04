@@ -144,6 +144,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
 
         $reservationMapper = $spot->mapper('Model\Reservation');
         $reservationMapper->create([
+            'unique_id' => 'unique_base',
             'token' => 'abc',
             'seat_id' => 1,
             'event_id' => 1,

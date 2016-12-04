@@ -9,17 +9,20 @@ use Latte\Engine;
 interface MailInterface {
     function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice);
     function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice);
+    function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice);
     function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice);
 }
 
 class Mail implements MailInterface {
     private $engine;
     private $mailer;
+    private $pdfTicketWriter;
     private $settings;
 
-    public function __construct(Engine $engine, IMailer $mailer, $settings) {
+    public function __construct(Engine $engine, IMailer $mailer, PdfTicketWriterInterface $pdfTicketWriter, $settings) {
         $this->engine = $engine;
         $this->mailer = $mailer;
+        $this->pdfTicketWriter = $pdfTicketWriter;
         $this->settings = $settings;
     }
 
@@ -71,6 +74,36 @@ class Mail implements MailInterface {
         }
     }
 
+    function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice) {
+        $pdfFilePaths = [];
+        foreach ($reservations as $reservation) {
+            $pdfFilePath = $this->pdfTicketWriter->write($reservation, $locale);
+            $pdfFilePaths[] = $pdfFilePath;
+        }
+
+        $params = [
+            'boxoffice' => $boxoffice,
+            'reservations' => $reservations,
+            'pdfFilePaths' => $pdfFilePaths,
+            'total' => $totalPrice
+        ];
+
+        $template = __DIR__ . '/../boxoffice/config/BoxofficePurchaseConfirmation' . $locale . '.txt';
+        if (!is_file($template)) {
+            $template = __DIR__ . '/../boxoffice/config/BoxofficePurchaseConfirmation_default.txt';
+        }
+        $body = $this->engine->renderToString($template, $params);
+
+        $message = new Message;
+        $message
+            ->setFrom($this->settings['from'])
+            ->setSubject(sprintf($this->settings['confirmation']['subject'], $boxoffice))
+            ->addReplyTo($this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>')
+            ->addTo($email)
+            ->setBody($body);
+        $this->mailer->send($message);
+    }
+
     function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice) {
         $params = [
             'boxoffice' => $boxoffice,
@@ -84,7 +117,7 @@ class Mail implements MailInterface {
             $message = new Message;
             $message
                 ->setFrom($this->settings['from'])
-                ->setSubject($this->settings['notification']['subject'])
+                ->setSubject(sprintf($this->settings['notification']['subject'], $boxoffice))
                 ->addTo($listener)
                 ->setBody($body);
             $this->mailer->send($message);

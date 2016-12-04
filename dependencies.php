@@ -14,6 +14,9 @@ require 'services/TokenProvider.php';
 require 'services/SeatReserver.php';
 require 'services/SeatConverter.php';
 require 'services/Mail.php';
+require 'services/FilePersister.php';
+require 'services/QrCodeWriter.php';
+require 'services/PdfTicketWriter.php';
 
 require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
@@ -76,6 +79,36 @@ $container['seatConverter'] = function($container) {
     return $converter;
 };
 
+$container['filePersister'] = function($container) {
+    $filePersister = new Services\FilePersister();
+    return $filePersister;
+};
+
+$container['qrWriter'] = function($container) {
+    $renderer = new \BaconQrCode\Renderer\Image\Png();
+    $renderer->setWidth(256);
+    $renderer->setHeight(256);
+    $renderer->setMargin(0);
+    $writer = new \BaconQrCode\Writer($renderer);
+    return $writer;
+};
+
+$container['qrCodeWriter'] = function($container) {
+    $qrCodeWriter = new Services\QrCodeWriter($container['qrWriter'], $container['settings']['Mailer']['tempDirectory']);
+    return $qrCodeWriter;
+};
+
+$container['pdfRenderer'] = function($container) {
+    $pdfRenderer = new \Dompdf\Dompdf();
+    return $pdfRenderer;
+};
+
+$container['pdfTicketWriter'] = function($container) {
+    $blockMapper = $container['orm']->mapper('Model\Block');
+    $pdfTicketWriter = new Services\PdfTicketWriter($container['template'], $container['pdfRenderer'], $container['qrCodeWriter'], $blockMapper, $container['filePersister'], $container['settings']['PdfTicketWriter']['templateDirectory'], $container['settings']['Mailer']['tempDirectory']);
+    return $pdfTicketWriter;
+};
+
 $container['template'] = function($container) {
     $template = new \Latte\Engine;
     return $template;
@@ -87,6 +120,6 @@ $container['mailer'] = function($container) {
 };
 
 $container['mail'] = function($container) {
-    $mail = new Services\Mail($container['template'], $container['mailer'], $container['settings']['Mailer']);
+    $mail = new Services\Mail($container['template'], $container['mailer'], $container['pdfTicketWriter'], $container['settings']['Mailer']);
     return $mail;
 };

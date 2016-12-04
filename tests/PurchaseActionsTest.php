@@ -27,6 +27,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
+            'unique_id' => 'unique',
             'token' => 'abc',
             'seat_id' => 2,
             'event_id' => 1,
@@ -56,6 +57,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
+            'unique_id' => 'unique',
             'token' => 'abc',
             'seat_id' => 2,
             'event_id' => 1,
@@ -85,6 +87,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
+            'unique_id' => 'unique',
             'token' => 'abc',
             'seat_id' => 2,
             'event_id' => 1,
@@ -113,6 +116,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
+            'unique_id' => 'unique',
             'token' => 'abc',
             'seat_id' => 2,
             'event_id' => 1,
