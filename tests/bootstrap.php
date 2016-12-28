@@ -19,6 +19,8 @@ require dirname(__DIR__) . '/actions/OrderActions.php';
 require dirname(__DIR__) . '/actions/PurchaseActions.php';
 
 // Register services
+require dirname(__DIR__) . '/services/TicketPartWriterInterface.php';
+require dirname(__DIR__) . '/services/ExpandedReservation.php';
 require dirname(__DIR__) . '/services/ReservationConverter.php';
 require dirname(__DIR__) . '/services/TokenProvider.php';
 require dirname(__DIR__) . '/services/SeatReserver.php';
@@ -26,7 +28,9 @@ require dirname(__DIR__) . '/services/SeatConverter.php';
 require dirname(__DIR__) . '/services/Mail.php';
 require dirname(__DIR__) . '/services/FilePersister.php';
 require dirname(__DIR__) . '/services/QrCodeWriter.php';
-require dirname(__DIR__) . '/services/PdfTicketWriter.php';
+require dirname(__DIR__) . '/services/SeatplanWriter.php';
+require dirname(__DIR__) . '/services/TemplateProvider.php';
+require dirname(__DIR__) . '/services/HtmlTicketWriter.php';
 
 require dirname(__FILE__) . '/DatabaseTestBase.php';
 

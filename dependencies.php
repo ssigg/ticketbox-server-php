@@ -9,6 +9,8 @@ require 'model/BoxofficePurchase.php';
 require 'model/Reservation.php';
 require 'model/Seat.php';
 
+require 'services/TicketPartWriterInterface.php';
+require 'services/ExpandedReservation.php';
 require 'services/ReservationConverter.php';
 require 'services/TokenProvider.php';
 require 'services/SeatReserver.php';
@@ -16,7 +18,9 @@ require 'services/SeatConverter.php';
 require 'services/Mail.php';
 require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
-require 'services/PdfTicketWriter.php';
+require 'services/SeatplanWriter.php';
+require 'services/TemplateProvider.php';
+require 'services/HtmlTicketWriter.php';
 
 require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
