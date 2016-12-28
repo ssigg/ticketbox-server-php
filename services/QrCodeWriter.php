@@ -2,23 +2,20 @@
 
 namespace Services;
 
-interface QrCodeWriterInterface {
-    function write($reservation);
-}
-
-class QrCodeWriter implements QRCodeWriterInterface {
+class QrCodeWriter implements TicketPartWriterInterface {
     private $writer;
-    private $directory;
+    private $outputDirectoryPath;
 
-    public function __construct(\BaconQrCode\Writer $writer, $directory) {
+    public function __construct(\BaconQrCode\Writer $writer, $outputDirectoryPath) {
         $this->writer = $writer;
-        $this->directory = $directory;
+        $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
-    public function write($reservation) {
-        $string = $reservation->unique_id;
-        $filePath = $this->directory . '/' . $string . '.png';
-        $this->writer->writeFile($string, $filePath);
-        return $filePath;
+    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
+        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '.png';
+        $this->writer->writeFile($reservation->unique_id, $filePath);
+
+        $partFilePaths['qr'] = $filePath;
+        return $partFilePaths;
     }
 }

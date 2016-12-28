@@ -4,21 +4,20 @@ namespace Services;
 
 class SeatplanWriter implements TicketPartWriterInterface {
     private $blockMapper;
-    private $tempDirectoryPath;
+    private $outputDirectoryPath;
 
-    public function __construct(\Spot\MapperInterface $blockMapper, $tempDirectoryPath) {
+    public function __construct(\Spot\MapperInterface $blockMapper, $outputDirectoryPath) {
         $this->blockMapper = $blockMapper;
-        $this->tempDirectoryPath = $tempDirectoryPath;
+        $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
-    public function write(ExpandedReservation $reservation, array $partFilePaths, $locale) {
-        $extension = ".png"; // TODO: use extension from seatplan image type
+    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
         $seatPlanFilePath = $this->markSeatOnSeatplanAndReturnImageFilePath($reservation);
         $partFilePaths["seatplan"] = $seatPlanFilePath;
         return $partFilePaths;
     }
 
-    private function markSeatOnSeatplanAndReturnImageFilePath(ExpandedReservation $reservation) {
+    private function markSeatOnSeatplanAndReturnImageFilePath(ExpandedReservationInterface $reservation) {
         $seat = $reservation->seat;
         $block = $this->blockMapper->get($seat->block_id);
         if (!preg_match('/data:([^;]*);base64,(.*)/', $block->seatplan_image_data_url, $matches)) {
@@ -33,7 +32,7 @@ class SeatplanWriter implements TicketPartWriterInterface {
         imageline($image, $seat->x2, $seat->y2, $seat->x3, $seat->y3, $color);
         imageline($image, $seat->x3, $seat->y3, $seat->x0, $seat->y0, $color);
 
-        $seatPlanFilePath = $this->tempDirectoryPath . "/" . $reservation->unique_id . "_seatplan.png";
+        $seatPlanFilePath = $this->outputDirectoryPath . "/" . $reservation->unique_id . "_seatplan.png";
         imagepng($image, $seatPlanFilePath);
         imagedestroy($image);
         return $seatPlanFilePath;

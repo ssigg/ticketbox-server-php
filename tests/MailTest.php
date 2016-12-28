@@ -106,6 +106,15 @@ class MailTest extends \PHPUnit_Framework_TestCase {
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $mail->sendBoxofficePurchaseConfirmation('Box office', 'john.doe@example.com', 'en', [ 'reservation' ], 0);
+        $reservationStub = new MailTestReservationStub('unique');
+        $mail->sendBoxofficePurchaseConfirmation('Box office', 'john.doe@example.com', 'en', [ $reservationStub ], 0);
+    }
+}
+
+class MailTestReservationStub implements Services\ExpandedReservationInterface {
+    public $unique_id;
+    
+    public function __construct($unique_id) {
+        $this->unique_id = $unique_id;
     }
 }

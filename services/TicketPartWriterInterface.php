@@ -3,5 +3,5 @@
 namespace Services;
 
 interface TicketPartWriterInterface {
-    function write(ExpandedReservation $reservation, array $partFilePaths, $locale);
+    function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale);
 }

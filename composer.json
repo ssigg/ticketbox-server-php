@@ -7,7 +7,11 @@
         "nette/mail": "2.4.*@dev",
         "duncan3dc/sessions": "^1.0",
         "dompdf/dompdf": "^0.7.0",
-        "bacon/bacon-qr-code": "^1.0.1"
+        "bacon/bacon-qr-code": "^1.0.1",
+        "message/wkhtmltopdf": "dev-master",
+        "mikehaertl/phpwkhtmltopdf": "^2.2.0",
+        "tivie/php-os-detector": "dev-master"
+
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0",
@@ -18,6 +22,6 @@
         "test": [
             "@phpunit"
         ],
-        "phpunit": "php vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-html coverage --coverage-clover coverage.xml tests --filter CategoryActionsTest"
+        "phpunit": "php vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-html coverage --coverage-clover coverage.xml tests"
     }
 }

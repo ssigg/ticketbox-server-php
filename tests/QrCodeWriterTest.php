@@ -19,11 +19,11 @@ class QrCodeWriterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('writeFile')
             ->with($this->equalTo('unique'), $this->equalTo('directory/unique.png'));
-        $qrCodeWriter->write($reservation);
+        $qrCodeWriter->write($reservation, [], 'en');
     }
 }
 
-class QrCodeWriterTestReservationStub {
+class QrCodeWriterTestReservationStub implements Services\ExpandedReservationInterface {
     public $unique_id;
     
     public function __construct($unique_id) {

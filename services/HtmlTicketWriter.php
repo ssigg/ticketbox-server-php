@@ -2,11 +2,7 @@
 
 namespace Services;
 
-interface HtmlTicketWriterInterface {
-    function write(ExpandedReservation $reservation, string $locale);
-}
-
-class HtmlTicketWriter implements HtmlTicketWriterInterface {
+class HtmlTicketWriter implements TicketPartWriterInterface {
     private $twig;
     private $templateProvider;
     private $filePersister;
@@ -19,7 +15,7 @@ class HtmlTicketWriter implements HtmlTicketWriterInterface {
         $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
-    public function write(ExpandedReservation $reservation, string $locale) {
+    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
         $templateFilePath = $this->templateProvider->getPath('ticket', $locale, 'html');
         $template = $this->_twig->loadTemplate($templateFilePath);
 
@@ -27,7 +23,11 @@ class HtmlTicketWriter implements HtmlTicketWriterInterface {
             'reservation' => $reservation
         ];
         $result = $template->render($params);
+
         $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '.html';
-        $this->filePersister->write($reservation->unique_id, $result);
+        $this->filePersister->write($filePath, $result);
+        
+        $partFilePaths['html'] = $filePath;
+        return $partFilePaths;
     }
 }

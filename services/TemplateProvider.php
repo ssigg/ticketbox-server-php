@@ -3,7 +3,7 @@
 namespace Services;
 
 interface TemplateProviderInterface {
-    function getPath($name, $locale);
+    function getPath($name, $locale, $extension);
 }
 
 class TemplateProvider implements TemplateProviderInterface {

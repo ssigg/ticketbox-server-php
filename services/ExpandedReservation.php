@@ -2,7 +2,9 @@
 
 namespace Services;
 
-class ExpandedReservation {
+interface ExpandedReservationInterface { }
+
+class ExpandedReservation implements ExpandedReservationInterface {
     public $id;
     public $unique_id;
     public $event;

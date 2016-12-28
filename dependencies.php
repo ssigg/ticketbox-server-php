@@ -102,14 +102,66 @@ $container['qrCodeWriter'] = function($container) {
     return $qrCodeWriter;
 };
 
+$container['seatplanWriter'] = function($container) {
+    $blockMapper = $container['orm']->mapper('Model\Block');
+    $outputDirectoryPath = $container['settings']['tempDirectory'];
+    $seatplanWriter = new Services\SeatplanWriter($blockMapper, $outputDirectoryPath);
+    return $seatplanWriter;
+};
+
+$container['twig'] = function($container) {
+    $templateDirectoryPath = $container['settings']['templateDirectory'];
+    $loader = new \Twig_Loader_Filesystem($templateDirectoryPath);
+    $twig = new \Twig_Environment($loader, [ 'cache' => false ]);
+    return $twig;
+};
+
+$container['htmlTicketWriter'] = function($container) {
+    $twig = $container['twig'];
+    $templateProvider = $container['templateProvider'];
+    $filePersister = $container['filePersister'];
+    $outputDirectoryPath = $container['settings']['tempDirectory'];
+    $htmlTicketWriter = new Services\HtmlTicketWriter($twig, $templateProvider, $filePersister, $outputDirectoryPath);
+    return $htmlTicketWriter;
+};
+
+$container['operatingSystem'] = function($container) {
+    $operatingSystem = new \Tivie\OS\Detector();
+    return $operatingSystem;
+};
+
+$container['pdfRendererBinary'] = function($container) {
+    $pdfRendererBinary = new Services\PdfRendererBinary($container['operatingSystem']);
+    return $pdfRendererBinary;
+};
+
 $container['pdfRenderer'] = function($container) {
-    $pdfRenderer = new \Dompdf\Dompdf();
+    $options = [
+        'binary' => $container['pdfRendererBinary']->getPath()
+    ];
+    $pdfRenderer = new \mikehaertl\wkhtmlto\Pdf($options);
     return $pdfRenderer;
 };
 
+$container['htmlToPdfTicketConverter'] = function($container) {
+    $pdfRenderer = $container['pdfRenderer'];
+    $outputDirectoryPath = $container['settings']['tempDirectory'];
+    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($pdfRenderer, $outputDirectoryPath);
+    return $htmlToPdfTicketConverter;
+};
+
 $container['pdfTicketWriter'] = function($container) {
-    $blockMapper = $container['orm']->mapper('Model\Block');
-    $pdfTicketWriter = new Services\PdfTicketWriter($container['template'], $container['pdfRenderer'], $container['qrCodeWriter'], $blockMapper, $container['filePersister'], $container['settings']['PdfTicketWriter']['templateDirectory'], $container['settings']['Mailer']['tempDirectory']);
+    $qrCodeWriter = $container['qrCodeWriter'];
+    $seatplanWriter = $container['seatplanWriter'];
+    $htmlTicketWriter = $container['htmlTicketWriter'];
+    $htmlToPdfTicketConverter = $container['htmlToPdfTicketConverter'];
+    $ticketPartWriters = [
+        $qrCodeWriter,
+        $seatplanWriter,
+        $htmlTicketWriter,
+        $htmlToPdfTicketConverter
+    ];
+    $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters);
     return $pdfTicketWriter;
 };
 
