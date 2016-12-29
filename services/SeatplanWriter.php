@@ -6,8 +6,9 @@ class SeatplanWriter implements TicketPartWriterInterface {
     private $blockMapper;
     private $outputDirectoryPath;
 
-    public function __construct(\Spot\MapperInterface $blockMapper, $outputDirectoryPath) {
+    public function __construct(\Spot\MapperInterface $blockMapper, FilePersisterInterface $filePersister, $outputDirectoryPath) {
         $this->blockMapper = $blockMapper;
+        $this->filePersister = $filePersister;
         $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
@@ -21,7 +22,7 @@ class SeatplanWriter implements TicketPartWriterInterface {
         $seat = $reservation->seat;
         $block = $this->blockMapper->get($seat->block_id);
         if (!preg_match('/data:([^;]*);base64,(.*)/', $block->seatplan_image_data_url, $matches)) {
-            throw new Exception("Invalid image format.");
+            throw new \Exception("Invalid image format.");
         }
         $imageData = base64_decode($matches[2]);
         $image = imagecreatefromstring($imageData);
@@ -33,7 +34,7 @@ class SeatplanWriter implements TicketPartWriterInterface {
         imageline($image, $seat->x3, $seat->y3, $seat->x0, $seat->y0, $color);
 
         $seatPlanFilePath = $this->outputDirectoryPath . "/" . $reservation->unique_id . "_seatplan.png";
-        imagepng($image, $seatPlanFilePath);
+        $this->filePersister->writePng($seatPlanFilePath, $image);
         imagedestroy($image);
         return $seatPlanFilePath;
     }

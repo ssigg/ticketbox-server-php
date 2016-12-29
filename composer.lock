@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3a5f15f168736f265e37a12421353170",
-    "content-hash": "163fa5bb1c67ca4f1ee9b5ff512560b3",
+    "hash": "59deeb300c427184e3622dfb13cff775",
+    "content-hash": "3048789960a7f4cac59359c5b7c9b6ae",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -722,6 +722,178 @@
             "time": "2016-12-22 18:30:01"
         },
         {
+            "name": "message/wkhtmltopdf",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/messagedigital/wkhtmltopdf.git",
+                "reference": "7bf2bb8b049d4e3e4ba556a230d87b5dd7115368"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/messagedigital/wkhtmltopdf/zipball/7bf2bb8b049d4e3e4ba556a230d87b5dd7115368",
+                "reference": "7bf2bb8b049d4e3e4ba556a230d87b5dd7115368",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/wkhtmltopdf-osx",
+                "bin/wkhtmltopdf-amd64",
+                "bin/wkhtmltopdf-i386",
+                "bin/wkhtmltoimage-osx",
+                "bin/wkhtmltoimage-amd64",
+                "bin/wkhtmltoimage-i386"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL Version 3"
+            ],
+            "authors": [
+                {
+                    "name": "Laurence Roberts",
+                    "email": "laurence@message.co.uk"
+                },
+                {
+                    "name": "Joe Holdcroft",
+                    "email": "joe@message.co.uk"
+                }
+            ],
+            "description": "Convert html to pdf using webkit (qtwebkit). Re-packaged with a stable version, with all available binaries.",
+            "homepage": "https://code.google.com/p/wkhtmltopdf/",
+            "keywords": [
+                "binary",
+                "convert",
+                "image",
+                "pdf",
+                "snapshot",
+                "thumbnail",
+                "wkhtmltoimage",
+                "wkhtmltopdf"
+            ],
+            "time": "2013-11-17 14:22:37"
+        },
+        {
+            "name": "mikehaertl/php-shellcommand",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikehaertl/php-shellcommand.git",
+                "reference": "0de4e2cce17936ec7cef60a62c722a4aaa56c18c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikehaertl/php-shellcommand/zipball/0de4e2cce17936ec7cef60a62c722a4aaa56c18c",
+                "reference": "0de4e2cce17936ec7cef60a62c722a4aaa56c18c",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "mikehaertl\\shellcommand\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Härtl",
+                    "email": "haertl.mike@gmail.com"
+                }
+            ],
+            "description": "An object oriented interface to shell commands",
+            "keywords": [
+                "shell"
+            ],
+            "time": "2016-07-16 09:42:31"
+        },
+        {
+            "name": "mikehaertl/php-tmpfile",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikehaertl/php-tmpfile.git",
+                "reference": "b1b013cc29a8ee0423994b286d22e3aed6640d4e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/b1b013cc29a8ee0423994b286d22e3aed6640d4e",
+                "reference": "b1b013cc29a8ee0423994b286d22e3aed6640d4e",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "mikehaertl\\tmp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Härtl",
+                    "email": "haertl.mike@gmail.com"
+                }
+            ],
+            "description": "A convenience class for temporary files",
+            "keywords": [
+                "files"
+            ],
+            "time": "2016-07-07 05:59:42"
+        },
+        {
+            "name": "mikehaertl/phpwkhtmltopdf",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikehaertl/phpwkhtmltopdf.git",
+                "reference": "318aed9ad8d7622c6d00a0fdf3b199e71d48e47e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikehaertl/phpwkhtmltopdf/zipball/318aed9ad8d7622c6d00a0fdf3b199e71d48e47e",
+                "reference": "318aed9ad8d7622c6d00a0fdf3b199e71d48e47e",
+                "shasum": ""
+            },
+            "require": {
+                "mikehaertl/php-shellcommand": "^1.0.2",
+                "mikehaertl/php-tmpfile": "^1.0.0",
+                "php": ">=5.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "mikehaertl\\wkhtmlto\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Haertl",
+                    "email": "haertl.mike@gmail.com"
+                }
+            ],
+            "description": "A slim PHP wrapper around wkhtmltopdf with an easy to use and clean OOP interface",
+            "homepage": "http://mikehaertl.github.com/phpwkhtmltopdf/",
+            "keywords": [
+                "pdf",
+                "wkhtmltoimage",
+                "wkhtmltopdf"
+            ],
+            "time": "2016-06-02 08:06:45"
+        },
+        {
             "name": "nette/mail",
             "version": "dev-master",
             "source": {
@@ -847,16 +1019,16 @@
         },
         {
             "name": "nikic/fast-route",
-            "version": "v1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/FastRoute.git",
-                "reference": "8ea928195fa9b907f0d6e48312d323c1a13cc2af"
+                "reference": "f3dcf5130e634b6123d40727d612ec6aa4f61fb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/8ea928195fa9b907f0d6e48312d323c1a13cc2af",
-                "reference": "8ea928195fa9b907f0d6e48312d323c1a13cc2af",
+                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/f3dcf5130e634b6123d40727d612ec6aa4f61fb3",
+                "reference": "f3dcf5130e634b6123d40727d612ec6aa4f61fb3",
                 "shasum": ""
             },
             "require": {
@@ -886,7 +1058,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2016-06-12 19:08:51"
+            "time": "2016-10-20 17:36:47"
         },
         {
             "name": "phenx/php-font-lib",
@@ -1172,6 +1344,54 @@
                 "router"
             ],
             "time": "2016-12-20 20:30:47"
+        },
+        {
+            "name": "tivie/php-os-detector",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tivie/php-os-detector.git",
+                "reference": "05762e4cfd09dd8bce9cdac8b5e9eac08d6ea054"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tivie/php-os-detector/zipball/05762e4cfd09dd8bce9cdac8b5e9eac08d6ea054",
+                "reference": "05762e4cfd09dd8bce9cdac8b5e9eac08d6ea054",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tivie\\OS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "APACHE 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Estevão Soares dos Santos",
+                    "email": "estevao@soares-dos-santos.com"
+                }
+            ],
+            "description": "A small utility library that detects the OS the server is running on",
+            "homepage": "http://tivie.github.com/php-os-detector/",
+            "keywords": [
+                "detection",
+                "detector",
+                "identification",
+                "operating system",
+                "os",
+                "os detection"
+            ],
+            "time": "2014-12-22 04:54:33"
         },
         {
             "name": "twig/twig",
@@ -3690,6 +3910,8 @@
     "stability-flags": {
         "latte/latte": 20,
         "nette/mail": 20,
+        "message/wkhtmltopdf": 20,
+        "tivie/php-os-detector": 20,
         "there4/slim-test-helpers": 20,
         "codeclimate/php-test-reporter": 20
     },

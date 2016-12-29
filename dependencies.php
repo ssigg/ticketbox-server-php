@@ -21,6 +21,9 @@ require 'services/QrCodeWriter.php';
 require 'services/SeatplanWriter.php';
 require 'services/TemplateProvider.php';
 require 'services/HtmlTicketWriter.php';
+require 'services/PdfRendererBinary.php';
+require 'services/HtmlToPdfTicketConverter.php';
+require 'services/PdfTicketWriter.php';
 
 require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
@@ -104,8 +107,9 @@ $container['qrCodeWriter'] = function($container) {
 
 $container['seatplanWriter'] = function($container) {
     $blockMapper = $container['orm']->mapper('Model\Block');
+    $filePersister = $container['filePersister'];
     $outputDirectoryPath = $container['settings']['tempDirectory'];
-    $seatplanWriter = new Services\SeatplanWriter($blockMapper, $outputDirectoryPath);
+    $seatplanWriter = new Services\SeatplanWriter($blockMapper, $filePersister, $outputDirectoryPath);
     return $seatplanWriter;
 };
 

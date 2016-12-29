@@ -13,7 +13,7 @@ class HtmlToPdfTicketConverter implements TicketPartWriterInterface {
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
         $this->pdfRenderer->addPage($partFilePaths['html']);
-        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '.pdf';
+        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.pdf';
         $this->pdfRenderer->saveAs($filePath);
 
         $partFilePaths['pdf'] = $filePath;

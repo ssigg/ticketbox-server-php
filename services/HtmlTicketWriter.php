@@ -8,7 +8,7 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
     private $filePersister;
     private $outputDirectoryPath;
 
-    public function __construct(\Twig_Environment $twig, TemplateProviderInterface $templateProvider, FilePersisterInterface $filePersister, string $outputDirectoryPath) {
+    public function __construct(\Twig_Environment $twig, TemplateProviderInterface $templateProvider, FilePersisterInterface $filePersister, $outputDirectoryPath) {
         $this->twig = $twig;
         $this->templateProvider = $templateProvider;
         $this->filePersister = $filePersister;
@@ -17,14 +17,16 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
         $templateFilePath = $this->templateProvider->getPath('ticket', $locale, 'html');
-        $template = $this->_twig->loadTemplate($templateFilePath);
+        $template = $this->twig->loadTemplate($templateFilePath);
 
         $params = [
-            'reservation' => $reservation
+            'reservation' => $reservation,
+            'qr' => $partFilePaths['qr'],
+            'seatplan' => $partFilePaths['seatplan']
         ];
         $result = $template->render($params);
 
-        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '.html';
+        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.html';
         $this->filePersister->write($filePath, $result);
         
         $partFilePaths['html'] = $filePath;

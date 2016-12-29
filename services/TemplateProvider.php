@@ -10,7 +10,7 @@ class TemplateProvider implements TemplateProviderInterface {
     private $filePersister;
     private $templatePath;
 
-    public function __construct(FilePersisterInterface $filePersister, string $templatePath) {
+    public function __construct(FilePersisterInterface $filePersister, $templatePath) {
         $this->filePersister = $filePersister;
         $this->templatePath = $templatePath;
     }
@@ -23,7 +23,7 @@ class TemplateProvider implements TemplateProviderInterface {
         } else if ($this->filePersister->exists($defaultPath)) {
             return $defaultPath;
         } else {
-            throw new Exception('No template file found.');
+            throw new \Exception('No template file found. Localized path: ' . $localizedPath . ', Default path: ' . $defaultPath);
         }
     }
 }

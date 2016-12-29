@@ -5,6 +5,7 @@ namespace Services;
 interface FilePersisterInterface {
     function read($filePath);
     function write($filePath, $content);
+    function writePng($filePath, $content);
     function exists($filePath);
 }
 
@@ -15,6 +16,10 @@ class FilePersister implements FilePersisterInterface {
 
     public function write($filePath, $content) {
         file_put_contents($filePath, $content);
+    }
+
+    public function writePng($filePath, $content) {
+        imagepng($content, $filePath);
     }
 
     public function exists($filePath) {
