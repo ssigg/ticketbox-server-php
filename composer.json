@@ -5,7 +5,6 @@
         "twig/twig": "~1.0",
         "nette/mail": "2.4.*@dev",
         "duncan3dc/sessions": "^1.0",
-        "dompdf/dompdf": "^0.7.0",
         "bacon/bacon-qr-code": "^1.0.1",
         "message/wkhtmltopdf": "dev-master",
         "mikehaertl/phpwkhtmltopdf": "^2.2.0",
