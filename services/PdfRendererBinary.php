@@ -17,9 +17,9 @@ class PdfRendererBinary implements PdfRendererBinaryInterface {
         $osType = $this->operatingSystem->getType();
         $osFamily = $this->operatingSystem->getFamily();
         if ($osType == \Tivie\OS\MACOSX) {
-            return __DIR__ . '/../vendor/message/bin/wkhtmltopdf-osx'; 
+            return __DIR__ . '/../vendor/message/wkhtmltopdf/bin/wkhtmltopdf-osx'; 
         } else if ($osFamily == \Tivie\OS\UNIX_FAMILY) {
-            return __DIR__ . '/../vendor/message/bin/wkhtmltopdf-i386';
+            return __DIR__ . '/../vendor/message/wkhtmltopdf/bin/wkhtmltopdf-i386';
         } else {
             throw new \Exception('Unsupported operating system: ' . $osFamily . '/' . $osType);
         }

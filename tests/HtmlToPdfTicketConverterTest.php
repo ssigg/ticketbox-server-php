@@ -2,6 +2,7 @@
 
 class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
     private $wkhtmltopdfMock;
+    private $pdfRendererFactoryMock;
     private $outputDirectory;
     private $unique_id;
     private $reservation;
@@ -12,14 +13,30 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->setMethods(['addPage', 'saveAs'])
             ->getMockForAbstractClass();
 
+        $this->pdfRendererFactoryMock = $this->getMockBuilder(Services\PdfRendererFactory::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['create'])
+            ->getMockForAbstractClass();
+        $this->pdfRendererFactoryMock
+            ->method('create')
+            ->willReturn($this->wkhtmltopdfMock);
+
         $this->outputDirectory = 'output';
 
-        $this->converter = new Services\HtmlToPdfTicketConverter($this->wkhtmltopdfMock, $this->outputDirectory);
+        $this->converter = new Services\HtmlToPdfTicketConverter($this->pdfRendererFactoryMock, $this->outputDirectory);
 
         $this->unique_id = 'unique';
         $this->reservation = new HtmlToPdfTicketConverterTestReservationStub($this->unique_id);
 
         $this->partFilePaths = [ 'qr' => 'qr.png', 'seatplan' => 'seatplan.png', 'html' => 'ticket.html' ];
+    }
+
+    public function testUsePdfRendererFactoryToCreatePdfRenderer() {
+        $this->pdfRendererFactoryMock
+            ->expects($this->once())
+            ->method('create');
+        
+        $this->converter->write($this->reservation, $this->partFilePaths, 'en');
     }
 
     public function testAddGivenHtmlAsPage() {

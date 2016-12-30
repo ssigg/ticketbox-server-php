@@ -16,8 +16,8 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
-        $templateFilePath = $this->templateProvider->getPath('ticket', $locale, 'html');
-        $template = $this->twig->loadTemplate($templateFilePath);
+        $templateFileName = $this->templateProvider->getPath('ticket', $locale, 'html');
+        $template = $this->twig->loadTemplate($templateFileName);
 
         $params = [
             'reservation' => $reservation,

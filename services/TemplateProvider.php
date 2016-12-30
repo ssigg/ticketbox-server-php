@@ -16,12 +16,14 @@ class TemplateProvider implements TemplateProviderInterface {
     }
 
     public function getPath($name, $locale, $extension) {
-        $localizedPath = $this->templatePath . '/' . $name . '.' . $locale . '.' . $extension;
-        $defaultPath = $this->templatePath . '/' . $name . '.default.' . $extension;
+        $localizedName = $name . '.' . $locale . '.' . $extension;
+        $localizedPath = $this->templatePath . '/' . $localizedName;
+        $defaultName = $name . '.default.' . $extension;
+        $defaultPath = $this->templatePath . '/' . $defaultName;
         if ($this->filePersister->exists($localizedPath)) {
-            return $localizedPath;
+            return $localizedName;
         } else if ($this->filePersister->exists($defaultPath)) {
-            return $defaultPath;
+            return $defaultName;
         } else {
             throw new \Exception('No template file found. Localized path: ' . $localizedPath . ', Default path: ' . $defaultPath);
         }

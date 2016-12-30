@@ -14,19 +14,24 @@ interface MailInterface {
 }
 
 class Mail implements MailInterface {
-    private $engine;
+    private $twig;
+    private $templateProvider;
     private $mailer;
     private $pdfTicketWriter;
     private $settings;
 
-    public function __construct(Engine $engine, IMailer $mailer, PdfTicketWriterInterface $pdfTicketWriter, $settings) {
-        $this->engine = $engine;
+    public function __construct(\Twig_Environment $twig, TemplateProviderInterface $templateProvider, IMailer $mailer, PdfTicketWriterInterface $pdfTicketWriter, $settings) {
+        $this->twig = $twig;
+        $this->templateProvider = $templateProvider;
         $this->mailer = $mailer;
         $this->pdfTicketWriter = $pdfTicketWriter;
         $this->settings = $settings;
     }
 
     public function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice) {
+        $templateFileName = $this->templateProvider->getPath('order-confirmation', $locale, 'txt');
+        $template = $this->twig->loadTemplate($templateFileName);
+
         $params = [
             'title' => $title,
             'firstname' => $firstname,
@@ -35,12 +40,7 @@ class Mail implements MailInterface {
             'reservations' => $reservations,
             'total' => $totalPrice
         ];
-
-        $template = __DIR__ . '/../customer/config/OrderConfirmation_' . $locale . '.txt';
-        if (!is_file($template)) {
-            $template = __DIR__ . '/../customer/config/OrderConfirmation_default.txt';
-        }
-        $body = $this->engine->renderToString($template, $params);
+        $body = $template->render($params);
 
         $message = new Message;
         $message
@@ -53,14 +53,16 @@ class Mail implements MailInterface {
     }
 
     public function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice) {
+        $templateFileName = $this->templateProvider->getPath('order-notification', 'default', 'txt');
+        $template = $this->twig->loadTemplate($templateFileName);
+
         $params = [
             'firstname' => $firstname,
             'lastname' => $lastname,
             'reservations' => $reservations,
             'total' => $totalPrice
         ];
-
-        $body = $this->engine->renderToString(__DIR__ . '/../customer/config/OrderNotification.txt', $params);
+        $body = $template->render($params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
             $message = new Message;
@@ -75,6 +77,9 @@ class Mail implements MailInterface {
     }
 
     function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice) {
+        $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-confirmation', $locale, 'txt');
+        $template = $this->twig->loadTemplate($templateFileName);
+
         $pdfFilePaths = [];
         foreach ($reservations as $reservation) {
             $pdfFilePath = $this->pdfTicketWriter->write($reservation, $locale);
@@ -87,12 +92,7 @@ class Mail implements MailInterface {
             'pdfFilePaths' => $pdfFilePaths,
             'total' => $totalPrice
         ];
-
-        $template = __DIR__ . '/../boxoffice/config/BoxofficePurchaseConfirmation' . $locale . '.txt';
-        if (!is_file($template)) {
-            $template = __DIR__ . '/../boxoffice/config/BoxofficePurchaseConfirmation_default.txt';
-        }
-        $body = $this->engine->renderToString($template, $params);
+        $body = $template->render($params);
 
         $message = new Message;
         $message
@@ -105,13 +105,15 @@ class Mail implements MailInterface {
     }
 
     function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice) {
+        $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-notification', 'default', 'txt');
+        $template = $this->twig->loadTemplate($templateFileName);
+
         $params = [
             'boxoffice' => $boxoffice,
             'reservations' => $reservations,
             'total' => $totalPrice
         ];
-
-        $body = $this->engine->renderToString(__DIR__ . '/../boxoffice/config/BoxofficePurchaseNotification.txt', $params);
+        $body = $template->render($params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
             $message = new Message;

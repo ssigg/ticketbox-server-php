@@ -18,7 +18,7 @@ class PdfRendererBinaryTest extends \PHPUnit_Framework_TestCase {
             ->method('getType')
             ->willReturn(\Tivie\OS\MACOSX);
         $path = $this->binary->getPath();
-        $this->assertContains('vendor/message/bin/wkhtmltopdf-osx', $path);
+        $this->assertContains('vendor/message/wkhtmltopdf/bin/wkhtmltopdf-osx', $path);
     }
 
     public function testLinux() {
@@ -29,7 +29,7 @@ class PdfRendererBinaryTest extends \PHPUnit_Framework_TestCase {
             ->method('getFamily')
             ->willReturn(\Tivie\OS\UNIX_FAMILY);
         $path = $this->binary->getPath();
-        $this->assertContains('vendor/message/bin/wkhtmltopdf-i386', $path);
+        $this->assertContains('vendor/message/wkhtmltopdf/bin/wkhtmltopdf-i386', $path);
     }
 
     public function testThrowsExceptionIfNotOSXOrLinux() {

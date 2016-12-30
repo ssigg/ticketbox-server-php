@@ -3,18 +3,19 @@
 namespace Services;
 
 class HtmlToPdfTicketConverter implements TicketPartWriterInterface {
-    private $pdfRenderer;
+    private $pdfRendererFactory;
     private $outputDirectoryPath;
 
-    public function __construct(\mikehaertl\wkhtmlto\Pdf $pdfRenderer, $outputDirectoryPath) {
-        $this->pdfRenderer = $pdfRenderer;
+    public function __construct(PdfRendererFactoryInterface $pdfRendererFactory, $outputDirectoryPath) {
+        $this->pdfRendererFactory = $pdfRendererFactory;
         $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
-        $this->pdfRenderer->addPage($partFilePaths['html']);
+        $pdfRenderer = $this->pdfRendererFactory->create();
+        $pdfRenderer->addPage($partFilePaths['html']);
         $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.pdf';
-        $this->pdfRenderer->saveAs($filePath);
+        $pdfRenderer->saveAs($filePath);
 
         $partFilePaths['pdf'] = $filePath;
         return $partFilePaths;

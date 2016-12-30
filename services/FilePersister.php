@@ -6,6 +6,7 @@ interface FilePersisterInterface {
     function read($filePath);
     function write($filePath, $content);
     function writePng($filePath, $content);
+    function delete($filePath);
     function exists($filePath);
 }
 
@@ -20,6 +21,10 @@ class FilePersister implements FilePersisterInterface {
 
     public function writePng($filePath, $content) {
         imagepng($content, $filePath);
+    }
+
+    public function delete($filePath) {
+        unlink($filePath);
     }
 
     public function exists($filePath) {

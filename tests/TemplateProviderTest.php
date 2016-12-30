@@ -2,7 +2,9 @@
 
 class TemplateProviderTest extends \PHPUnit_Framework_TestCase {
     private $filePersisterMock;
+    private $localizedTemplateName;
     private $localizedTemplatePath;
+    private $defaultTemplateName;
     private $defaultTemplatePath;
     private $templateProvider;
 
@@ -12,8 +14,10 @@ class TemplateProviderTest extends \PHPUnit_Framework_TestCase {
             ->getMockForAbstractClass();
         
         $templatePath = 'templates';
-        $this->localizedTemplatePath = $templatePath . '/name.en.ext';
-        $this->defaultTemplatePath = $templatePath . '/name.default.ext';
+        $this->localizedTemplateName = 'name.en.ext';
+        $this->localizedTemplatePath = $templatePath . '/' . $this->localizedTemplateName;
+        $this->defaultTemplateName = 'name.default.ext';
+        $this->defaultTemplatePath = $templatePath . '/' . $this->defaultTemplateName;
 
         $this->templateProvider = new Services\TemplateProvider($this->filePersisterMock, $templatePath);
     }
@@ -26,8 +30,8 @@ class TemplateProviderTest extends \PHPUnit_Framework_TestCase {
         $this->filePersisterMock
             ->method('exists')
             ->will($this->returnValueMap($existsValueMap));
-        $path = $this->templateProvider->getPath('name', 'en', 'ext');
-        $this->assertSame($this->localizedTemplatePath, $path);
+        $name = $this->templateProvider->getPath('name', 'en', 'ext');
+        $this->assertSame($this->localizedTemplateName, $name);
     }
 
     public function testReturnDefaultPathIfLocalizedPathDoesNotExist() {
@@ -38,8 +42,8 @@ class TemplateProviderTest extends \PHPUnit_Framework_TestCase {
         $this->filePersisterMock
             ->method('exists')
             ->will($this->returnValueMap($existsValueMap));
-        $path = $this->templateProvider->getPath('name', 'en', 'ext');
-        $this->assertSame($this->defaultTemplatePath, $path);
+        $name = $this->templateProvider->getPath('name', 'en', 'ext');
+        $this->assertSame($this->defaultTemplateName, $name);
     }
 
     public function testThrowsExceptionWhenNoTemplateFileExists() {
