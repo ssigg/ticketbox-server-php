@@ -1,0 +1,10 @@
+{{firstname}} {{lastname}} ordered tickets. They are reserved now but not
+yet purchased. They have to be paid at the box office.
+
+Reserved seats
+==============
+{% for reservation in reservations %}
+{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: $ {{reservation.price}} {% if reservation.isReduced %}(reduced){% endif %}
+{% endfor %}
+
+Total: $ {{total}}

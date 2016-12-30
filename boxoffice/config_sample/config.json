@@ -24,9 +24,9 @@
             ]
         }
     },
-    "PdfTicketWriter": {
-        "templateDirectory": "config"
-    },
+    "templateDirectory": "config/templates",
+    "tempDirectory": "temp",
+    "ticketDirectory": "tickets",
     "Reservations": {
         "lifetimeInSeconds": 600
     }
