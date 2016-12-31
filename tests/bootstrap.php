@@ -25,6 +25,7 @@ require dirname(__DIR__) . '/services/ReservationConverter.php';
 require dirname(__DIR__) . '/services/TokenProvider.php';
 require dirname(__DIR__) . '/services/SeatReserver.php';
 require dirname(__DIR__) . '/services/SeatConverter.php';
+require dirname(__DIR__) . '/services/MessageFactory.php';
 require dirname(__DIR__) . '/services/Mail.php';
 require dirname(__DIR__) . '/services/FilePersister.php';
 require dirname(__DIR__) . '/services/QrCodeWriter.php';

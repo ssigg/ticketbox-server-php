@@ -2,10 +2,6 @@
 
 namespace Services;
 
-use Nette\Mail\IMailer;
-use Nette\Mail\Message;
-use Latte\Engine;
-
 interface MailInterface {
     function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice);
     function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice);
@@ -16,13 +12,15 @@ interface MailInterface {
 class Mail implements MailInterface {
     private $twig;
     private $templateProvider;
+    private $messageFactory;
     private $mailer;
     private $pdfTicketWriter;
     private $settings;
 
-    public function __construct(\Twig_Environment $twig, TemplateProviderInterface $templateProvider, IMailer $mailer, PdfTicketWriterInterface $pdfTicketWriter, $settings) {
+    public function __construct(\Twig_Environment $twig, TemplateProviderInterface $templateProvider, MessageFactoryInterface $messageFactory, \Nette\Mail\IMailer $mailer, PdfTicketWriterInterface $pdfTicketWriter, $settings) {
         $this->twig = $twig;
         $this->templateProvider = $templateProvider;
+        $this->messageFactory = $messageFactory;
         $this->mailer = $mailer;
         $this->pdfTicketWriter = $pdfTicketWriter;
         $this->settings = $settings;
@@ -42,13 +40,13 @@ class Mail implements MailInterface {
         ];
         $body = $template->render($params);
 
-        $message = new Message;
-        $message
-            ->setFrom($this->settings['from'])
-            ->setSubject($this->settings['confirmation']['subject'])
-            ->addReplyTo($this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>')
-            ->addTo($email)
-            ->setBody($body);
+        $from = $this->settings['from'];
+        $to = $email;
+        $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
+        $subject = $this->settings['confirmation']['subject'];
+        $attachments = [];
+        $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+        
         $this->mailer->send($message);
     }
 
@@ -65,13 +63,13 @@ class Mail implements MailInterface {
         $body = $template->render($params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
-            $message = new Message;
-            $message
-                ->setFrom($this->settings['from'])
-                ->setSubject($this->settings['notification']['subject'])
-                ->addReplyTo($firstname . ' ' . $lastname . ' <' . $email . '>')
-                ->addTo($listener)
-                ->setBody($body);
+            $from = $this->settings['from'];
+            $to = $listener;
+            $replyTo = $firstname . ' ' . $lastname . ' <' . $email . '>';
+            $subject = $this->settings['notification']['subject'];
+            $attachments = [];
+            $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+
             $this->mailer->send($message);
         }
     }
@@ -94,13 +92,13 @@ class Mail implements MailInterface {
         ];
         $body = $template->render($params);
 
-        $message = new Message;
-        $message
-            ->setFrom($this->settings['from'])
-            ->setSubject(sprintf($this->settings['confirmation']['subject'], $boxoffice))
-            ->addReplyTo($this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>')
-            ->addTo($email)
-            ->setBody($body);
+        $from = $this->settings['from'];
+        $to = $email;
+        $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
+        $subject = sprintf($this->settings['confirmation']['subject'], $boxoffice);
+        $attachments = $pdfFilePaths;
+        $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+
         $this->mailer->send($message);
     }
 
@@ -116,12 +114,13 @@ class Mail implements MailInterface {
         $body = $template->render($params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
-            $message = new Message;
-            $message
-                ->setFrom($this->settings['from'])
-                ->setSubject(sprintf($this->settings['notification']['subject'], $boxoffice))
-                ->addTo($listener)
-                ->setBody($body);
+            $from = $this->settings['from'];
+            $to = $listener;
+            $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
+            $subject = sprintf($this->settings['notification']['subject'], $boxoffice);
+            $attachments = [];
+            $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+
             $this->mailer->send($message);
         }
     }

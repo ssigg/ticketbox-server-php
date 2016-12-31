@@ -8,6 +8,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
     private $templateMock;
     private $twigMock;
     private $templateProviderMock;
+    private $messageFactoryMock;
     private $pdfTicketWriterMock;
 
     protected function setUp() {        
@@ -28,6 +29,13 @@ class MailTest extends \PHPUnit_Framework_TestCase {
         $this->templateProviderMock = $this->getMockBuilder(Services\TemplateProviderInterface::class)
             ->setMethods(['getPath'])
             ->getMockForAbstractClass();
+        
+        $this->messageFactoryMock = $this->getMockBuilder(Services\MessageFactoryInterface::class)
+            ->setMethods(['create'])
+            ->getMock();
+        $this->messageFactoryMock
+            ->method('create')
+            ->willReturn(new \Nette\Mail\Message);
 
         $this->pdfTicketWriterMock = $this->getMockBuilder(Services\PdfTicketWriterInterface::class)
             ->setMethods(['write'])
@@ -45,7 +53,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
                 'email' => 'reply@example.com'
             ]
         ];
-        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->messageFactoryMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
@@ -67,7 +75,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
                 'email' => 'reply@example.com'
             ]
         ];
-        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->messageFactoryMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -89,7 +97,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
                 'email' => 'reply@example.com'
             ]
         ];
-        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->messageFactoryMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -114,7 +122,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
                 'email' => 'reply@example.com'
             ]
         ];
-        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->messageFactoryMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 

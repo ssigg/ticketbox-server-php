@@ -16,6 +16,7 @@ require 'services/ReservationConverter.php';
 require 'services/TokenProvider.php';
 require 'services/SeatReserver.php';
 require 'services/SeatConverter.php';
+require 'services/MessageFactory.php';
 require 'services/Mail.php';
 require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
@@ -208,12 +209,18 @@ $container['mailer'] = function($container) {
     return $mailer;
 };
 
+$container['messageFactory'] = function($container) {
+    $messageFactory = new Services\MessageFactory();
+    return $messageFactory;
+};
+
 $container['mail'] = function($container) {
     $twig = $container['twig'];
     $templateProvider = $container['templateProvider'];
+    $messageFactory = $container['messageFactory'];
     $mailer = $container['mailer'];
     $pdfTicketWriter = $container['pdfTicketWriter'];
     $settings = $container['settings']['Mailer'];
-    $mail = new Services\Mail($twig, $templateProvider, $mailer, $pdfTicketWriter, $settings);
+    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $settings);
     return $mail;
 };
