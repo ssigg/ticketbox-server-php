@@ -23,32 +23,15 @@ class ReservationConverter implements ReservationConverterInterface {
         $expandedReservations = [];
         foreach ($reservations as $reservation) {
             $id = $reservation->get('id');
+            $unique_id = $reservation->get('unique_id');
             $eventId = $reservation->get('event_id');
             $event = $this->eventMapper->get($eventId);
             $seat = $this->seatMapper->get($reservation->get('seat_id'));
             $category = $this->categoryMapper->get($reservation->get('category_id'));
             $isReduced = $reservation->get('is_reduced');
             $price = $isReduced ? $category->get('price_reduced') : $category->get('price');
-            $expandedReservations[] = new ExpandedReservation($id, $event, $seat, $category, $isReduced, $price);
+            $expandedReservations[] = new ExpandedReservation($id, $unique_id, $event, $seat, $category, $isReduced, $price);
         }
         return $expandedReservations;
-    }
-}
-
-class ExpandedReservation {
-    public $id;
-    public $event;
-    public $seat;
-    public $category;
-    public $isReduced;
-    public $price;
-
-    public function __construct($id, $event, $seat, $category, $isReduced, $price) {
-        $this->id = $id;
-        $this->event = $event;
-        $this->seat = $seat;
-        $this->category = $category;
-        $this->isReduced = $isReduced;
-        $this->price = $price;
     }
 }

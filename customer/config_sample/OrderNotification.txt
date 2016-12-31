@@ -1,9 +1,0 @@
-{$firstname} {$lastname} issued an order. The seats listed below are now reserved but not purchased.
-
-Reserved Seats
-==============
-{foreach $reservations as $reservation}
-{$reservation->seat->name}: {$reservation->price} $ {if $reservation->isReduced}(reduced){/if}
-{/foreach}
-
-Total: {$total} $

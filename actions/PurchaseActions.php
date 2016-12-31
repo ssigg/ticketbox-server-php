@@ -44,25 +44,34 @@ class ListBoxofficePurchasesAction {
 class CreateBoxofficePurchaseAction {
     private $mail;
     private $reserver;
-    private $boxofficeSettings;
+    private $tempDirectory;
 
     public function __construct(ContainerInterface $container) {
         $this->mail = $container->get('mail');
         $this->reserver = $container->get('seatReserver');
         $this->boxofficeSettings = $container->get('settings')['boxoffice'];
+        $this->tempDirectory = $container->get('settings')['tempDirectory'];
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
+        $boxofficeName = $data['boxofficeName'];
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf]
+        $customerEmail = isset($data['email']) ? $data['email'] : null;
+        $locale = $data['locale'];
         
-        $purchase = $this->reserver->boxofficePurchase($this->boxofficeSettings['name'], $data['locale']);
+        $purchase = $this->reserver->boxofficePurchase($boxofficeName, $locale);
 
         $totalPrice = 0;
         foreach ($purchase->reservations as $reservation) {
             $totalPrice += $reservation->price;
         }
 
-        $this->mail->sendBoxofficePurchaseNotification($this->boxofficeSettings['name'], $purchase->reservations, $totalPrice);
+        if ($boxofficeType == 'pdf') {
+            $this->mail->sendBoxofficePurchaseConfirmation($boxofficeName, $customerEmail, $locale, $purchase->reservations, $totalPrice);
+        }
+
+        $this->mail->sendBoxofficePurchaseNotification($boxofficeName, $purchase->reservations, $totalPrice);
 
         return $response->withJson($purchase, 201);
     }

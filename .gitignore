@@ -6,3 +6,5 @@ data
 coverage.xml
 coverage
 dist
+temp
+boxoffice/tickets

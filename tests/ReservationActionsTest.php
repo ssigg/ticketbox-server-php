@@ -30,6 +30,7 @@ class ReservationActionsTest extends DatabaseTestBase {
         $reservationMapper = $this->container['orm']->mapper('Model\Reservation');
 
         $reservationMapper->create([
+            'unique_id' => 'unique',
             'token' => 'abc',
             'seat_id' => 2,
             'event_id' => 1,
@@ -68,7 +69,8 @@ class ReservationActionsTest extends DatabaseTestBase {
 
         $data = [
             "seat_id" => 2,
-            "event_id" => 42
+            "event_id" => 42,
+            "category_id" => 32
         ];
         $request = $this->getPostRequest('/reservations', $data);
         $response = new \Slim\Http\Response();
@@ -88,7 +90,8 @@ class ReservationActionsTest extends DatabaseTestBase {
 
         $data = [
             "seat_id" => 2,
-            "event_id" => 42
+            "event_id" => 42,
+            "category_id" => 32
         ];
         $request = $this->getPostRequest('/reservations', $data);
         $response = new \Slim\Http\Response();

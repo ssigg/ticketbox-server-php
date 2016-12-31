@@ -91,11 +91,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         
         $seat = $this->getEntityMock();
         $event = $this->getEntityMock();
+        $category = $this->getEntityMock();
 
         $this->reservationMapperMock->method('insert')->willReturn(42);
         $this->reservationMapperMock->expects($this->once())->method('insert');
         $this->reservationMapperMock->expects($this->once())->method('get');
-        $reserver->reserve($seat, $event);
+        $reserver->reserve($seat, $event, $category);
     }
 
     public function testReserveCreatesReservationUnsuccessful() {
@@ -115,11 +116,12 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         
         $seat = $this->getEntityMock();
         $event = $this->getEntityMock();
+        $category = $this->getEntityMock();
 
         $this->reservationMapperMock->method('insert')->willReturn(false);
         $this->reservationMapperMock->expects($this->once())->method('insert');
         $this->reservationMapperMock->expects($this->never())->method('get');
-        $reserver->reserve($seat, $event);
+        $reserver->reserve($seat, $event, $category);
     }
 
     public function testReleaseDeletesReservation() {

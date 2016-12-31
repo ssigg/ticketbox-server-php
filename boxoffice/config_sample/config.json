@@ -7,22 +7,26 @@
         "driver": "pdo_sqlite"
     },
     "Mailer": {
+        "tempDirectory": "temp",
         "from": "From <from@example.com>",
         "replyTo": {
             "name": "Reply To",
             "email": "reply@example.com"
         },
         "confirmation": {
-            "subject": "Ticket reservation confirmation"
+            "subject": "Your ticket purchase at %s"
         },
         "notification": {
-            "subject": "Ticket reservation notification",
+            "subject": "Ticket purchase at %s",
             "listeners": [
                 "listener1@example.com",
                 "listener2@example.com"
             ]
         }
     },
+    "templateDirectory": "config/templates",
+    "tempDirectory": "temp",
+    "ticketDirectory": "tickets",
     "Reservations": {
         "lifetimeInSeconds": 600
     }
