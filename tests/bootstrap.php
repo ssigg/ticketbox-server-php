@@ -21,6 +21,7 @@ require dirname(__DIR__) . '/actions/PurchaseActions.php';
 // Register services
 require dirname(__DIR__) . '/services/TicketPartWriterInterface.php';
 require dirname(__DIR__) . '/services/ExpandedReservation.php';
+require dirname(__DIR__) . '/services/PathConverter.php';
 require dirname(__DIR__) . '/services/ReservationConverter.php';
 require dirname(__DIR__) . '/services/TokenProvider.php';
 require dirname(__DIR__) . '/services/SeatReserver.php';
