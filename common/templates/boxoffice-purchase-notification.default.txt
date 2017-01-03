@@ -1,0 +1,10 @@
+Die Vorverkaufsstelle {{boxoffice}} hat Tickets verkauft. Die unten aufgelisteten Plätze
+sind nun definitiv verkauft.
+
+Verkaufte Plätze
+================
+{% for reservations in reservations %}
+{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}}  CHF {% if reservation.isReduced %}}(Kinder){% endif %}
+{% endfor %}
+
+Total: {{total}} CHF

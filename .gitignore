@@ -7,4 +7,4 @@ coverage.xml
 coverage
 dist
 temp
-boxoffice/tickets
+common/tickets

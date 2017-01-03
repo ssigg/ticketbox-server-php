@@ -6,6 +6,7 @@ require 'model/Category.php';
 require 'model/Eventblock.php';
 require 'model/Order.php';
 require 'model/BoxofficePurchase.php';
+require 'model/CustomerPurchase.php';
 require 'model/Reservation.php';
 require 'model/Seat.php';
 
@@ -28,6 +29,7 @@ require 'services/PdfRendererFactory.php';
 require 'services/HtmlToPdfTicketConverter.php';
 require 'services/TicketPartTempFilesRemover.php';
 require 'services/PdfTicketWriter.php';
+require 'services/BraintreePaymentProvider.php';
 
 require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
@@ -80,12 +82,14 @@ $container['tokenProvider'] = function($container) {
 $container['seatReserver'] = function($container) {
     $orderMapper = $container['orm']->mapper('Model\Order');
     $boxofficePurchaseMapper = $container['orm']->mapper('Model\BoxofficePurchase');
+    $customerPurchaseMapper = $container['orm']->mapper('Model\CustomerPurchase');
     $reservationMapper = $container['orm']->mapper('Model\Reservation');
     $reservationConverter = $container['reservationConverter'];
     $tokenProvider = $container['tokenProvider'];
     $reserver = new Services\SeatReserver(
         $orderMapper,
         $boxofficePurchaseMapper,
+        $customerPurchaseMapper,
         $reservationMapper,
         $reservationConverter,
         $tokenProvider,
@@ -224,4 +228,14 @@ $container['mail'] = function($container) {
     $settings = $container['settings']['Mailer'];
     $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $settings);
     return $mail;
+};
+
+$container['paymentProvider'] = function($container) {
+    if ($container['settings']['PaymentProvider']['gateway'] == 'Braintree') {
+        $settings = $container['settings']['PaymentProvider']['settings'];
+        $paymentProvider = new Services\BraintreePaymentProvider($settings);
+        return $paymentProvider;
+    } else {
+        throw new \Exception('Unknown payment gateway.');
+    }
 };

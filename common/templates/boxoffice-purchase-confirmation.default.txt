@@ -1,0 +1,16 @@
+Dear customer of {{boxoffice}}
+
+Thank you for your purchase. Please find the tickets in the attachement
+of this message.
+
+Purchased Seats
+===============
+{% for reservation in reservations %}
+{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Reduced){% endif %}
+
+{% endfor %}
+
+Total: {{total}} CHF
+
+Kind Regards
+xxx

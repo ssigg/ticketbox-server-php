@@ -19,6 +19,7 @@ class MigrateAction {
             $this->orm->mapper('Model\Block'),
             $this->orm->mapper('Model\BoxofficePurchase'),
             $this->orm->mapper('Model\Category'),
+            $this->orm->mapper('Model\CustomerPurchase'),
             $this->orm->mapper('Model\Event'),
             $this->orm->mapper('Model\Eventblock'),
             $this->orm->mapper('Model\Order'),

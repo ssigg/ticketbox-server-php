@@ -77,6 +77,54 @@ class CreateBoxofficePurchaseAction {
     }
 }
 
+class GetCustomerPurchaseTokenAction {
+    private $paymentProvider;
+
+    public function __construct(ContainerInterface $container) {
+        $this->paymentProvider = $container->get('paymentProvider');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $token = $this->paymentProvider->getToken();
+        $tokenContainer = [ "value" => $token ];
+        return $response->withJson($tokenContainer, 200);
+    }
+}
+
+class CreateCustomerPurchaseAction {
+    private $reserver;
+    private $paymentProvider;
+    private $mail;
+
+    public function __construct(ContainerInterface $container) {
+        $this->reserver = $container->get('seatReserver');
+        $this->paymentProvider = $container->get('paymentProvider');
+        $this->mail = $container->get('mail');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $data = $request->getParsedBody();
+        $nonce = $data['nonce'];
+        $title = $data['title'];
+        $firstname = $data['firstname'];
+        $lastname = $data['lastname'];
+        $email = $data['email'];
+        $locale = $data['locale'];
+
+        $totalPrice = $this->reserver->getTotalPriceOfPendingReservations();
+
+        $result = $this->paymentProvider->sale($totalPrice, $nonce);
+        if ($result->success) {
+            $purchase = $this->reserver->customerPurchase($title, $firstname, $lastname, $email, $locale);
+            $this->mail->sendCustomerPurchaseConfirmation($purchase, $totalPrice);
+            $this->mail->sendCustomerPurchaseNotification($purchase, $totalPrice);
+            return $response->withJson($purchase, 201);
+        } else {
+            return $response->withJson($result, 400);
+        }
+    }
+}
+
 class ExpandedBoxofficePurchase {
     public $id;
     public $boxoffice;

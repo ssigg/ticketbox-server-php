@@ -3,6 +3,7 @@
 class SeatReserverTest extends \PHPUnit_Framework_TestCase {
     private $orderMapperMock;
     private $boxofficePurchaseMapperMock;
+    private $customerPurchaseMapperMock;
     private $reservationMapperMock;
     private $reservationConverterMock;
     private $tokenProviderMock;
@@ -12,6 +13,9 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->setMethods(['create'])
             ->getMockForAbstractClass();
         $this->boxofficePurchaseMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
+            ->setMethods(['create'])
+            ->getMockForAbstractClass();
+        $this->customerPurchaseMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
             ->setMethods(['create'])
             ->getMockForAbstractClass();
         $this->reservationMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
@@ -37,6 +41,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -63,6 +68,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -84,6 +90,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -109,6 +116,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -134,6 +142,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -156,6 +165,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -191,13 +201,14 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $settings);
         
         $this->orderMapperMock->expects($this->never())->method('create');
-        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en', false);
     }
 
     public function testOrderCreatesOrder() {
@@ -223,13 +234,14 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $settings);
         
         $this->orderMapperMock->expects($this->once())->method('create');
-        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en', false);
     }
 
     public function testOrderModifiesAllReservations() {
@@ -254,13 +266,14 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
-        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en');
+        $reserver->order('Mr.', 'John', 'Doe', 'john.doe@example.com', 'en', false);
     }
 
     public function testBoxofficePurchaseWithoutReservationsDoesNothing() {
@@ -282,6 +295,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -314,6 +328,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,
@@ -345,6 +360,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $reserver = new Services\SeatReserver(
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
+            $this->customerPurchaseMapperMock,
             $this->reservationMapperMock,
             $this->reservationConverterMock,
             $this->tokenProviderMock,

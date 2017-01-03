@@ -7,6 +7,8 @@ interface MailInterface {
     function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice);
     function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice);
     function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice);
+    function sendCustomerPurchaseConfirmation($purchase, $totalPrice);
+    function sendCustomerPurchaseNotification($purchase, $totalPrice);
 }
 
 class Mail implements MailInterface {
@@ -43,7 +45,7 @@ class Mail implements MailInterface {
         $from = $this->settings['from'];
         $to = $email;
         $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
-        $subject = $this->settings['confirmation']['subject'];
+        $subject = $this->settings['order-confirmation']['subject'];
         $attachments = [];
         $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
         
@@ -62,11 +64,11 @@ class Mail implements MailInterface {
         ];
         $body = $template->render($params);
 
-        foreach ($this->settings['notification']['listeners'] as $listener) {
+        foreach ($this->settings['order-notification']['listeners'] as $listener) {
             $from = $this->settings['from'];
             $to = $listener;
             $replyTo = $firstname . ' ' . $lastname . ' <' . $email . '>';
-            $subject = $this->settings['notification']['subject'];
+            $subject = $this->settings['order-notification']['subject'];
             $attachments = [];
             $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 
@@ -118,6 +120,55 @@ class Mail implements MailInterface {
             $to = $listener;
             $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
             $subject = sprintf($this->settings['notification']['subject'], $boxoffice);
+            $attachments = [];
+            $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+
+            $this->mailer->send($message);
+        }
+    }
+
+    function sendCustomerPurchaseConfirmation($purchase, $totalPrice) {
+        $templateFileName = $this->templateProvider->getPath('customer-purchase-confirmation', $purchase->locale, 'txt');
+        $template = $this->twig->loadTemplate($templateFileName);
+
+        $pdfFilePaths = [];
+        foreach ($purchase->reservations as $reservation) {
+            $pdfFilePath = $this->pdfTicketWriter->write($reservation, $purchase->locale);
+            $pdfFilePaths[] = $pdfFilePath;
+        }
+
+        $params = [
+            'purchase' => $purchase,
+            'pdfFilePaths' => $pdfFilePaths,
+            'total' => $totalPrice
+        ];
+        $body = $template->render($params);
+
+        $from = $this->settings['from'];
+        $to = $purchase->email;
+        $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
+        $subject = $this->settings['purchase-confirmation']['subject'];
+        $attachments = $pdfFilePaths;
+        $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+
+        $this->mailer->send($message);
+    }
+
+    function sendCustomerPurchaseNotification($purchase, $totalPrice) {
+        $templateFileName = $this->templateProvider->getPath('customer-purchase-notification', 'default', 'txt');
+        $template = $this->twig->loadTemplate($templateFileName);
+
+        $params = [
+            'purchase' => $purchase,
+            'total' => $totalPrice
+        ];
+        $body = $template->render($params);
+
+        foreach ($this->settings['purchase-notification']['listeners'] as $listener) {
+            $from = $this->settings['from'];
+            $to = $listener;
+            $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
+            $subject = $this->settings['purchase-notification']['subject'];
             $attachments = [];
             $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 

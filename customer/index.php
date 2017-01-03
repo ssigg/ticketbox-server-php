@@ -21,6 +21,9 @@ $app->put('/reservations/{id}', Actions\ChangeReductionForReservationAction::cla
 $app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 
 $app->post('/orders', Actions\CreateOrderAction::class);
+
+$app->get('/customer-purchase-token', Actions\GetCustomerPurchaseTokenAction::class);
+$app->post('/customer-purchases', Actions\CreateCustomerPurchaseAction::class);
 // =============================================================
 
 $app->run();

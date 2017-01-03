@@ -23,9 +23,9 @@
             ]
         }
     },
-    "templateDirectory": "config/templates",
+    "templateDirectory": "../common/templates",
     "tempDirectory": "temp",
-    "ticketDirectory": "tickets",
+    "ticketDirectory": "../common/tickets",
     "Reservations": {
         "lifetimeInSeconds": 600
     }

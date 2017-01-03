@@ -45,7 +45,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
     public function testSendOrderConfirmation() {
         $settings = [
             'from' => 'from@example.com',
-            'confirmation' => [
+            'order-confirmation' => [
                 'subject' => 'Confirmation Subject'
             ],
             'replyTo' => [
@@ -63,7 +63,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
     public function testSendOrderNotification() {
         $settings = [
             'from' => 'from@example.com',
-            'notification' => [
+            'order-notification' => [
                 'subject' => 'Notification Subject',
                 'listeners' => [
                     'listener.1@example.com',
