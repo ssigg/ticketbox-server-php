@@ -5,11 +5,13 @@ namespace Services;
 class SeatplanWriter implements TicketPartWriterInterface {
     private $blockMapper;
     private $outputDirectoryPath;
+    private $settings;
 
-    public function __construct(\Spot\MapperInterface $blockMapper, FilePersisterInterface $filePersister, $outputDirectoryPath) {
+    public function __construct(\Spot\MapperInterface $blockMapper, FilePersisterInterface $filePersister, $outputDirectoryPath, $settings) {
         $this->blockMapper = $blockMapper;
         $this->filePersister = $filePersister;
         $this->outputDirectoryPath = $outputDirectoryPath;
+        $this->settings = $settings;
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
@@ -27,7 +29,10 @@ class SeatplanWriter implements TicketPartWriterInterface {
         $imageData = base64_decode($matches[2]);
         $image = imagecreatefromstring($imageData);
         imagesetthickness($image, 4);
-        $color = imagecolorallocate($image, 255, 50, 50); // TODO: use color from settings
+        $r = $this->settings['markerColor']['R'];
+        $g = $this->settings['markerColor']['G'];
+        $b = $this->settings['markerColor']['B'];
+        $color = imagecolorallocate($image, $r, $g, $b);
         imageline($image, $seat->x0, $seat->y0, $seat->x1, $seat->y1, $color);
         imageline($image, $seat->x1, $seat->y1, $seat->x2, $seat->y2, $color);
         imageline($image, $seat->x2, $seat->y2, $seat->x3, $seat->y3, $color);

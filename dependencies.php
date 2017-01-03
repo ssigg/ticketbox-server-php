@@ -127,7 +127,8 @@ $container['seatplanWriter'] = function($container) {
     $blockMapper = $container['orm']->mapper('Model\Block');
     $filePersister = $container['filePersister'];
     $tempDirectory = $pathConverter->convert($container['settings']['tempDirectory']);
-    $seatplanWriter = new Services\SeatplanWriter($blockMapper, $filePersister, $tempDirectory);
+    $settings = $container['settings']['SeatplanWriter'];
+    $seatplanWriter = new Services\SeatplanWriter($blockMapper, $filePersister, $tempDirectory, $settings);
     return $seatplanWriter;
 };
 

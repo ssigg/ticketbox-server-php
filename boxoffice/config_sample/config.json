@@ -24,6 +24,13 @@
             ]
         }
     },
+    "SeatplanWriter": {
+        "markerColor": {
+            "R": 255,
+            "G": 50,
+            "B": 50
+        }
+    },
     "templateDirectory": "config/templates",
     "tempDirectory": "temp",
     "ticketDirectory": "tickets",

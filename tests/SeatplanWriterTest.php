@@ -19,7 +19,12 @@ class SeatplanWriterTest extends \PHPUnit_Framework_TestCase {
             ->getMockForAbstractClass();
 
         $this->outputDirectory = 'output';
-        $this->writer = new Services\SeatplanWriter($this->blockMapperMock, $this->filePersisterMock, $this->outputDirectory);
+        $settings = [
+            "markerColor" => [
+                "R" => 255, "G" => 0, "B" => 0
+            ]
+        ];
+        $this->writer = new Services\SeatplanWriter($this->blockMapperMock, $this->filePersisterMock, $this->outputDirectory, $settings);
         
         $this->unique_id = 'unique';
         $this->reservation = new SeatplanWriterTestReservationStub($this->unique_id, 42);
