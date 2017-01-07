@@ -6,10 +6,9 @@ interface SeatReserverInterface {
     function getReservations();
     function reserve($seats, $event, $category);
     function release($reservationId);
+    function getReservationsExpirationTimestamp();
     function changeReduction($reservationId, $value);
     function order($title, $firstname, $lastname, $email, $locale);
-    function getOrder($orderId);
-    function upgradeOrderToCustomerPurchase($order);
     function boxofficePurchase($boxofficeName, $locale);
 }
 
@@ -48,13 +47,18 @@ class SeatReserver implements SeatReserverInterface {
 
     public function reserve($seat, $event, $category) {
         $this->deleteStaleReservations();
+        $oldestReservation = $this->reservationMapper
+            ->where([ 'token' => $this->token, 'order_id' => null ])
+            ->order([ 'timestamp' => 'DESC' ])
+            ->first();
+        $timestamp = $oldestReservation != null ? $oldestReservation->get('timestamp') : time();
         $data = [
             'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
             'token' => $this->token,
             'seat_id' => $seat->get('id'),
             'event_id' => $event->get('id'),
             'category_id' => $category->get('id'),
-            'timestamp' => time(),
+            'timestamp' => $timestamp,
             'is_reduced' => false
         ];
         $result = $this->reservationMapper->insert($data);
@@ -67,6 +71,19 @@ class SeatReserver implements SeatReserverInterface {
 
     public function release($reservationId) {
         $this->reservationMapper->delete([ 'id' => $reservationId, 'token' => $this->token ]);
+    }
+
+    public function getReservationsExpirationTimestamp() {
+        $this->deleteStaleReservations();
+        $oldestReservation = $this->reservationMapper
+            ->where([ 'token' => $this->token, 'order_id' => null ])
+            ->order([ 'timestamp' => 'DESC' ])
+            ->first();
+        if ($oldestReservation != null) {
+            return $oldestReservation->get('timestamp') + $this->settings['lifetimeInSeconds'];
+        } else {
+            return null;
+        }
     }
 
     public function changeReduction($reservationId, $value) {
@@ -98,8 +115,9 @@ class SeatReserver implements SeatReserverInterface {
                 $this->reservationMapper->update($reservation);
             }
             return $order;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public function boxofficePurchase($boxofficeName, $locale) {
@@ -118,8 +136,9 @@ class SeatReserver implements SeatReserverInterface {
                 $this->reservationMapper->update($reservation);
             }
             return $purchase;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public function customerPurchase($title, $firstname, $lastname, $email, $locale) {
@@ -136,13 +155,14 @@ class SeatReserver implements SeatReserverInterface {
             $purchase = $this->customerPurchaseMapper->create($data);
             $purchase->reservations = $this->reservationConverter->convert($reservations);
             foreach ($reservations as $reservation) {
-                $reservation->order_kind = 'boxoffice-purchase';
+                $reservation->order_kind = 'customer-purchase';
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
             return $purchase;
+        } else {
+            return null;
         }
-        return null;
     }
 
     public function getTotalPriceOfPendingReservations() {
@@ -153,31 +173,6 @@ class SeatReserver implements SeatReserverInterface {
             $totalPrice += $expandedReservation->price;
         }
         return $totalPrice;
-    }
-
-    public function getOrder($orderId) {
-        $order = $this->orderMapper->get($orderId);
-        $reservations = $this->reservationMapper->where([ 'order_id' => $orderId ]);
-        $order->reservations = $this->reservationConverter->convert($reservations);
-        return $order;
-    }
-
-    public function upgradeOrderToCustomerPurchase($order) {
-        $data = [
-            'title' => $order->title,
-            'firstname' => $order->firstname,
-            'lastname' => $order->lastname,
-            'email' => $order->email,
-            'locale' => $order->locale
-        ];
-        $purchase = $this->customerPurchaseMapper->create($data);
-        foreach ($order->reservations as $reservation) {
-            $reservation->order_kind = 'customer-purchase';
-            $reservation->order_id = $purchase->get('id');
-            $this->reservationMapper->update($reservation);
-        }
-        $this->orderMapper->delete($order->id);
-        return $purchase;
     }
 
     private function deleteStaleReservations() {

@@ -23,6 +23,15 @@
             ]
         }
     },
+    "PaymentProvider": {
+        "gateway": "Braintree",
+        "settings": {
+            "environment": "sandbox",
+            "merchantId": "merchantId",
+            "publicKey": "publicKey",
+            "privateKey": "privateKey"
+        }
+    },
     "templateDirectory": "../common/templates",
     "tempDirectory": "temp",
     "ticketDirectory": "../common/tickets",

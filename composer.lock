@@ -819,12 +819,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/mail.git",
-                "reference": "ba06ea7a49b7292ff06c6909fbc7d5e1c25eaaa4"
+                "reference": "16db2e8ea54e952a4dc5e37a23c05f4d7d770749"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/mail/zipball/ba06ea7a49b7292ff06c6909fbc7d5e1c25eaaa4",
-                "reference": "ba06ea7a49b7292ff06c6909fbc7d5e1c25eaaa4",
+                "url": "https://api.github.com/repos/nette/mail/zipball/16db2e8ea54e952a4dc5e37a23c05f4d7d770749",
+                "reference": "16db2e8ea54e952a4dc5e37a23c05f4d7d770749",
                 "shasum": ""
             },
             "require": {
@@ -872,7 +872,7 @@
             ],
             "description": "Nette Mail: Sending E-mails",
             "homepage": "https://nette.org",
-            "time": "2017-01-02 23:25:02"
+            "time": "2017-01-04 14:19:49"
         },
         {
             "name": "nette/utils",

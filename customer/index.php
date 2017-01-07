@@ -20,6 +20,8 @@ $app->post('/reservations', Actions\CreateReservationAction::class);
 $app->put('/reservations/{id}', Actions\ChangeReductionForReservationAction::class);
 $app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 
+$app->get('/reservations-expiration-timestamp', Actions\GetReservationsExpirationTimestampAction::class);
+
 $app->post('/orders', Actions\CreateOrderAction::class);
 
 $app->get('/customer-purchase-token', Actions\GetCustomerPurchaseTokenAction::class);
