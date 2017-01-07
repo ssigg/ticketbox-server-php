@@ -6,8 +6,8 @@
 Use this server together with the web client available at https://github.com/ssigg/ticketbox-client-angularjs
 
 ## Available endpoints
-* `/customer`: Endpoint for customer interface available to all visitors. Currently, they can only reserve seats but they cannot purchase any tickets.
-* `/boxoffice`: Endpoint for the box office or ticket agencies. Currently, they can sell hardware tickets and mark the seats as sold.
+* `/customer`: Endpoint for customer interface available to all visitors.
+* `/boxoffice`: Endpoint for the box office or ticket agencies.
 * `/admin`: Administration interface endpoint.
 
 
