@@ -8,7 +8,8 @@
         "bacon/bacon-qr-code": "^1.0.1",
         "message/wkhtmltopdf": "dev-master",
         "mikehaertl/phpwkhtmltopdf": "^2.2.0",
-        "tivie/php-os-detector": "dev-master"
+        "tivie/php-os-detector": "dev-master",
+        "braintree/braintree_php": "^3.20.0"
 
     },
     "require-dev": {

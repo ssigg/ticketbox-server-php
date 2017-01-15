@@ -39,6 +39,8 @@ class SeatConverter implements SeatConverterInterface {
                 $state = 'ordered';
             } else if ($reservation->get('order_kind') == 'boxoffice-purchase') {
                 $state = 'sold';
+            } else if ($reservation->get('order_kind') == 'customer-purchase') {
+                $state = 'sold';
             } else {
                 throw new \Exception('Unknown Reservations->order_kind: ' + $reservation->get('order_kind'));
             }

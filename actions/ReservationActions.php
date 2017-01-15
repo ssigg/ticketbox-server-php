@@ -96,3 +96,19 @@ class ChangeReductionForReservationAction {
         return $response->withJson($expandedReservation, 200);
     }
 }
+
+class GetReservationsExpirationTimestampAction {
+    private $reserver;
+    
+    public function __construct(ContainerInterface $container) {
+        $this->reserver = $container->get('seatReserver');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $expirationTimestamp = $this->reserver->getReservationsExpirationTimestamp();
+        $expirationTimestampContainer = [
+            'value' => $expirationTimestamp
+        ];
+        return $response->withJson($expirationTimestampContainer, 200);
+    }
+}

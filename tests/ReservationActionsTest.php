@@ -4,7 +4,7 @@ class ReservationActionsTest extends DatabaseTestBase {
     protected function setUp() {
         parent::setUp();
         $reserverMock = $this->getMockBuilder(SeatReserverInterface::class)
-            ->setMethods(['getReservations', 'reserve', 'release', 'changeReduction'])
+            ->setMethods(['getReservations', 'reserve', 'release', 'changeReduction', 'getReservationsExpirationTimestamp'])
             ->getMock();
         $this->container['seatReserver'] = $reserverMock;
 
@@ -131,6 +131,18 @@ class ReservationActionsTest extends DatabaseTestBase {
 
         $reserverMock->expects($this->once())->method('changeReduction');
         $action($request, $response, [ 'id' => 42 ]); 
+    }
+
+    public function testUseReserverToFetchReservationsExpirationTimestamp() {
+        $action = new Actions\GetReservationsExpirationTimestampAction($this->container);
+
+        $request = $this->getGetRequest('/reservations-expiration-timestamp');
+        $response = new \Slim\Http\Response();
+
+        $reserverMock = $this->container->get('seatReserver');
+
+        $reserverMock->expects($this->once())->method('getReservationsExpirationTimestamp');
+        $action($request, $response, [ ]); 
     }
 
     private function getEntityMock() {

@@ -10,6 +10,7 @@ var bases = {
 var paths = [
     'actions/*',
     'admin/**',
+    'common/**',
     '!admin/config',
     'boxoffice/**',
     '!boxoffice/config',

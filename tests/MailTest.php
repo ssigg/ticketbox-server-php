@@ -45,7 +45,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
     public function testSendOrderConfirmation() {
         $settings = [
             'from' => 'from@example.com',
-            'confirmation' => [
+            'order-confirmation' => [
                 'subject' => 'Confirmation Subject'
             ],
             'replyTo' => [
@@ -63,7 +63,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
     public function testSendOrderNotification() {
         $settings = [
             'from' => 'from@example.com',
-            'notification' => [
+            'order-notification' => [
                 'subject' => 'Notification Subject',
                 'listeners' => [
                     'listener.1@example.com',
@@ -128,6 +128,72 @@ class MailTest extends \PHPUnit_Framework_TestCase {
 
         $reservationStub = new MailTestReservationStub('unique');
         $mail->sendBoxofficePurchaseConfirmation('Box office', 'john.doe@example.com', 'en', [ $reservationStub ], 0);
+    }
+
+    public function testSendCustomerPurchaseNotification() {
+        $settings = [
+            'from' => 'from@example.com',
+            'purchase-confirmation' => [
+                'subject' => 'Confirmation subject'
+            ],
+            'purchase-notification' => [
+                'subject' => 'Notification Subject',
+                'listeners' => [
+                    'listener.1@example.com',
+                    'listener.2@example.com'
+                ]
+            ],
+            'replyTo' => [
+                'name' => 'Reply',
+                'email' => 'reply@example.com'
+            ]
+        ];
+        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->messageFactoryMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+
+        $this->mailerMock->expects($this->exactly(2))->method('send');
+
+        $reservationStub = new MailTestReservationStub('unique');
+        $purchaseStub = new MailTestCustomerPurchaseStub('en', 'john.doe@example.com', [ $reservationStub ]);
+        $mail->sendCustomerPurchaseNotification($purchaseStub, 0);
+    }
+
+    public function testSendCustomerPurchaseConfirmation() {
+        $settings = [
+            'from' => 'from@example.com',
+            'purchase-confirmation' => [
+                'subject' => 'Confirmation subject'
+            ],
+            'purchase-notification' => [
+                'subject' => 'Notification Subject',
+                'listeners' => [
+                    'listener.1@example.com',
+                    'listener.2@example.com'
+                ]
+            ],
+            'replyTo' => [
+                'name' => 'Reply',
+                'email' => 'reply@example.com'
+            ]
+        ];
+        $mail = new Services\Mail($this->twigMock, $this->templateProviderMock, $this->messageFactoryMock, $this->mailerMock, $this->pdfTicketWriterMock, $settings);
+
+        $this->mailerMock->expects($this->once())->method('send');
+
+        $reservationStub = new MailTestReservationStub('unique');
+        $purchaseStub = new MailTestCustomerPurchaseStub('en', 'john.doe@example.com', [ $reservationStub ]);
+        $mail->sendCustomerPurchaseConfirmation($purchaseStub, 0);
+    }
+}
+
+class MailTestCustomerPurchaseStub {
+    public $locale;
+    public $email;
+    public $reservations;
+
+    public function __construct($locale, $email, $reservations) {
+        $this->locale = $locale;
+        $this->email = $email;
+        $this->reservations = $reservations;
     }
 }
 

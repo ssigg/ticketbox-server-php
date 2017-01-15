@@ -27,6 +27,8 @@ class Reservation extends \Spot\Entity {
                 return true;
             } else if ($reservation->order_kind == 'boxoffice-purchase') {
                 return true;
+            } else if ($reservation->order_kind == 'customer-purchase') {
+                return true;
             } else {
                 return false;
             }

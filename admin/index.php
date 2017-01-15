@@ -43,6 +43,8 @@ $app->get('/orders', Actions\ListOrdersAction::class);
 
 $app->get('/boxoffice-purchases', Actions\ListBoxofficePurchasesAction::class);
 
+$app->get('/customer-purchases', Actions\ListCustomerPurchasesAction::class);
+
 $app->post('/migrate', Actions\MigrateAction::class);
 // =============================================================
 
