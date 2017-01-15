@@ -10,6 +10,8 @@ interface SeatReserverInterface {
     function changeReduction($reservationId, $value);
     function order($title, $firstname, $lastname, $email, $locale);
     function boxofficePurchase($boxofficeName, $locale);
+    function customerPurchase($title, $firstname, $lastname, $email, $locale);
+    function getTotalPriceOfPendingReservations();
 }
 
 class SeatReserver implements SeatReserverInterface {
