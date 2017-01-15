@@ -77,6 +77,40 @@ class CreateBoxofficePurchaseAction {
     }
 }
 
+class ListCustomerPurchasesAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->reservationConverter = $container->get('reservationConverter');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $customerPurchaseMapper = $this->orm->mapper('Model\CustomerPurchase');
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+
+        $customerPurchases = $customerPurchaseMapper->all();
+
+        $eventId = $request->getQueryParam('event_id', null);
+        $expandedCustomerPurchases = [];
+        foreach ($customerPurchases as $customerPurchase) {
+            $reservations = [];
+            if ($eventId != null) {
+                $reservations = $reservationMapper->where([ 'order_id' => $customerPurchase->id, 'order_kind' => 'customer-purchase', 'event_id' => $eventId ]);
+            } else {
+                $reservations = $reservationMapper->where([ 'order_id' => $customerPurchase->id, 'order_kind' => 'customer-purchase' ]);
+            }
+            if (count($reservations) > 0) {
+                $expandedReservations = $this->reservationConverter->convert($reservations);
+                $expandedCustomerPurchase = new ExpandedCustomerPurchase($customerPurchase, $expandedReservations);
+                $expandedCustomerPurchases[] = $expandedCustomerPurchase;
+            }
+        }
+
+        return $response->withJson($expandedCustomerPurchases, 200);
+    }
+}
+
 class GetCustomerPurchaseTokenAction {
     private $paymentProvider;
 
@@ -137,6 +171,33 @@ class ExpandedBoxofficePurchase {
         $this->boxoffice = $boxofficePurchase->boxoffice;
         $this->locale = $boxofficePurchase->locale;
         $this->timestamp = $boxofficePurchase->timestamp;
+        $this->reservations = $reservations;
+
+        $this->totalPrice = 0;
+        foreach ($reservations as $reservation) {
+            $this->totalPrice += $reservation->price; 
+        }
+    }
+}
+
+class ExpandedCustomerPurchase {
+    public $id;
+    public $title;
+    public $firstname;
+    public $lastname;
+    public $email;
+    public $locale;
+    public $timestamp;
+    public $reservations;
+    public $totalPrice;
+    public function __construct($customerPurchase, $reservations) {
+        $this->id = $customerPurchase->id;
+        $this->title = $customerPurchase->title;
+        $this->firstname = $customerPurchase->firstname;
+        $this->lastname = $customerPurchase->lastname;
+        $this->email = $customerPurchase->email;
+        $this->locale = $customerPurchase->locale;
+        $this->timestamp = $customerPurchase->timestamp;
         $this->reservations = $reservations;
 
         $this->totalPrice = 0;

@@ -6,6 +6,7 @@ require dirname(__FILE__) . '/../model/Category.php';
 require dirname(__FILE__) . '/../model/Eventblock.php';
 require dirname(__FILE__) . '/../model/Order.php';
 require dirname(__FILE__) . '/../model/BoxofficePurchase.php';
+require dirname(__FILE__) . '/../model/CustomerPurchase.php';
 require dirname(__FILE__) . '/../model/Reservation.php';
 require dirname(__FILE__) . '/../model/Seat.php';
 
@@ -82,6 +83,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             $spot->mapper('Model\Eventblock'),
             $spot->mapper('Model\Order'),
             $spot->mapper('Model\BoxofficePurchase'),
+            $spot->mapper('Model\CustomerPurchase'),
             $spot->mapper('Model\Reservation'),
             $spot->mapper('Model\Seat'),
         ];
@@ -138,6 +140,16 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
         $boxofficePurchaseMapper = $spot->mapper('Model\BoxofficePurchase');
         $boxofficePurchaseMapper->create([
             'boxoffice' => 'Box Office',
+            'locale' => 'en',
+            'timestamp' => 123
+        ]);
+
+        $customerPurchaseMapper = $spot->mapper('Model\CustomerPurchase');
+        $customerPurchaseMapper->create([
+            'title' => 'm',
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'email' => 'john.doe@example.com',
             'locale' => 'en',
             'timestamp' => 123
         ]);

@@ -35,7 +35,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $this->container['paymentProvider'] = $paymentProviderMock;
     }
 
-    public function testExpandAllReservationsWhenListingWithoutEventId() {
+    public function testExpandAllReservationsWhenListingBoxofficePurchasesWithoutEventId() {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
@@ -65,7 +65,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
-    public function testExpandEvent1ReservationsWhenListingWithEventId1() {
+    public function testExpandEvent1ReservationsWhenListingBoxofficePurchasesWithEventId1() {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
@@ -95,7 +95,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
-    public function testExpandNoReservationsWhenListingWithEventId2() {
+    public function testExpandNoReservationsWhenListingBoxofficePurchasesWithEventId2() {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
@@ -124,7 +124,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
-    public function testSumUpReservationsPriceWhenListing() {
+    public function testSumUpReservationsPriceWhenListingBoxofficePurchases() {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
         $reservationMapper->create([
@@ -207,6 +207,129 @@ class PurchaseActionsTest extends DatabaseTestBase {
 
         $mailMock->expects($this->once())->method('sendBoxofficePurchaseConfirmation');
         $action($request, $response, []);
+    }
+
+    public function testExpandAllReservationsWhenListingCustomerPurchasesWithoutEventId() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationMapper->create([
+            'unique_id' => 'unique',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'customer-purchase',
+            'is_reduced' => false,
+            'timestamp' => time()]);
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\ListCustomerPurchasesAction($this->container);
+
+        $request = $this->getGetRequest('/customer-purchases');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->once())->method('convert');
+        $action($request, $response, []);
+    }
+
+    public function testExpandEvent1ReservationsWhenListingCustomerPurchasesWithEventId1() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationMapper->create([
+            'unique_id' => 'unique',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'customer-purchase',
+            'is_reduced' => false,
+            'timestamp' => time()]);
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\ListCustomerPurchasesAction($this->container);
+
+        $request = $this->getGetRequest('/boxoffice-purchases?event_id=1');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->once())->method('convert');
+        $action($request, $response, []);
+    }
+
+    public function testExpandNoReservationsWhenListingCustomerPurchasesWithEventId2() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationMapper->create([
+            'unique_id' => 'unique',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'customer-purchase',
+            'is_reduced' => false,
+            'timestamp' => time()]);
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+        $action = new Actions\ListCustomerPurchasesAction($this->container);
+
+        $request = $this->getGetRequest('/customer-purchases?event_id=2');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->never())->method('convert');
+        $action($request, $response, []);
+    }
+
+    public function testSumUpReservationsPriceWhenListingCustomerPurchases() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationMapper->create([
+            'unique_id' => 'unique',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'customer-purchase',
+            'is_reduced' => false,
+            'timestamp' => time()]);
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([
+                new PurchaseActionsTestExpandedReservationStub(2),
+                new PurchaseActionsTestExpandedReservationStub(40)
+            ]);
+        
+        $action = new Actions\ListCustomerPurchasesAction($this->container);
+
+        $request = $this->getGetRequest('/customer-purchases');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, []);
+
+        $decodedResponse = json_decode((string)$response->getBody(), true);
+        $this->assertSame(1, count($decodedResponse));
+        $this->assertSame(42, $decodedResponse[0]['totalPrice']);
     }
 
     public function testUsePaymentProviderToGetToken() {
