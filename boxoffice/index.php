@@ -10,7 +10,7 @@ require '../dependencies.php';
 
 // Routes
 // =============================================================
-$app->get('/events', Actions\ListEventsAction::class);
+$app->get('/events', Actions\ListVisibleEventsAction::class);
 $app->get('/events/{id}', Actions\GetEventAction::class);
 
 $app->get('/eventblocks/{id}', Actions\GetEventblockAction::class);
