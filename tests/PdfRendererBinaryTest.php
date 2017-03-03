@@ -29,7 +29,7 @@ class PdfRendererBinaryTest extends \PHPUnit_Framework_TestCase {
             ->method('getFamily')
             ->willReturn(\Tivie\OS\UNIX_FAMILY);
         $path = $this->binary->getPath();
-        $this->assertContains('vendor/message/wkhtmltopdf/bin/wkhtmltopdf-i386', $path);
+        $this->assertContains('vendor/message/wkhtmltopdf/bin/wkhtmltopdf-amd64', $path);
     }
 
     public function testThrowsExceptionIfNotOSXOrLinux() {
