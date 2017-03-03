@@ -24,6 +24,14 @@ class PurchaseActionsTest extends DatabaseTestBase {
             ->willReturn(new PurchaseActionsTestCustomerPurchaseStub());
         $this->container['seatReserver'] = $reserverMock;
 
+        $upgraderMock = $this->getMockBuilder(OrderToBoxofficePurchaseUpgraderInterface::class)
+            ->setMethods(['upgrade'])
+            ->getMock();
+        $upgraderMock
+            ->method('upgrade')
+            ->willReturn(new PurchaseActionsTestBoxofficePurchaseStub());
+        $this->container['orderToBoxofficePurchaseUpgrader'] = $upgraderMock;
+
         $reservationConverterMock = $this->getMockBuilder(ReservationConverterInterface::class)
             ->setMethods(['convert'])
             ->getMock();
@@ -207,6 +215,57 @@ class PurchaseActionsTest extends DatabaseTestBase {
 
         $mailMock->expects($this->once())->method('sendBoxofficePurchaseConfirmation');
         $action($request, $response, []);
+    }
+
+    public function testUseUpgraderToUpgradeOrderToBoxofficePurchase() {
+        $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "paper",
+            "locale" => "en"
+        ];
+        $request = $this->getPutRequest('/upgrade-order/1', $data);
+        $response = new \Slim\Http\Response();
+
+        $upgraderMock = $this->container->get('orderToBoxofficePurchaseUpgrader');
+
+        $upgraderMock->expects($this->once())->method('upgrade');
+        $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testSendBoxofficePurchaseNotificationWhenUpgradingOrder() {
+        $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "paper",
+            "locale" => "en"
+        ];
+        $request = $this->getPutRequest('/upgrade-order/1', $data);
+        $response = new \Slim\Http\Response();
+
+        $mailMock = $this->container->get('mail');
+
+        $mailMock->expects($this->once())->method('sendBoxofficePurchaseNotification');
+        $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testSendBoxofficePurchaseConfirmationWhileUpgradingOrderWhenBoxofficeIsPdfBoxoffice() {
+        $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "pdf",
+            "locale" => "en"
+        ];
+        $request = $this->getPutRequest('/upgrade-order/1', $data);
+        $response = new \Slim\Http\Response();
+
+        $mailMock = $this->container->get('mail');
+
+        $mailMock->expects($this->once())->method('sendBoxofficePurchaseConfirmation');
+        $action($request, $response, [ 'id' => 1 ]);
     }
 
     public function testExpandAllReservationsWhenListingCustomerPurchasesWithoutEventId() {

@@ -23,6 +23,7 @@ $app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 $app->get('/orders', Actions\ListOrdersAction::class);
 
 $app->post('/boxoffice-purchases', Actions\CreateBoxofficePurchaseAction::class);
+$app->put('/upgrade-order/{id}', Actions\UpgradeOrderToBoxofficePurchaseAction::class);
 // =============================================================
 
 $app->run();
