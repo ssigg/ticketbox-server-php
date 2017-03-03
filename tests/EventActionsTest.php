@@ -1,15 +1,27 @@
 <?php
 
 class EventActionsTest extends DatabaseTestBase {
-    public function testListEventsAction() {
-        $action = new Actions\ListEventsAction($this->container);
+    public function testListAllEventsAction() {
+        $action = new Actions\ListAllEventsAction($this->container);
 
         $request = $this->getGetRequest('/events');
         $response = new \Slim\Http\Response();
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1"}]',
+            '[{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","visible":true},{"id":2,"name":"Event 2","location":"Location 2","dateandtime":"Date and Time 2","visible":false}]',
+            (string)$response->getBody());
+    }
+
+    public function testListVisibleEventsAction() {
+        $action = new Actions\ListVisibleEventsAction($this->container);
+
+        $request = $this->getGetRequest('/events');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, []);
+        $this->assertSame(
+            '[{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","visible":true}]',
             (string)$response->getBody());
     }
 
@@ -31,14 +43,14 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","blocks":[{"id":1,"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}}]}',
+            '{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","visible":true,"blocks":[{"id":1,"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}}]}',
             (string)$response->getBody());
     }
 
     public function testCreateEventAction() {
         $action = new Actions\CreateEventAction($this->container);
 
-        $request = $this->getPostRequest('/events', [ 'name' => 'Test name', 'location' => 'There', 'dateandtime' => 'Tomorrow, 8 PM' ]);
+        $request = $this->getPostRequest('/events', [ 'name' => 'Test name', 'location' => 'There', 'dateandtime' => 'Tomorrow, 8 PM', 'visible' => true ]);
         $response = new \Slim\Http\Response();
 
         $eventMapper = $this->container->orm->mapper('Model\Event');
@@ -56,10 +68,12 @@ class EventActionsTest extends DatabaseTestBase {
         $newName = "New name";
         $newLocation = "New location";
         $newDateandtime = "New date and time";
+        $newVisible = false;
         $data = [
             "name" => $newName,
             "location" => $newLocation,
-            "dateandtime" => $newDateandtime
+            "dateandtime" => $newDateandtime,
+            "visible" => $newVisible
         ];
         $request = $this->getPutRequest('/events/1', $data);
         $response = new \Slim\Http\Response();
@@ -70,6 +84,7 @@ class EventActionsTest extends DatabaseTestBase {
         $this->assertNotSame($eventBefore->name, $newName);
         $this->assertNotSame($eventBefore->location, $newLocation);
         $this->assertNotSame($eventBefore->dateandtime, $newDateandtime);
+        $this->assertNotSame($eventBefore->visible, $newVisible);
 
         $response = $action($request, $response, [ 'id' => 1 ]);
 
@@ -77,9 +92,10 @@ class EventActionsTest extends DatabaseTestBase {
         $this->assertSame($eventAfter->name, $newName);
         $this->assertSame($eventAfter->location, $newLocation);
         $this->assertSame($eventAfter->dateandtime, $newDateandtime);
+        $this->assertSame($eventAfter->visible, $newVisible);
 
         $this->assertSame(
-            '{"id":1,"name":"New name","location":"New location","dateandtime":"New date and time"}',
+            '{"id":1,"name":"New name","location":"New location","dateandtime":"New date and time","visible":false}',
             (string)$response->getBody());
     }
 

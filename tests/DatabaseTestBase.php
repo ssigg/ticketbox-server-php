@@ -95,7 +95,13 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
         $eventMapper->create([
             'name' => 'Event 1',
             'location' => 'Location 1',
-            'dateandtime' => 'Date and Time 1' ]);
+            'dateandtime' => 'Date and Time 1',
+            'visible' => true ]);
+        $eventMapper->create([
+            'name' => 'Event 2',
+            'location' => 'Location 2',
+            'dateandtime' => 'Date and Time 2',
+            'visible' => false ]);
 
         $eventblockMapper = $spot->mapper('Model\Eventblock');
         $eventblockMapper->create([

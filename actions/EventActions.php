@@ -7,7 +7,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
  
-class ListEventsAction {
+class ListAllEventsAction {
     private $orm;
 
     public function __construct(ContainerInterface $container) {
@@ -17,6 +17,20 @@ class ListEventsAction {
     public function __invoke(Request $request, Response $response, $args = []) {
         $mapper = $this->orm->mapper('Model\Event');
         $events = $mapper->all()->toArray();
+        return $response->withJson($events, 200);
+    }
+}
+
+class ListVisibleEventsAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $mapper = $this->orm->mapper('Model\Event');
+        $events = $mapper->where(['visible' => true])->toArray();
         return $response->withJson($events, 200);
     }
 }
@@ -86,6 +100,7 @@ class ChangeEventAction {
         $event->name = $data['name'];
         $event->location = $data['location'];
         $event->dateandtime = $data['dateandtime'];
+        $event->visible = $data['visible'];
         $mapper->update($event);
 
         return $response->withJson($event, 200);

@@ -10,7 +10,7 @@ require '../dependencies.php';
 
 // Routes
 // =============================================================
-$app->get('/events', Actions\ListEventsAction::class);
+$app->get('/events', Actions\ListAllEventsAction::class);
 $app->get('/events/{id}', Actions\GetEventAction::class);
 $app->post('/events', Actions\CreateEventAction::class);
 $app->put('/events/{id}', Actions\ChangeEventAction::class);
