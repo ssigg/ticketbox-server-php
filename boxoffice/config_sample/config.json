@@ -31,6 +31,10 @@
             "B": 50
         }
     },
+    "PriceModificators": {
+        "addend": 0,
+        "factor": 1
+    },
     "templateDirectory": "../common/templates",
     "tempDirectory": "temp",
     "ticketDirectory": "../common/tickets",

@@ -70,7 +70,8 @@ $container['reservationConverter'] = function($container) {
     $seatMapper = $container['orm']->mapper('Model\Seat');
     $eventblockMapper = $container['orm']->mapper('Model\Eventblock');
     $categoryMapper = $container['orm']->mapper('Model\Category');
-    $converter = new Services\ReservationConverter($eventMapper, $seatMapper, $eventblockMapper, $categoryMapper);
+    $priceModificators = $container['settings']['PriceModificators'];
+    $converter = new Services\ReservationConverter($eventMapper, $seatMapper, $eventblockMapper, $categoryMapper, $priceModificators);
     return $converter;
 };
 

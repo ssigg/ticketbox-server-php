@@ -146,6 +146,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
         $boxofficePurchaseMapper = $spot->mapper('Model\BoxofficePurchase');
         $boxofficePurchaseMapper->create([
             'boxoffice' => 'Box Office',
+            'price' => 42,
             'locale' => 'en',
             'timestamp' => 123
         ]);
@@ -156,6 +157,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             'firstname' => 'John',
             'lastname' => 'Doe',
             'email' => 'john.doe@example.com',
+            'price' => 42,
             'locale' => 'en',
             'timestamp' => 123
         ]);

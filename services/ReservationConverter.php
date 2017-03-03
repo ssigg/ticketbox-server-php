@@ -12,11 +12,12 @@ class ReservationConverter implements ReservationConverterInterface {
     private $eventblockMapper;
     private $categoryMapper;
 
-    public function __construct(\Spot\MapperInterface $eventMapper, \Spot\MapperInterface $seatMapper, \Spot\MapperInterface $eventblockMapper, \Spot\MapperInterface $categoryMapper) {
+    public function __construct(\Spot\MapperInterface $eventMapper, \Spot\MapperInterface $seatMapper, \Spot\MapperInterface $eventblockMapper, \Spot\MapperInterface $categoryMapper, $priceModificators) {
         $this->eventMapper = $eventMapper;
         $this->seatMapper = $seatMapper;
         $this->eventblockMapper = $eventblockMapper;
         $this->categoryMapper = $categoryMapper;
+        $this->priceModificators = $priceModificators;
     }
 
     public function convert($reservations) {
@@ -30,7 +31,8 @@ class ReservationConverter implements ReservationConverterInterface {
             $category = $this->categoryMapper->get($reservation->get('category_id'));
             $isReduced = $reservation->get('is_reduced');
             $price = $isReduced ? $category->get('price_reduced') : $category->get('price');
-            $expandedReservations[] = new ExpandedReservation($id, $unique_id, $event, $seat, $category, $isReduced, $price);
+            $modifiedPrice = ($price * $this->priceModificators['factor']) + $this->priceModificators['addend'];
+            $expandedReservations[] = new ExpandedReservation($id, $unique_id, $event, $seat, $category, $isReduced, $modifiedPrice);
         }
         return $expandedReservations;
     }
