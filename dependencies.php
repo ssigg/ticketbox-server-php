@@ -41,6 +41,7 @@ require 'actions/OrderActions.php';
 require 'actions/PurchaseActions.php';
 require 'actions/SeatActions.php';
 require 'actions/AdminActions.php';
+require 'actions/ScannerActions.php';
 
 $container = $app->getContainer();
 
