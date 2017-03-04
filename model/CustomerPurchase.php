@@ -11,6 +11,7 @@ class CustomerPurchase extends \Spot\Entity {
             'firstname' => ['type' => 'string', 'required' => true],
             'lastname' => ['type' => 'string', 'required' => true],
             'email' => ['type' => 'string', 'required' => true],
+            'price' => ['type' => 'float', 'required' => true],
             'locale' => ['type' => 'string', 'required' => true],
             'timestamp' => ['type' => 'integer', 'required' => true]
         ];

@@ -12,15 +12,30 @@
             "name": "Reply To",
             "email": "reply@example.com"
         },
-        "confirmation": {
-            "subject": "Ticket reservation confirmation"
+        "order-confirmation": {
+            "subject": "Ticket order confirmation"
         },
-        "notification": {
-            "subject": "Ticket reservation notification",
+        "order-notification": {
+            "subject": "Ticket order notification",
             "listeners": [
-                "listener1@example.com",
-                "listener2@example.com"
+                "listener@example.com"
             ]
+        },
+        "purchase-confirmation": {
+            "subject": "Ticket purchase confirmation"
+        },
+        "purchase-notification": {
+            "subject": "Ticket purchase notification",
+            "listeners": [
+                "listener@example.com"
+            ]
+        }
+    },
+    "SeatplanWriter": {
+        "markerColor": {
+            "R": 255,
+            "G": 50,
+            "B": 50
         }
     },
     "PaymentProvider": {
@@ -37,5 +52,9 @@
     "ticketDirectory": "../common/tickets",
     "Reservations": {
         "lifetimeInSeconds": 600
+    },
+    "PriceModificators": {
+        "addend": 0,
+        "factor": 1
     }
 }

@@ -14,6 +14,7 @@ require 'services/TicketPartWriterInterface.php';
 require 'services/ExpandedReservation.php';
 require 'services/PathConverter.php';
 require 'services/ReservationConverter.php';
+require 'services/OrderToBoxofficePurchaseUpgrader.php';
 require 'services/TokenProvider.php';
 require 'services/SeatReserver.php';
 require 'services/SeatConverter.php';
@@ -70,7 +71,8 @@ $container['reservationConverter'] = function($container) {
     $seatMapper = $container['orm']->mapper('Model\Seat');
     $eventblockMapper = $container['orm']->mapper('Model\Eventblock');
     $categoryMapper = $container['orm']->mapper('Model\Category');
-    $converter = new Services\ReservationConverter($eventMapper, $seatMapper, $eventblockMapper, $categoryMapper);
+    $priceModificators = $container['settings']['PriceModificators'];
+    $converter = new Services\ReservationConverter($eventMapper, $seatMapper, $eventblockMapper, $categoryMapper, $priceModificators);
     return $converter;
 };
 
@@ -95,6 +97,21 @@ $container['seatReserver'] = function($container) {
         $tokenProvider,
         $container['settings']['Reservations']);
     return $reserver;
+};
+
+$container['orderToBoxofficePurchaseUpgrader'] = function($container) {
+    $orderMapper = $container['orm']->mapper('Model\Order');
+    $boxofficePurchaseMapper = $container['orm']->mapper('Model\BoxofficePurchase');
+    $reservationMapper = $container['orm']->mapper('Model\Reservation');
+    $reservationConverter = $container['reservationConverter'];
+    $priceModificators = $container['settings']['PriceModificators'];
+    $orderToBoxofficePurchaseUpgrader = new Services\OrderToBoxofficePurchaseUpgrader(
+        $orderMapper,
+        $boxofficePurchaseMapper,
+        $reservationMapper,
+        $reservationConverter,
+        $priceModificators);
+    return $orderToBoxofficePurchaseUpgrader;
 };
 
 $container['seatConverter'] = function($container) {

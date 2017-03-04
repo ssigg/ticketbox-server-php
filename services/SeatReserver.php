@@ -125,13 +125,16 @@ class SeatReserver implements SeatReserverInterface {
     public function boxofficePurchase($boxofficeName, $locale) {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
+            $expandedReservations = $this->reservationConverter->convert($reservations);
+            $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
             $data = [
                 'boxoffice' => $boxofficeName,
+                'price' => $totalPrice,
                 'locale' => $locale,
                 'timestamp' => time()
             ];
             $purchase = $this->boxofficePurchaseMapper->create($data);
-            $purchase->reservations = $this->reservationConverter->convert($reservations);
+            $purchase->reservations = $expandedReservations;
             foreach ($reservations as $reservation) {
                 $reservation->order_kind = 'boxoffice-purchase';
                 $reservation->order_id = $purchase->get('id');
@@ -146,16 +149,19 @@ class SeatReserver implements SeatReserverInterface {
     public function customerPurchase($title, $firstname, $lastname, $email, $locale) {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
+            $expandedReservations = $this->reservationConverter->convert($reservations);
+            $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
             $data = [
                 'title' => $title,
                 'firstname' => $firstname,
                 'lastname' => $lastname,
                 'email' => $email,
+                'price' => $totalPrice,
                 'locale' => $locale,
                 'timestamp' => time()
             ];
             $purchase = $this->customerPurchaseMapper->create($data);
-            $purchase->reservations = $this->reservationConverter->convert($reservations);
+            $purchase->reservations = $expandedReservations;
             foreach ($reservations as $reservation) {
                 $reservation->order_kind = 'customer-purchase';
                 $reservation->order_id = $purchase->get('id');
@@ -170,6 +176,11 @@ class SeatReserver implements SeatReserverInterface {
     public function getTotalPriceOfPendingReservations() {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         $expandedReservations = $this->reservationConverter->convert($reservations);
+        $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
+        return $totalPrice;
+    }
+
+    private function getTotalPriceOfExpandedReservations($expandedReservations) {
         $totalPrice = 0;
         foreach ($expandedReservations as $expandedReservation) {
             $totalPrice += $expandedReservation->price;

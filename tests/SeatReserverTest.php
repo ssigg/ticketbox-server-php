@@ -390,6 +390,9 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $this->boxofficePurchaseMapperMock
             ->method('create')
             ->willReturn($this->getEntityMock());
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
         
         $settings = [
             'lifetimeInSeconds' => 0
@@ -423,6 +426,10 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $this->boxofficePurchaseMapperMock
             ->method('create')
             ->willReturn($this->getEntityMock());
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
+
         $settings = [
             'lifetimeInSeconds' => 0
         ];
@@ -484,6 +491,9 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $this->customerPurchaseMapperMock
             ->method('create')
             ->willReturn($this->getEntityMock());
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
         
         $settings = [
             'lifetimeInSeconds' => 0
@@ -517,6 +527,10 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
         $this->customerPurchaseMapperMock
             ->method('create')
             ->willReturn($this->getEntityMock());
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
+            
         $settings = [
             'lifetimeInSeconds' => 0
         ];

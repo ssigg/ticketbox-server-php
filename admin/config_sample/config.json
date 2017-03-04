@@ -8,5 +8,9 @@
     },
     "Reservations": {
         "lifetimeInSeconds": 600
+    },
+    "PriceModificators": {
+        "addend": 0,
+        "factor": 1
     }
 }

@@ -77,6 +77,44 @@ class CreateBoxofficePurchaseAction {
     }
 }
 
+class UpgradeOrderToBoxofficePurchaseAction {
+    private $orm;
+    private $mail;
+    private $orderToBoxofficePurchaseUpgrader;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->mail = $container->get('mail');
+        $this->orderToBoxofficePurchaseUpgrader = $container->get('orderToBoxofficePurchaseUpgrader');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $mapper = $this->orm->mapper('Model\Order');
+        $order = $mapper->get($args['id']);
+
+        $data = $request->getParsedBody();
+        $boxofficeName = $data['boxofficeName'];
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf]
+        $customerEmail = $order->email;
+        $locale = $data['locale'];
+
+        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $boxofficeName, $locale);
+
+        $totalPrice = 0;
+        foreach ($purchase->reservations as $reservation) {
+            $totalPrice += $reservation->price;
+        }
+
+        if ($boxofficeType == 'pdf') {
+            $this->mail->sendBoxofficePurchaseConfirmation($boxofficeName, $customerEmail, $locale, $purchase->reservations, $totalPrice);
+        }
+
+        $this->mail->sendBoxofficePurchaseNotification($boxofficeName, $purchase->reservations, $totalPrice);
+
+        return $response->withJson($purchase, 200);
+    }
+}
+
 class ListCustomerPurchasesAction {
     private $orm;
 
