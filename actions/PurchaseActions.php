@@ -98,7 +98,7 @@ class UpgradeOrderToBoxofficePurchaseAction {
         $customerEmail = $order->email;
         $locale = $data['locale'];
 
-        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $data['locale']);
+        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $boxofficeName, $locale);
 
         $totalPrice = 0;
         foreach ($purchase->reservations as $reservation) {

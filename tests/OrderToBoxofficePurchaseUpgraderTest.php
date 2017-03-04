@@ -32,8 +32,9 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
             $defaultPriceModificators);
     }
 
-    public function testReservationsAreFetched() {
+    public function testReservationsAreFetchedOnceForTheOrderAndOnceForTheCreatedBoxofficePurchase() {
         $orderId = 42;
+        $boxofficePurchaseId = 84;
 
         $orderMock = $this->getEntityMock();
         $orderMock
@@ -49,14 +50,20 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
             ->will($this->returnArgument(0));
 
         $boxofficePurchaseMock = $this->getEntityMock();
+        $boxofficePurchaseMock
+            ->method('get')
+            ->willReturn($boxofficePurchaseId);
         $this->boxofficePurchaseMapperMock
             ->method('create')
             ->willReturn($boxofficePurchaseMock);
         
         $this->reservationMapperMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('where')
-            ->with([ 'order_id' => $orderId, 'order_kind' => 'reservation' ]);
+            ->with($this->logicalOr(
+                [ 'order_id' => $orderId, 'order_kind' => 'reservation' ],
+                [ 'order_id' => $boxofficePurchaseId, 'order_kind' => 'boxoffice-purchase' ]
+            ));
         $this->upgrader->upgrade($orderMock, 'boxoffice', 'en');
     }
 

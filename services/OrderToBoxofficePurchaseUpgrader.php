@@ -45,8 +45,9 @@ class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgrad
             $reservation->order_id = $purchase->get('id');
             $this->reservationMapper->update($reservation);
         }
-        $this->orderMapper->delete($order->get('id'));
+        $this->orderMapper->delete([ 'id' => $order->get('id') ]);
 
+        $reservations = $this->reservationMapper->where([ 'order_id' => $purchase->get('id'), 'order_kind' => 'boxoffice-purchase' ]);
         $expandedReservations = $this->reservationConverter->convert($reservations);
         $purchase->reservations = $expandedReservations;
         return $purchase;
