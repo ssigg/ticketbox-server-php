@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>WARNING</title>
+    <style>
+        body {
+            background-color: #cc3;
+            font-size: 3em;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <p>
+        {% for message in messages %}
+        {{message}}<br>
+        {% endfor %}
+    </p>
+</body>

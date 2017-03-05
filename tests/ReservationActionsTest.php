@@ -38,6 +38,7 @@ class ReservationActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'reservation',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $action = new Actions\ListAllReservationsAction($this->container);
@@ -59,6 +60,7 @@ class ReservationActionsTest extends DatabaseTestBase {
         $this->assertSame(2, $reservation['seat_id']);
         $this->assertSame(1, $reservation['event_id']);
         $this->assertSame(false, $reservation['is_reduced']);
+        $this->assertSame(false, $reservation['is_scanned']);
         $this->assertSame(1, $reservation['order_id']);
         $this->assertSame('reservation', $reservation['order_kind']);
 

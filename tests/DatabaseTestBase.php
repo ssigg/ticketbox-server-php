@@ -170,6 +170,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             'event_id' => 1,
             'category_id' => 1,
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         return $spot;

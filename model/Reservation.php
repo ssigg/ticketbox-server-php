@@ -15,6 +15,7 @@ class Reservation extends \Spot\Entity {
             'is_reduced' => ['type' => 'boolean', 'required' => true],
             'order_id' => ['type' => 'integer', 'required' => false],
             'order_kind' => ['type' => 'string', 'required' => false],
+            'is_scanned' => ['type' => 'boolean', 'required' => true],
             'timestamp' => ['type' => 'integer', 'required' => true]
         ];
     }
