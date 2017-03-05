@@ -12,6 +12,7 @@ require 'model/Seat.php';
 
 require 'services/TicketPartWriterInterface.php';
 require 'services/ExpandedReservation.php';
+require 'services/TicketValidatorResult.php';
 require 'services/PathConverter.php';
 require 'services/ReservationConverter.php';
 require 'services/OrderToBoxofficePurchaseUpgrader.php';
@@ -20,6 +21,7 @@ require 'services/SeatReserver.php';
 require 'services/SeatConverter.php';
 require 'services/MessageFactory.php';
 require 'services/Mail.php';
+require 'services/Page.php';
 require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
 require 'services/SeatplanWriter.php';
@@ -31,6 +33,7 @@ require 'services/HtmlToPdfTicketConverter.php';
 require 'services/TicketPartTempFilesRemover.php';
 require 'services/PdfTicketWriter.php';
 require 'services/BraintreePaymentProvider.php';
+require 'services/TicketValidator.php';
 
 require 'actions/EventActions.php';
 require 'actions/BlockActions.php';
@@ -256,4 +259,25 @@ $container['paymentProvider'] = function($container) {
     } else {
         throw new \Exception('Unknown payment gateway.');
     }
+};
+
+$container['page'] = function($container) {
+    $twig = $container['twig'];
+    $templateProvider = $container['templateProvider'];
+    $page = new Services\Page($twig, $templateProvider);
+    return $page;
+};
+
+$container['ticketValidator'] = function($container) {
+    $reservationMapper = $container['orm']->mapper('Model\Reservation');
+    $secretKey = $container['settings']['Scanner']['secretKey'];
+    $ticketValidator = new Services\TicketValidator($reservationMapper, $secretKey);
+    return $ticketValidator;
+};
+
+$container['ticketTestValidator'] = function($container) {
+    $eventMapper = $container['orm']->mapper('Model\Event');
+    $secretKey = $container['settings']['Scanner']['secretKey'];
+    $ticketTestValidator = new Services\TicketTestValidator($eventMapper, $secretKey);
+    return $ticketTestValidator;
 };

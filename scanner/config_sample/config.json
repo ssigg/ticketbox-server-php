@@ -48,7 +48,7 @@
         }
     },
     "Scanner": {
-        "key": "secretKey"
+        "secretKey": "secretKey"
     },
     "templateDirectory": "../common/templates",
     "tempDirectory": "temp",

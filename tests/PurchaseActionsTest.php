@@ -55,6 +55,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'boxoffice-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -85,6 +86,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'boxoffice-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -115,6 +117,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'boxoffice-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -144,6 +147,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'boxoffice-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -280,6 +284,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'customer-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -310,6 +315,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'customer-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -340,6 +346,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'customer-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
@@ -369,6 +376,7 @@ class PurchaseActionsTest extends DatabaseTestBase {
             'order_id' => 1,
             'order_kind' => 'customer-purchase',
             'is_reduced' => false,
+            'is_scanned' => false,
             'timestamp' => time()]);
 
         $reservationConverterMock = $this->container->get('reservationConverter');
