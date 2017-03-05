@@ -47,6 +47,9 @@
             "privateKey": "privateKey"
         }
     },
+    "Scanner": {
+        "key": "secretKey"
+    },
     "templateDirectory": "../common/templates",
     "tempDirectory": "temp",
     "ticketDirectory": "../common/tickets",

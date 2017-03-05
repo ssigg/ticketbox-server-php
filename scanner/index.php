@@ -10,9 +10,7 @@ require '../dependencies.php';
 
 // Routes
 // =============================================================
-$app->get('/enable/{eventId}', Actions\EnableDeviceAction::class);
-$app->get('/disable/{eventId}', Actions\DisableDeviceAction::class);
-$app->get('/validate/{code}', Actions\ValidateTicketAction::class);
+$app->get('/validate/{key}/{eventId}/{code}', Actions\ValidateTicketAction::class);
 // =============================================================
 
 $app->run();
