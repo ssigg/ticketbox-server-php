@@ -9,3 +9,6 @@ dist
 temp
 common/tickets
 common/templates
+customer/logs
+boxoffice/logs
+admin/logs

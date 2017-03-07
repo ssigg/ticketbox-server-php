@@ -3,6 +3,7 @@
 class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
     private $reservationMapperMock;
     private $eventMapperMock;
+    private $loggerMock;
     private $secretKey;
     private $validator;
 
@@ -13,8 +14,11 @@ class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->eventMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
             ->setMethods(['get'])
             ->getMockForAbstractClass();
+        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+            ->setMethods(['info', 'warning'])
+            ->getMockForAbstractClass();
         $this->secretKey = 'validSecretKey';
-        $this->validator = new Services\TicketValidator($this->reservationMapperMock, $this->secretKey);
+        $this->validator = new Services\TicketValidator($this->reservationMapperMock, $this->loggerMock, $this->secretKey);
         $this->testValidator = new Services\TicketTestValidator($this->eventMapperMock, $this->secretKey);
     }
 
@@ -25,6 +29,9 @@ class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->reservationMapperMock
             ->method('first')
             ->willReturn($this->getReservationMock('boxoffice-purchase', false));
+        $this->loggerMock
+            ->expects($this->once())
+            ->method('info');
         $result = $this->validator->validate($key, $eventId, $code);
         $this->assertSame(Services\TicketValidatorStatus::Ok, $result->status);
     }
@@ -48,6 +55,9 @@ class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
         $key = 'invalidSecretKey';
         $eventId = 'e1';
         $code = 'code';
+        $this->loggerMock
+            ->expects($this->once())
+            ->method('warning');
         $result = $this->validator->validate($key, $eventId, $code);
         $this->assertSame(Services\TicketValidatorStatus::Error, $result->status);
     }
@@ -59,6 +69,9 @@ class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->reservationMapperMock
             ->method('first')
             ->willReturn(null);
+        $this->loggerMock
+            ->expects($this->once())
+            ->method('warning');
         $result = $this->validator->validate($key, $eventId, $code);
         $this->assertSame(Services\TicketValidatorStatus::Error, $result->status);
     }
@@ -70,6 +83,9 @@ class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->reservationMapperMock
             ->method('first')
             ->willReturn($this->getReservationMock('not-purchase', false));
+        $this->loggerMock
+            ->expects($this->once())
+            ->method('warning');
         $result = $this->validator->validate($key, $eventId, $code);
         $this->assertSame(Services\TicketValidatorStatus::Error, $result->status);
     }
@@ -81,6 +97,9 @@ class TicketValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->reservationMapperMock
             ->method('first')
             ->willReturn($this->getReservationMock('boxoffice-purchase', true));
+        $this->loggerMock
+            ->expects($this->once())
+            ->method('warning');
         $result = $this->validator->validate($key, $eventId, $code);
         $this->assertSame(Services\TicketValidatorStatus::Warning, $result->status);
     }
