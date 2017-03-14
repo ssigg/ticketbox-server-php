@@ -103,6 +103,7 @@ class SeatReserver implements SeatReserverInterface {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
             $data = [
+                'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
                 'title' => $title,
                 'firstname' => $firstname,
                 'lastname' => $lastname,
@@ -129,6 +130,7 @@ class SeatReserver implements SeatReserverInterface {
             $expandedReservations = $this->reservationConverter->convert($reservations);
             $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
             $data = [
+                'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
                 'boxoffice' => $boxofficeName,
                 'price' => $totalPrice,
                 'locale' => $locale,
@@ -153,6 +155,7 @@ class SeatReserver implements SeatReserverInterface {
             $expandedReservations = $this->reservationConverter->convert($reservations);
             $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
             $data = [
+                'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
                 'title' => $title,
                 'firstname' => $firstname,
                 'lastname' => $lastname,

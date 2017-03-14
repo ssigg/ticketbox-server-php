@@ -41,6 +41,32 @@ class ListOrdersAction {
     }
 }
 
+class GetOrderAction {
+    private $orm;
+    private $reservationConverter;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->reservationConverter = $container->get('reservationConverter');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $unique_id = $args['unique_id'];
+        $orderMapper = $this->orm->mapper('Model\Order');
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+        $order = $orderMapper->first([ 'unique_id' => $unique_id ]);
+
+        if ($order != null) {
+            $reservations = $reservationMapper->where([ 'order_id' => $order->id, 'order_kind' => 'reservation' ]);
+            $expandedReservations = $this->reservationConverter->convert($reservations);
+            $expandedOrder = new ExpandedOrder($order, $expandedReservations);
+            return $response->withJson($expandedOrder, 200);
+        } else {
+            return $response->withStatus(404);
+        }
+    }
+}
+
 class CreateOrderAction {
     private $mail;
     private $reserver;

@@ -151,6 +151,44 @@ class OrderActionsTest extends DatabaseTestBase {
         $this->assertSame(42, $decodedResponse[0]['totalPrice']);
     }
 
+    public function testGetOrderWithKnownUniqueIdConvertsReservations() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\GetOrderAction($this->container);
+
+        $request = $this->getGetRequest('/orders/order-unique_base');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->once())->method('convert');
+        $action($request, $response, [ 'unique_id' => 'order-unique_base' ]);
+    }
+
+    public function testGetOrderWithUnknownUniqueIdDoesNotConvertReservations() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\GetOrderAction($this->container);
+
+        $request = $this->getGetRequest('/orders/unknown');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->never())->method('convert');
+        $action($request, $response, [ 'unique_id' => 'unknown' ]);
+    }
+
     public function testUseReserverToCreateOrder() {
         $action = new Actions\CreateOrderAction($this->container);
 

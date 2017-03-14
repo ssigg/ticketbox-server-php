@@ -23,9 +23,11 @@ $app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 $app->get('/reservations-expiration-timestamp', Actions\GetReservationsExpirationTimestampAction::class);
 
 $app->post('/orders', Actions\CreateOrderAction::class);
+$app->get('/orders/{unique_id}', Actions\GetOrderAction::class);
 
 $app->get('/customer-purchase-token', Actions\GetCustomerPurchaseTokenAction::class);
 $app->post('/customer-purchases', Actions\CreateCustomerPurchaseAction::class);
+$app->get('/customer-purchases/{unique_id}', Actions\GetCustomerPurchaseAction::class);
 // =============================================================
 
 $app->run();
