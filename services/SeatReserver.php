@@ -21,6 +21,7 @@ class SeatReserver implements SeatReserverInterface {
     private $reservationMapper;
     private $reservationConverter;
     private $token;
+    private $logger;
     private $settings;
     
     public function __construct(
@@ -30,6 +31,7 @@ class SeatReserver implements SeatReserverInterface {
         \Spot\MapperInterface $reservationMapper,
         ReservationConverterInterface $reservationConverter,
         TokenProviderInterface $tokenProvider,
+        \Psr\Log\LoggerInterface $logger,
         $settings) {
             $this->orderMapper = $orderMapper;
             $this->boxofficePurchaseMapper = $boxofficePurchaseMapper;
@@ -37,6 +39,7 @@ class SeatReserver implements SeatReserverInterface {
             $this->reservationMapper = $reservationMapper;
             $this->reservationConverter = $reservationConverter;
             $this->token = $tokenProvider->provide();
+            $this->logger = $logger;
             $this->settings = $settings;
     }
 
@@ -68,6 +71,7 @@ class SeatReserver implements SeatReserverInterface {
         if ($result) {
             return $this->reservationMapper->get($result);
         } else {
+            $this->logger->info('Seat reservation conflict. Seat: ' . $seat->get('id') . '|' . $seat->get('name') . ', Event: ' . $event->get('id') . '|' . $event->get('name'));
             return null;
         }
     }
@@ -95,6 +99,8 @@ class SeatReserver implements SeatReserverInterface {
         if ($reservation != null) {
             $reservation->is_reduced = $value;
             $this->reservationMapper->update($reservation);
+        } else {
+            $this->logger->info('Reservation lost when trying to change reduction.');
         }
         return $reservation;
     }
@@ -118,8 +124,10 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $order->get('id');
                 $this->reservationMapper->update($reservation);
             }
+            $this->logger->info('Created order with ' . count($reservations) . ' seats.');
             return $order;
         } else {
+            $this->logger->info('Reservations lost when trying to create order.');
             return null;
         }
     }
@@ -143,8 +151,10 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
+            $this->logger->info('Created boxoffice purchase with ' . count($expandedReservations) . ' seats.');
             return $purchase;
         } else {
+            $this->logger->info('Reservations lost when trying to create boxoffice purchase.');
             return null;
         }
     }
@@ -171,8 +181,10 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
+            $this->logger->info('Created customer purchase with ' . count($expandedReservations) . ' seats.');
             return $purchase;
         } else {
+            $this->logger->info('Reservations lost when trying to create customer purchase.');
             return null;
         }
     }

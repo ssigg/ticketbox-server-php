@@ -54,6 +54,13 @@ $container['pathConverter'] = function($container) {
     return $converter;
 };
 
+$container['logger'] = function($container) {
+    $pathConverter = $container['pathConverter'];
+    $logDirectory = $pathConverter->convert($container['settings']['logDirectory']);
+    $logger = new Katzgrau\KLogger\Logger($logDirectory);
+    return $logger;
+};
+
 $container['orm'] = function($container) {
     $pathConverter = $container['pathConverter'];
     $spotSettings = $container['settings']['Spot'];
@@ -92,6 +99,7 @@ $container['seatReserver'] = function($container) {
     $reservationMapper = $container['orm']->mapper('Model\Reservation');
     $reservationConverter = $container['reservationConverter'];
     $tokenProvider = $container['tokenProvider'];
+    $logger = $container['logger'];
     $reserver = new Services\SeatReserver(
         $orderMapper,
         $boxofficePurchaseMapper,
@@ -99,6 +107,7 @@ $container['seatReserver'] = function($container) {
         $reservationMapper,
         $reservationConverter,
         $tokenProvider,
+        $logger,
         $container['settings']['Reservations']);
     return $reserver;
 };
@@ -246,15 +255,17 @@ $container['mail'] = function($container) {
     $messageFactory = $container['messageFactory'];
     $mailer = $container['mailer'];
     $pdfTicketWriter = $container['pdfTicketWriter'];
+    $logger = $container['logger'];
     $settings = $container['settings']['Mailer'];
-    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $settings);
+    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $logger, $settings);
     return $mail;
 };
 
 $container['paymentProvider'] = function($container) {
     if ($container['settings']['PaymentProvider']['gateway'] == 'Braintree') {
         $settings = $container['settings']['PaymentProvider']['settings'];
-        $paymentProvider = new Services\BraintreePaymentProvider($settings);
+        $logger = $container['logger'];
+        $paymentProvider = new Services\BraintreePaymentProvider($logger, $settings);
         return $paymentProvider;
     } else {
         throw new \Exception('Unknown payment gateway.');
@@ -270,8 +281,9 @@ $container['page'] = function($container) {
 
 $container['ticketValidator'] = function($container) {
     $reservationMapper = $container['orm']->mapper('Model\Reservation');
+    $logger = $container['logger'];
     $secretKey = $container['settings']['Scanner']['secretKey'];
-    $ticketValidator = new Services\TicketValidator($reservationMapper, $secretKey);
+    $ticketValidator = new Services\TicketValidator($reservationMapper, $logger, $secretKey);
     return $ticketValidator;
 };
 

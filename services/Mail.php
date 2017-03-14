@@ -17,14 +17,23 @@ class Mail implements MailInterface {
     private $messageFactory;
     private $mailer;
     private $pdfTicketWriter;
+    private $logger;
     private $settings;
 
-    public function __construct(\Twig_Environment $twig, TemplateProviderInterface $templateProvider, MessageFactoryInterface $messageFactory, \Nette\Mail\IMailer $mailer, PdfTicketWriterInterface $pdfTicketWriter, $settings) {
+    public function __construct(
+        \Twig_Environment $twig,
+        TemplateProviderInterface $templateProvider,
+        MessageFactoryInterface $messageFactory,
+        \Nette\Mail\IMailer $mailer,
+        PdfTicketWriterInterface $pdfTicketWriter,
+        \Psr\Log\LoggerInterface $logger,
+        $settings) {
         $this->twig = $twig;
         $this->templateProvider = $templateProvider;
         $this->messageFactory = $messageFactory;
         $this->mailer = $mailer;
         $this->pdfTicketWriter = $pdfTicketWriter;
+        $this->logger = $logger;
         $this->settings = $settings;
     }
 
@@ -49,7 +58,12 @@ class Mail implements MailInterface {
         $attachments = [];
         $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
         
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+            $this->logger->info('Sent order confirmation mail to ' . $to);
+        } catch (\Nette\Mail\SendException $e) {
+            $this->logger->error($e);
+        }
     }
 
     public function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice) {
@@ -72,7 +86,12 @@ class Mail implements MailInterface {
             $attachments = [];
             $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 
-            $this->mailer->send($message);
+            try {
+                $this->mailer->send($message);
+                $this->logger->info('Sent order notification mail to ' . $to);
+            } catch (\Nette\Mail\SendException $e) {
+                $this->logger->error($e);
+            }
         }
     }
 
@@ -101,7 +120,12 @@ class Mail implements MailInterface {
         $attachments = $pdfFilePaths;
         $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+            $this->logger->info('Sent boxoffice purchase confirmation mail to ' . $to);
+        } catch (\Nette\Mail\SendException $e) {
+            $this->logger->error($e);
+        }
     }
 
     function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice) {
@@ -123,7 +147,12 @@ class Mail implements MailInterface {
             $attachments = [];
             $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 
-            $this->mailer->send($message);
+            try {
+                $this->mailer->send($message);
+                $this->logger->info('Sent boxoffice purchase notification mail to ' . $to);
+            } catch (\Nette\Mail\SendException $e) {
+                $this->logger->error($e);
+            }
         }
     }
 
@@ -151,7 +180,12 @@ class Mail implements MailInterface {
         $attachments = $pdfFilePaths;
         $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+            $this->logger->info('Sent customer purchase confirmation mail to ' . $to);
+        } catch (\Nette\Mail\SendException $e) {
+            $this->logger->error($e);
+        }
     }
 
     function sendCustomerPurchaseNotification($purchase, $totalPrice) {
@@ -172,7 +206,12 @@ class Mail implements MailInterface {
             $attachments = [];
             $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
 
-            $this->mailer->send($message);
+            try {
+                $this->mailer->send($message);
+                $this->logger->info('Sent customer purchase notification mail to ' . $to);
+            } catch (\Nette\Mail\SendException $e) {
+                $this->logger->error($e);
+            }
         }
     }
 }

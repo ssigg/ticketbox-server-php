@@ -3,13 +3,14 @@
         "vlucas/spot2": "~2.0",
         "slim/slim": "^3.0",
         "twig/twig": "~1.0",
-        "nette/mail": "2.4.*@dev",
+        "nette/mail": "2.4.2",
         "duncan3dc/sessions": "^1.0",
         "bacon/bacon-qr-code": "^1.0.1",
         "message/wkhtmltopdf": "dev-master",
         "mikehaertl/phpwkhtmltopdf": "^2.2.0",
         "tivie/php-os-detector": "dev-master",
-        "braintree/braintree_php": "^3.20.0"
+        "braintree/braintree_php": "^3.20.0",
+        "katzgrau/klogger": "dev-master"
 
     },
     "require-dev": {
