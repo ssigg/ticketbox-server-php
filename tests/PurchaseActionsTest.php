@@ -170,6 +170,44 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $this->assertSame(42, $decodedResponse[0]['totalPrice']);
     }
 
+    public function testGetBoxofficePurchaseWithKnownUniqueIdConvertsReservations() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\GetBoxofficePurchaseAction($this->container);
+
+        $request = $this->getGetRequest('/boxxoffice-purchases/boxoffice-unique_base');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->once())->method('convert');
+        $action($request, $response, [ 'unique_id' => 'boxoffice-unique_base' ]);
+    }
+
+    public function testGetBoxofficePurchaseWithUnknownUniqueIdDoesNotConvertReservations() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\GetBoxofficePurchaseAction($this->container);
+
+        $request = $this->getGetRequest('/boxoffice-purchases/unknown');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->never())->method('convert');
+        $action($request, $response, [ 'unique_id' => 'unknown' ]);
+    }
+
     public function testUseReserverToCreateBoxofficePurchase() {
         $action = new Actions\CreateBoxofficePurchaseAction($this->container);
 
@@ -397,6 +435,44 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $decodedResponse = json_decode((string)$response->getBody(), true);
         $this->assertSame(1, count($decodedResponse));
         $this->assertSame(42, $decodedResponse[0]['totalPrice']);
+    }
+
+    public function testGetCustomerPurchaseWithKnownUniqueIdConvertsReservations() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\GetCustomerPurchaseAction($this->container);
+
+        $request = $this->getGetRequest('/customer-purchases/boxoffice-unique_base');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->once())->method('convert');
+        $action($request, $response, [ 'unique_id' => 'customer-unique_base' ]);
+    }
+
+    public function testGetCustomerPurchaseWithUnknownUniqueIdDoesNotConvertReservations() {
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+        $reservationConverterMock
+            ->method('convert')
+            ->willReturn([]);
+
+        $action = new Actions\GetCustomerPurchaseAction($this->container);
+
+        $request = $this->getGetRequest('/customer-purchases/unknown');
+        $response = new \Slim\Http\Response();
+
+        $reservationConverterMock = $this->container->get('reservationConverter');
+
+        $reservationConverterMock->expects($this->never())->method('convert');
+        $action($request, $response, [ 'unique_id' => 'unknown' ]);
     }
 
     public function testUsePaymentProviderToGetToken() {

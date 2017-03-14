@@ -135,6 +135,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
 
         $orderMapper = $spot->mapper('Model\Order');
         $orderMapper->create([
+            'unique_id' => 'order-unique_base',
             'title' => 'm',
             'firstname' => 'John',
             'lastname' => 'Doe',
@@ -145,6 +146,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
 
         $boxofficePurchaseMapper = $spot->mapper('Model\BoxofficePurchase');
         $boxofficePurchaseMapper->create([
+            'unique_id' => 'boxoffice-unique_base',
             'boxoffice' => 'Box Office',
             'price' => 42,
             'locale' => 'en',
@@ -153,6 +155,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
 
         $customerPurchaseMapper = $spot->mapper('Model\CustomerPurchase');
         $customerPurchaseMapper->create([
+            'unique_id' => 'customer-unique_base',
             'title' => 'm',
             'firstname' => 'John',
             'lastname' => 'Doe',

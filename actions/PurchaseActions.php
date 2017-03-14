@@ -41,6 +41,32 @@ class ListBoxofficePurchasesAction {
     }
 }
 
+class GetBoxofficePurchaseAction {
+    private $orm;
+    private $reservationConverter;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->reservationConverter = $container->get('reservationConverter');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $unique_id = $args['unique_id'];
+        $boxofficePurchaseMapper = $this->orm->mapper('Model\BoxofficePurchase');
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+        $boxofficePurchase = $boxofficePurchaseMapper->first([ 'unique_id' => $unique_id ]);
+
+        if ($boxofficePurchase != null) {
+            $reservations = $reservationMapper->where([ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase' ]);
+            $expandedReservations = $this->reservationConverter->convert($reservations);
+            $expandedBoxofficePurchase = new ExpandedBoxofficePurchase($boxofficePurchase, $expandedReservations);
+            return $response->withJson($expandedBoxofficePurchase, 200);
+        } else {
+            return $response->withStatus(404);
+        }
+    }
+}
+
 class CreateBoxofficePurchaseAction {
     private $mail;
     private $reserver;
@@ -146,6 +172,32 @@ class ListCustomerPurchasesAction {
         }
 
         return $response->withJson($expandedCustomerPurchases, 200);
+    }
+}
+
+class GetCustomerPurchaseAction {
+    private $orm;
+    private $reservationConverter;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->reservationConverter = $container->get('reservationConverter');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $unique_id = $args['unique_id'];
+        $customerPurchaseMapper = $this->orm->mapper('Model\CustomerPurchase');
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+        $customerPurchase = $customerPurchaseMapper->first([ 'unique_id' => $unique_id ]);
+
+        if ($customerPurchase != null) {
+            $reservations = $reservationMapper->where([ 'order_id' => $customerPurchase->id, 'order_kind' => 'customer-purchase' ]);
+            $expandedReservations = $this->reservationConverter->convert($reservations);
+            $expandedCustomerPurchase = new ExpandedCustomerPurchase($customerPurchase, $expandedReservations);
+            return $response->withJson($expandedCustomerPurchase, 200);
+        } else {
+            return $response->withStatus(404);
+        }
     }
 }
 

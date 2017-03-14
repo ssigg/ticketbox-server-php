@@ -7,6 +7,7 @@ class BoxofficePurchase extends \Spot\Entity {
     public static function fields() {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
+            'unique_id' => ['type' => 'string', 'required' => true],
             'boxoffice' => ['type' => 'string', 'required' => true],
             'price' => ['type' => 'float', 'required' => true],
             'locale' => ['type' => 'string', 'required' => true],
