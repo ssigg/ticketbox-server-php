@@ -1,8 +1,4 @@
-{% if title == 'm' %}
-Dear {{firstname}}
-{% else %}
-Dear {{firstname}}
-{% endif %}
+Dear customer of {{boxoffice}}
 
 Thank you for your purchase. Please find the tickets in the attachement
 of this message.
