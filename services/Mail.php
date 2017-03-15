@@ -167,6 +167,7 @@ class Mail implements MailInterface {
         }
 
         $params = [
+            'purchase' => $purchase,
             'reservations' => $purchase->reservations,
             'pdfFilePaths' => $pdfFilePaths,
             'total' => $totalPrice
@@ -194,6 +195,7 @@ class Mail implements MailInterface {
 
         $params = [
             'purchase' => $purchase,
+            'reservations' => $purchase->reservations,
             'total' => $totalPrice
         ];
         $body = $template->render($params);
