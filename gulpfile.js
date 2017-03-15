@@ -16,6 +16,8 @@ var paths = [
     '!boxoffice/config',
     'customer/**',
     '!customer/config',
+    'scanner/**',
+    '!scanner/config',
     'model/*',
     'services/*',
     'vendor/**',
