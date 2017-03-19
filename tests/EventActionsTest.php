@@ -9,7 +9,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","visible":true},{"id":2,"name":"Event 2","location":"Location 2","dateandtime":"Date and Time 2","visible":false}]',
+            '[{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true},{"id":2,"name":"Event 2","location":"Location 2","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 2","visible":false}]',
             (string)$response->getBody());
     }
 
@@ -21,7 +21,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","visible":true}]',
+            '[{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true}]',
             (string)$response->getBody());
     }
 
@@ -43,7 +43,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"name":"Event 1","location":"Location 1","dateandtime":"Date and Time 1","visible":true,"blocks":[{"id":1,"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}}]}',
+            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"blocks":[{"id":1,"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}}]}',
             (string)$response->getBody());
     }
 
@@ -67,11 +67,17 @@ class EventActionsTest extends DatabaseTestBase {
 
         $newName = "New name";
         $newLocation = "New location";
+        $newLocationAddress = "New location address";
+        $newLocationDirectionsPublicTransport = "New location directions public transport";
+        $newLocationDirectionsCar = "New location directions car";
         $newDateandtime = "New date and time";
         $newVisible = false;
         $data = [
             "name" => $newName,
             "location" => $newLocation,
+            "location_address" => $newLocationAddress,
+            "location_directions_public_transport" => $newLocationDirectionsPublicTransport,
+            "location_directions_car" => $newLocationDirectionsCar,
             "dateandtime" => $newDateandtime,
             "visible" => $newVisible
         ];
@@ -83,6 +89,9 @@ class EventActionsTest extends DatabaseTestBase {
         $eventBefore = $mapper->get(1);
         $this->assertNotSame($eventBefore->name, $newName);
         $this->assertNotSame($eventBefore->location, $newLocation);
+        $this->assertNotSame($eventBefore->location_address, $newLocationAddress);
+        $this->assertNotSame($eventBefore->location_directions_public_transport, $newLocationDirectionsPublicTransport);
+        $this->assertNotSame($eventBefore->location_directions_car, $newLocationDirectionsCar);
         $this->assertNotSame($eventBefore->dateandtime, $newDateandtime);
         $this->assertNotSame($eventBefore->visible, $newVisible);
 
@@ -91,11 +100,14 @@ class EventActionsTest extends DatabaseTestBase {
         $eventAfter = $mapper->get(1);
         $this->assertSame($eventAfter->name, $newName);
         $this->assertSame($eventAfter->location, $newLocation);
+        $this->assertSame($eventAfter->location_address, $newLocationAddress);
+        $this->assertSame($eventAfter->location_directions_public_transport, $newLocationDirectionsPublicTransport);
+        $this->assertSame($eventAfter->location_directions_car, $newLocationDirectionsCar);
         $this->assertSame($eventAfter->dateandtime, $newDateandtime);
         $this->assertSame($eventAfter->visible, $newVisible);
 
         $this->assertSame(
-            '{"id":1,"name":"New name","location":"New location","dateandtime":"New date and time","visible":false}',
+            '{"id":1,"name":"New name","location":"New location","location_address":"New location address","location_directions_public_transport":"New location directions public transport","location_directions_car":"New location directions car","dateandtime":"New date and time","visible":false}',
             (string)$response->getBody());
     }
 

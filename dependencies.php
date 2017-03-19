@@ -194,8 +194,9 @@ $container['htmlTicketWriter'] = function($container) {
     $twig = $container['twig'];
     $templateProvider = $container['templateProvider'];
     $filePersister = $container['filePersister'];
+    $templateDirectory = $pathConverter->convert($container['settings']['templateDirectory']);
     $tempDirectory = $pathConverter->convert($container['settings']['tempDirectory']);
-    $htmlTicketWriter = new Services\HtmlTicketWriter($twig, $templateProvider, $filePersister, $tempDirectory);
+    $htmlTicketWriter = new Services\HtmlTicketWriter($twig, $templateProvider, $filePersister, $templateDirectory, $tempDirectory);
     return $htmlTicketWriter;
 };
 
@@ -240,7 +241,7 @@ $container['pdfTicketWriter'] = function($container) {
         $seatplanWriter,
         $htmlTicketWriter,
         $htmlToPdfTicketConverter,
-        // $ticketPartTempFilesRemover
+        $ticketPartTempFilesRemover
     ];
     $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters);
     return $pdfTicketWriter;

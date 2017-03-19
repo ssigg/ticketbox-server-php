@@ -30,8 +30,9 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
             ->setMethods(['write'])
             ->getMockForAbstractClass();
 
+        $this->templateDirectory = 'templates';
         $this->outputDirectory = 'output';
-        $this->writer = new Services\HtmlTicketWriter($this->twigMock, $this->templateProviderMock, $this->filePersisterMock, $this->outputDirectory);
+        $this->writer = new Services\HtmlTicketWriter($this->twigMock, $this->templateProviderMock, $this->filePersisterMock, $this->templateDirectory, $this->outputDirectory);
         
         $this->unique_id = 'unique';
         $this->reservation = new HtmlTicketWriterTestReservationStub($this->unique_id);
