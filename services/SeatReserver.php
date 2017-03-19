@@ -21,6 +21,7 @@ class SeatReserver implements SeatReserverInterface {
     private $reservationMapper;
     private $reservationConverter;
     private $token;
+    private $uuidFactory;
     private $logger;
     private $settings;
     
@@ -31,6 +32,7 @@ class SeatReserver implements SeatReserverInterface {
         \Spot\MapperInterface $reservationMapper,
         ReservationConverterInterface $reservationConverter,
         TokenProviderInterface $tokenProvider,
+        \Ramsey\Uuid\UuidFactoryInterface $uuidFactory,
         \Psr\Log\LoggerInterface $logger,
         $settings) {
             $this->orderMapper = $orderMapper;
@@ -39,6 +41,7 @@ class SeatReserver implements SeatReserverInterface {
             $this->reservationMapper = $reservationMapper;
             $this->reservationConverter = $reservationConverter;
             $this->token = $tokenProvider->provide();
+            $this->uuidFactory = $uuidFactory;
             $this->logger = $logger;
             $this->settings = $settings;
     }
@@ -58,7 +61,7 @@ class SeatReserver implements SeatReserverInterface {
             ->first();
         $timestamp = $oldestReservation != null ? $oldestReservation->get('timestamp') : time();
         $data = [
-            'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
+            'unique_id' => $this->uuidFactory->uuid1(),
             'token' => $this->token,
             'seat_id' => $seat->get('id'),
             'event_id' => $event->get('id'),
@@ -109,7 +112,7 @@ class SeatReserver implements SeatReserverInterface {
         $reservations = $this->reservationMapper->where([ 'token' => $this->token, 'order_id' => null ]);
         if (count($reservations) > 0) {
             $data = [
-                'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
+                'unique_id' => $this->uuidFactory->uuid1(),
                 'title' => $title,
                 'firstname' => $firstname,
                 'lastname' => $lastname,
@@ -138,7 +141,7 @@ class SeatReserver implements SeatReserverInterface {
             $expandedReservations = $this->reservationConverter->convert($reservations);
             $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
             $data = [
-                'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
+                'unique_id' => $this->uuidFactory->uuid1(),
                 'boxoffice' => $boxofficeName,
                 'price' => $totalPrice,
                 'locale' => $locale,
@@ -165,7 +168,7 @@ class SeatReserver implements SeatReserverInterface {
             $expandedReservations = $this->reservationConverter->convert($reservations);
             $totalPrice = $this->getTotalPriceOfExpandedReservations($expandedReservations);
             $data = [
-                'unique_id' => bin2hex(openssl_random_pseudo_bytes(8)),
+                'unique_id' => $this->uuidFactory->uuid1(),
                 'title' => $title,
                 'firstname' => $firstname,
                 'lastname' => $lastname,

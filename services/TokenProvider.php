@@ -8,15 +8,17 @@ interface TokenProviderInterface {
 
 class TokenProvider implements TokenProviderInterface {
     private $session;
+    private $uuidFactory;
 
-    public function __construct(\duncan3dc\Sessions\SessionInterface $session) {
+    public function __construct(\duncan3dc\Sessions\SessionInterface $session, \Ramsey\Uuid\UuidFactoryInterface $uuidFactory) {
         $this->session = $session;
+        $this->uuidFactory = $uuidFactory;
     }
 
     public function provide() {
         $token = $this->session->get('token');
         if ($token == null) {
-            $token = bin2hex(openssl_random_pseudo_bytes(8));
+            $token = $this->uuidFactory->uuid1();
             $this->session->set('token', $token);
         }
         return $token;

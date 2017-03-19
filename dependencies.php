@@ -61,6 +61,11 @@ $container['logger'] = function($container) {
     return $logger;
 };
 
+$container['uuidFactory'] = function($container) {
+    $uuidFactory = new \Ramsey\Uuid\UuidFactory();
+    return $uuidFactory;
+};
+
 $container['orm'] = function($container) {
     $pathConverter = $container['pathConverter'];
     $spotSettings = $container['settings']['Spot'];
@@ -88,7 +93,7 @@ $container['reservationConverter'] = function($container) {
 };
 
 $container['tokenProvider'] = function($container) {
-    $provider = new Services\TokenProvider($container['session']);
+    $provider = new Services\TokenProvider($container['session'], $container['uuidFactory']);
     return $provider;
 };
 
@@ -99,6 +104,7 @@ $container['seatReserver'] = function($container) {
     $reservationMapper = $container['orm']->mapper('Model\Reservation');
     $reservationConverter = $container['reservationConverter'];
     $tokenProvider = $container['tokenProvider'];
+    $uuidFactory = $container['uuidFactory'];
     $logger = $container['logger'];
     $reserver = new Services\SeatReserver(
         $orderMapper,
@@ -107,6 +113,7 @@ $container['seatReserver'] = function($container) {
         $reservationMapper,
         $reservationConverter,
         $tokenProvider,
+        $uuidFactory,
         $logger,
         $container['settings']['Reservations']);
     return $reserver;
@@ -233,7 +240,7 @@ $container['pdfTicketWriter'] = function($container) {
         $seatplanWriter,
         $htmlTicketWriter,
         $htmlToPdfTicketConverter,
-        $ticketPartTempFilesRemover
+        // $ticketPartTempFilesRemover
     ];
     $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters);
     return $pdfTicketWriter;
