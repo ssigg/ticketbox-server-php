@@ -9,6 +9,9 @@ class Event extends \Spot\Entity {
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
             'name' => ['type' => 'string', 'required' => true],
             'location' => ['type' => 'string', 'required' => false],
+            'location_address' => ['type' => 'string', 'required' => false],
+            'location_directions_public_transport' => ['type' => 'string', 'required' => false],
+            'location_directions_car' => ['type' => 'string', 'required' => false],
             'dateandtime' => ['type' => 'string', 'required' => false],
             'visible' => ['type' => 'boolean', 'required' => true]
         ];

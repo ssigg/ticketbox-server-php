@@ -99,6 +99,9 @@ class ChangeEventAction {
         $event = $mapper->get($args['id']);
         $event->name = $data['name'];
         $event->location = $data['location'];
+        $event->location_address = $data['location_address'];
+        $event->location_directions_public_transport = $data['location_directions_public_transport'];
+        $event->location_directions_car = $data['location_directions_car'];
         $event->dateandtime = $data['dateandtime'];
         $event->visible = $data['visible'];
         $mapper->update($event);
