@@ -32,7 +32,9 @@ class BraintreePaymentProvider implements BraintreePaymentProviderInterface {
             ]
         ];
         $result = \Braintree\Transaction::sale($transaction);
-        if (!$result->success) {
+        if ($result->success) {
+            $this->logger->info('Recieved payment of ' . $amount . ' CHF.');
+        } else {
             $this->logger->warning($result);
         }
         return $result;

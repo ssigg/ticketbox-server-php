@@ -184,7 +184,7 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
-            $this->logger->info('Created customer purchase with ' . count($expandedReservations) . ' seats.');
+            $this->logger->info('Created customer purchase for ' . $email . ' with ' . count($expandedReservations) . ' seats.');
             return $purchase;
         } else {
             $this->logger->info('Reservations lost when trying to create customer purchase.');
