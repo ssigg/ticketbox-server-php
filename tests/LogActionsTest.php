@@ -14,12 +14,12 @@ class LogActionsTest extends \PHPUnit_Framework_TestCase {
 
     public function testInfoLogsInfo() {
         $action = new Actions\LogClientMessageAction($this->container);
-        $level = 'info';
+        $severity = 'info';
         $message = 'message';
         $userData = 'userData';
 
         $data = [
-            'level' => $level,
+            'severity' => $severity,
             'message' => $message,
             'userData' => $userData
         ];
@@ -44,12 +44,12 @@ class LogActionsTest extends \PHPUnit_Framework_TestCase {
 
     public function testWarningLogsWaning() {
         $action = new Actions\LogClientMessageAction($this->container);
-        $level = 'warning';
+        $severity = 'warning';
         $message = 'message';
         $userData = 'userData';
 
         $data = [
-            'level' => $level,
+            'severity' => $severity,
             'message' => $message,
             'userData' => $userData
         ];
@@ -74,12 +74,12 @@ class LogActionsTest extends \PHPUnit_Framework_TestCase {
 
     public function testErrorLogsError() {
         $action = new Actions\LogClientMessageAction($this->container);
-        $level = 'error';
+        $severity = 'error';
         $message = 'message';
         $userData = 'userData';
 
         $data = [
-            'level' => $level,
+            'severity' => $severity,
             'message' => $message,
             'userData' => $userData
         ];

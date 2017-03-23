@@ -16,7 +16,7 @@ class LogClientMessageAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
-        $level = $data['level'];
+        $level = $data['severity'];
         $message = $data['message'];
         $userData = $data['userData'];
         $logMessage = $message . "\n\nUser data:\n" . print_r($userData, true);

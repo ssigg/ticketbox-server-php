@@ -10,7 +10,7 @@ interface BraintreePaymentProviderInterface {
 class BraintreePaymentProvider implements BraintreePaymentProviderInterface {
     private $log;
 
-    public function __construct(\Psr\Log\LoggerInterface $log, $settings) {
+    public function __construct(LogInterface $log, $settings) {
         $this->log = $log;
         \Braintree\Configuration::environment($settings['environment']);
         \Braintree\Configuration::merchantId($settings['merchantId']);
