@@ -22,7 +22,7 @@ class SeatReserver implements SeatReserverInterface {
     private $reservationConverter;
     private $token;
     private $uuidFactory;
-    private $logger;
+    private $log;
     private $settings;
     
     public function __construct(
@@ -33,7 +33,7 @@ class SeatReserver implements SeatReserverInterface {
         ReservationConverterInterface $reservationConverter,
         TokenProviderInterface $tokenProvider,
         \Ramsey\Uuid\UuidFactoryInterface $uuidFactory,
-        \Psr\Log\LoggerInterface $logger,
+        LogInterface $log,
         $settings) {
             $this->orderMapper = $orderMapper;
             $this->boxofficePurchaseMapper = $boxofficePurchaseMapper;
@@ -42,7 +42,7 @@ class SeatReserver implements SeatReserverInterface {
             $this->reservationConverter = $reservationConverter;
             $this->token = $tokenProvider->provide();
             $this->uuidFactory = $uuidFactory;
-            $this->logger = $logger;
+            $this->log = $log;
             $this->settings = $settings;
     }
 
@@ -74,7 +74,7 @@ class SeatReserver implements SeatReserverInterface {
         if ($result) {
             return $this->reservationMapper->get($result);
         } else {
-            $this->logger->info('Seat reservation conflict. Seat: ' . $seat->get('id') . '|' . $seat->get('name') . ', Event: ' . $event->get('id') . '|' . $event->get('name'));
+            $this->log->info('Seat reservation conflict. Seat: ' . $seat->get('id') . '|' . $seat->get('name') . ', Event: ' . $event->get('id') . '|' . $event->get('name'));
             return null;
         }
     }
@@ -103,7 +103,7 @@ class SeatReserver implements SeatReserverInterface {
             $reservation->is_reduced = $value;
             $this->reservationMapper->update($reservation);
         } else {
-            $this->logger->info('Reservation lost when trying to change reduction.');
+            $this->log->info('Reservation lost when trying to change reduction.');
         }
         return $reservation;
     }
@@ -127,10 +127,10 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $order->get('id');
                 $this->reservationMapper->update($reservation);
             }
-            $this->logger->info('Created order with ' . count($reservations) . ' seats.');
+            $this->log->info('Created order with ' . count($reservations) . ' seats.');
             return $order;
         } else {
-            $this->logger->info('Reservations lost when trying to create order.');
+            $this->log->info('Reservations lost when trying to create order.');
             return null;
         }
     }
@@ -154,10 +154,10 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
-            $this->logger->info('Created boxoffice purchase with ' . count($expandedReservations) . ' seats.');
+            $this->log->info('Created boxoffice purchase with ' . count($expandedReservations) . ' seats.');
             return $purchase;
         } else {
-            $this->logger->info('Reservations lost when trying to create boxoffice purchase.');
+            $this->log->info('Reservations lost when trying to create boxoffice purchase.');
             return null;
         }
     }
@@ -184,10 +184,10 @@ class SeatReserver implements SeatReserverInterface {
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
-            $this->logger->info('Created customer purchase for ' . $email . ' with ' . count($expandedReservations) . ' seats.');
+            $this->log->info('Created customer purchase for ' . $email . ' with ' . count($expandedReservations) . ' seats.');
             return $purchase;
         } else {
-            $this->logger->info('Reservations lost when trying to create customer purchase.');
+            $this->log->info('Reservations lost when trying to create customer purchase.');
             return null;
         }
     }

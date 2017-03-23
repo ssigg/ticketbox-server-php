@@ -57,5 +57,13 @@
     "PriceModificators": {
         "addend": 0,
         "factor": 1
+    },
+    "Log": {
+        "from": "From Logger <log@example.com>",
+        "subject": "Error",
+        "listeners": [
+            "listener1@example.com",
+            "listener2@example.com"
+        ]
     }
 }

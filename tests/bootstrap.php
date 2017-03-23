@@ -24,6 +24,7 @@ require dirname(__DIR__) . '/services/TicketPartWriterInterface.php';
 require dirname(__DIR__) . '/services/ExpandedReservation.php';
 require dirname(__DIR__) . '/services/TicketValidatorResult.php';
 require dirname(__DIR__) . '/services/PathConverter.php';
+require dirname(__DIR__) . '/services/Log.php';
 require dirname(__DIR__) . '/services/ReservationConverter.php';
 require dirname(__DIR__) . '/services/OrderToBoxofficePurchaseUpgrader.php';
 require dirname(__DIR__) . '/services/TokenProvider.php';

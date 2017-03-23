@@ -8,10 +8,10 @@ interface BraintreePaymentProviderInterface {
 }
 
 class BraintreePaymentProvider implements BraintreePaymentProviderInterface {
-    private $logger;
+    private $log;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, $settings) {
-        $this->logger = $logger;
+    public function __construct(\Psr\Log\LoggerInterface $log, $settings) {
+        $this->log = $log;
         \Braintree\Configuration::environment($settings['environment']);
         \Braintree\Configuration::merchantId($settings['merchantId']);
         \Braintree\Configuration::publicKey($settings['publicKey']);
@@ -33,9 +33,9 @@ class BraintreePaymentProvider implements BraintreePaymentProviderInterface {
         ];
         $result = \Braintree\Transaction::sale($transaction);
         if ($result->success) {
-            $this->logger->info('Recieved payment of ' . $amount . ' CHF.');
+            $this->log->info('Recieved payment of ' . $amount . ' CHF.');
         } else {
-            $this->logger->warning($result);
+            $this->log->warning($result);
         }
         return $result;
     }

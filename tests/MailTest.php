@@ -42,7 +42,7 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             ->setMethods(['write'])
             ->getMock();
 
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->logMock = $this->getMockBuilder(Services\LogInterface::class)
             ->setMethods(['info', 'error'])
             ->getMockForAbstractClass();
     }
@@ -64,12 +64,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
 
@@ -98,12 +98,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('error');
 
@@ -132,12 +132,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->exactly(2))
             ->method('info');
 
@@ -170,12 +170,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->exactly(2))
             ->method('error');
 
@@ -203,12 +203,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->exactly(2))
             ->method('info');
 
@@ -241,12 +241,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->exactly(2))
             ->method('error');
 
@@ -277,12 +277,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
 
@@ -319,12 +319,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('error');
 
@@ -357,12 +357,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->exactly(2))
             ->method('info');
 
@@ -400,12 +400,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->exactly(2))
             ->method('error');
 
@@ -438,12 +438,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
 
@@ -481,12 +481,12 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->messageFactoryMock,
             $this->mailerMock,
             $this->pdfTicketWriterMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->mailerMock->expects($this->once())->method('send');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('error');
 

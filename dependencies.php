@@ -14,6 +14,7 @@ require 'services/TicketPartWriterInterface.php';
 require 'services/ExpandedReservation.php';
 require 'services/TicketValidatorResult.php';
 require 'services/PathConverter.php';
+require 'services/Log.php';
 require 'services/ReservationConverter.php';
 require 'services/OrderToBoxofficePurchaseUpgrader.php';
 require 'services/TokenProvider.php';
@@ -59,6 +60,15 @@ $container['logger'] = function($container) {
     $logDirectory = $pathConverter->convert($container['settings']['logDirectory']);
     $logger = new Katzgrau\KLogger\Logger($logDirectory);
     return $logger;
+};
+
+$container['log'] = function($container) {
+    $messageFactory = $container['messageFactory'];
+    $mailer = $container['mailer'];
+    $logger = $container['logger'];
+    $settings = $container['settings']['Log'];
+    $log = new Services\Log($messageFactory, $mailer, $logger, $settings);
+    return $log;
 };
 
 $container['uuidFactory'] = function($container) {

@@ -8,12 +8,12 @@ interface TicketValidatorInterface {
 
 class TicketValidator implements TicketValidatorInterface {
     private $reservationMapper;
-    private $logger;
+    private $log;
     private $secretKey;
 
-    public function __construct(\Spot\MapperInterface $reservationMapper, \Psr\Log\LoggerInterface $logger, $secretKey) {
+    public function __construct(\Spot\MapperInterface $reservationMapper, LogInterface $log, $secretKey) {
         $this->reservationMapper = $reservationMapper;
-        $this->logger = $logger;
+        $this->log = $log;
         $this->secretKey = $secretKey;
     }
 
@@ -31,25 +31,25 @@ class TicketValidator implements TicketValidatorInterface {
                         $reservation->is_scanned = true;
                         $this->reservationMapper->update($reservation);
 
-                        $this->logger->info('Successfully scanned reservation ' . $reservation->get('id'));
+                        $this->log->info('Successfully scanned reservation ' . $reservation->get('id'));
                     } else {
                         // Paid, but already seen
                         $ticketValidatorResult = new TicketValidatorResult([ 'Already seen' ], TicketValidatorStatus::Warning);
-                        $this->logger->warning('Reservation ' . $reservation->get('id') . ' was scanned twice.');
+                        $this->log->warning('Reservation ' . $reservation->get('id') . ' was scanned twice.');
                     }
                 } else {
                     // Reservation, not paid
                     $ticketValidatorResult = new TicketValidatorResult([ 'Not paid' ], TicketValidatorStatus::Error);
-                    $this->logger->warning('Reservation ' . $reservation->get('id') . ' was not paid.');
+                    $this->log->warning('Reservation ' . $reservation->get('id') . ' was not paid.');
                 }
             } else {
                 // Reservation not found
                 $ticketValidatorResult = new TicketValidatorResult([ 'Not found' ], TicketValidatorStatus::Error);
-                $this->logger->warning('Reservation not found.');
+                $this->log->warning('Reservation not found.');
             }
         } else {
             $ticketValidatorResult = new TicketValidatorResult([ 'Wrong key' ], TicketValidatorStatus::Error);
-            $this->logger->warning('Secret key invalid.');
+            $this->log->warning('Secret key invalid.');
         }
         return $ticketValidatorResult;
     }

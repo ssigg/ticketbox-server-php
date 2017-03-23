@@ -17,7 +17,7 @@ class Mail implements MailInterface {
     private $messageFactory;
     private $mailer;
     private $pdfTicketWriter;
-    private $logger;
+    private $log;
     private $settings;
 
     public function __construct(
@@ -26,14 +26,14 @@ class Mail implements MailInterface {
         MessageFactoryInterface $messageFactory,
         \Nette\Mail\IMailer $mailer,
         PdfTicketWriterInterface $pdfTicketWriter,
-        \Psr\Log\LoggerInterface $logger,
+        LogInterface $log,
         $settings) {
         $this->twig = $twig;
         $this->templateProvider = $templateProvider;
         $this->messageFactory = $messageFactory;
         $this->mailer = $mailer;
         $this->pdfTicketWriter = $pdfTicketWriter;
-        $this->logger = $logger;
+        $this->log = $log;
         $this->settings = $settings;
     }
 
@@ -60,9 +60,9 @@ class Mail implements MailInterface {
         
         try {
             $this->mailer->send($message);
-            $this->logger->info('Sent order confirmation mail to ' . $to);
+            $this->log->info('Sent order confirmation mail to ' . $to);
         } catch (\Nette\Mail\SendException $e) {
-            $this->logger->error($e);
+            $this->log->error($e);
         }
     }
 
@@ -88,14 +88,14 @@ class Mail implements MailInterface {
 
             try {
                 $this->mailer->send($message);
-                $this->logger->info('Sent order notification mail to ' . $to);
+                $this->log->info('Sent order notification mail to ' . $to);
             } catch (\Nette\Mail\SendException $e) {
-                $this->logger->error($e);
+                $this->log->error($e);
             }
         }
     }
 
-    function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice) {
+    public function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice) {
         $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-confirmation', $locale, 'txt');
         $template = $this->twig->loadTemplate($templateFileName);
 
@@ -122,13 +122,13 @@ class Mail implements MailInterface {
 
         try {
             $this->mailer->send($message);
-            $this->logger->info('Sent boxoffice purchase confirmation mail to ' . $to);
+            $this->log->info('Sent boxoffice purchase confirmation mail to ' . $to);
         } catch (\Nette\Mail\SendException $e) {
-            $this->logger->error($e);
+            $this->log->error($e);
         }
     }
 
-    function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice) {
+    public function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice) {
         $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-notification', 'default', 'txt');
         $template = $this->twig->loadTemplate($templateFileName);
 
@@ -149,14 +149,14 @@ class Mail implements MailInterface {
 
             try {
                 $this->mailer->send($message);
-                $this->logger->info('Sent boxoffice purchase notification mail to ' . $to);
+                $this->log->info('Sent boxoffice purchase notification mail to ' . $to);
             } catch (\Nette\Mail\SendException $e) {
-                $this->logger->error($e);
+                $this->log->error($e);
             }
         }
     }
 
-    function sendCustomerPurchaseConfirmation($purchase, $totalPrice) {
+    public function sendCustomerPurchaseConfirmation($purchase, $totalPrice) {
         $templateFileName = $this->templateProvider->getPath('customer-purchase-confirmation', $purchase->locale, 'txt');
         $template = $this->twig->loadTemplate($templateFileName);
 
@@ -183,13 +183,13 @@ class Mail implements MailInterface {
 
         try {
             $this->mailer->send($message);
-            $this->logger->info('Sent customer purchase confirmation mail to ' . $to);
+            $this->log->info('Sent customer purchase confirmation mail to ' . $to);
         } catch (\Nette\Mail\SendException $e) {
-            $this->logger->error($e);
+            $this->log->error($e);
         }
     }
 
-    function sendCustomerPurchaseNotification($purchase, $totalPrice) {
+    public function sendCustomerPurchaseNotification($purchase, $totalPrice) {
         $templateFileName = $this->templateProvider->getPath('customer-purchase-notification', 'default', 'txt');
         $template = $this->twig->loadTemplate($templateFileName);
 
@@ -210,9 +210,9 @@ class Mail implements MailInterface {
 
             try {
                 $this->mailer->send($message);
-                $this->logger->info('Sent customer purchase notification mail to ' . $to);
+                $this->log->info('Sent customer purchase notification mail to ' . $to);
             } catch (\Nette\Mail\SendException $e) {
-                $this->logger->error($e);
+                $this->log->error($e);
             }
         }
     }

@@ -41,7 +41,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->setMethods(['uuid1'])
             ->getMockForAbstractClass();
 
-        $this->loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)
+        $this->logMock = $this->getMockBuilder(Services\LogInterface::class)
             ->setMethods(['info'])
             ->getMockForAbstractClass();
     }
@@ -63,7 +63,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
     }
 
@@ -92,7 +92,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->reservationMapperMock->expects($this->once())->method('where');
@@ -116,7 +116,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $seat = $this->getEntityMock();
@@ -148,7 +148,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $seat = $this->getEntityMock();
@@ -159,7 +159,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('where')
             ->willReturn($this->queryMock);
         
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
 
@@ -184,7 +184,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $reservationId = 1;
@@ -206,7 +206,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $reservationId = 1;
@@ -237,7 +237,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $reservationId = 1;
@@ -267,7 +267,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $seat = $this->getEntityMock();
@@ -296,7 +296,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $seat = $this->getEntityMock();
@@ -308,7 +308,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
 
         $this->reservationMapperMock->expects($this->never())->method('update');
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
 
@@ -328,7 +328,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('create')
             ->willReturn($this->getEntityMock());
         
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
         
@@ -343,7 +343,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->orderMapperMock->expects($this->never())->method('create');
@@ -367,7 +367,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('create')
             ->willReturn($this->getEntityMock());
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
         
@@ -382,7 +382,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->orderMapperMock->expects($this->once())->method('create');
@@ -416,7 +416,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
@@ -436,7 +436,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('create')
             ->willReturn($this->getEntityMock());
         
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
         
@@ -451,7 +451,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->boxofficePurchaseMapperMock->expects($this->never())->method('create');
@@ -478,7 +478,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('convert')
             ->will($this->returnArgument(0));
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
         
@@ -493,7 +493,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->boxofficePurchaseMapperMock->expects($this->once())->method('create');
@@ -531,7 +531,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
@@ -551,7 +551,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('create')
             ->willReturn($this->getEntityMock());
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
         
@@ -566,7 +566,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->customerPurchaseMapperMock->expects($this->never())->method('create');
@@ -593,7 +593,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             ->method('convert')
             ->will($this->returnArgument(0));
 
-        $this->loggerMock
+        $this->logMock
             ->expects($this->once())
             ->method('info');
         
@@ -608,7 +608,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
         
         $this->customerPurchaseMapperMock->expects($this->once())->method('create');
@@ -646,7 +646,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $this->reservationMapperMock->expects($this->exactly(count($reservations)))->method('update');
@@ -674,7 +674,7 @@ class SeatReserverTest extends \PHPUnit_Framework_TestCase {
             $this->reservationConverterMock,
             $this->tokenProviderMock,
             $this->uuidFactoryMock,
-            $this->loggerMock,
+            $this->logMock,
             $settings);
 
         $totalPrice = $reserver->getTotalPriceOfPendingReservations();
