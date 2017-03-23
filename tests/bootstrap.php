@@ -18,6 +18,7 @@ require dirname(__DIR__) . '/actions/ReservationActions.php';
 require dirname(__DIR__) . '/actions/OrderActions.php';
 require dirname(__DIR__) . '/actions/PurchaseActions.php';
 require dirname(__DIR__) . '/actions/ScannerActions.php';
+require dirname(__DIR__) . '/actions/LogActions.php';
 
 // Register services
 require dirname(__DIR__) . '/services/TicketPartWriterInterface.php';

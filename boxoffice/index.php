@@ -27,6 +27,8 @@ $app->get('/orders', Actions\ListOrdersAction::class);
 $app->post('/boxoffice-purchases', Actions\CreateBoxofficePurchaseAction::class);
 $app->get('/boxoffice-purchases/{unique_id}', Actions\GetBoxofficePurchaseAction::class);
 $app->put('/upgrade-order/{id}', Actions\UpgradeOrderToBoxofficePurchaseAction::class);
+
+$app->post('/log', Actions\LogClientMessageAction::class);
 // =============================================================
 
 $app->run();
