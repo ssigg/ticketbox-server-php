@@ -237,14 +237,14 @@ class CreateCustomerPurchaseAction {
 
         $totalPrice = $this->reserver->getTotalPriceOfPendingReservations();
 
-        $result = $this->paymentProvider->sale($totalPrice, $nonce);
+        $result = $this->paymentProvider->sale($totalPrice, $nonce, $firstname, $lastname, $email);
         if ($result->success) {
             $purchase = $this->reserver->customerPurchase($title, $firstname, $lastname, $email, $locale);
             $this->mail->sendCustomerPurchaseConfirmation($purchase, $totalPrice);
             $this->mail->sendCustomerPurchaseNotification($purchase, $totalPrice);
             return $response->withJson($purchase, 201);
         } else {
-            return $response->withJson($result, 400);
+            return $response->withStatus(400);
         }
     }
 }

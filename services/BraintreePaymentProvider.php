@@ -4,7 +4,7 @@ namespace Services;
 
 interface BraintreePaymentProviderInterface {
     function getToken();
-    function sale($amount, $nonce);
+    function sale($amount, $nonce, $firstname, $lastname, $email);
 }
 
 class BraintreePaymentProvider implements BraintreePaymentProviderInterface {
@@ -23,12 +23,17 @@ class BraintreePaymentProvider implements BraintreePaymentProviderInterface {
         return $token;
     }
 
-    public function sale($amount, $nonce) {
+    public function sale($amount, $nonce, $firstname, $lastname, $email) {
         $transaction = [
             'amount' => $amount,
             'paymentMethodNonce' => $nonce,
             'options' => [
                 'submitForSettlement' => true
+            ],
+            'customer' => [
+                'firstName' => $firstname,
+                'lastName' => $lastname,
+                'email' => $email
             ]
         ];
         $result = \Braintree\Transaction::sale($transaction);
