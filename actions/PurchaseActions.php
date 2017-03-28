@@ -41,6 +41,44 @@ class ListBoxofficePurchasesAction {
     }
 }
 
+class ListThinBoxofficePurchasesAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $boxofficePurchaseMapper = $this->orm->mapper('Model\BoxofficePurchase');
+        $reservationMapper = $this->orm->mapper('Model\Reservation');
+
+        $boxofficeName = $args['boxoffice_name'];
+        $boxofficePurchases = $boxofficePurchaseMapper->where([ 'boxoffice' => $boxofficeName ]);
+
+        $eventId = $request->getQueryParam('event_id', null);
+        $thinBoxofficePurchases = [];
+        foreach ($boxofficePurchases as $boxofficePurchase) {
+            if (!$boxofficePurchase->get('is_printed')) {
+                $reservationPredicate = [ 'order_id' => $boxofficePurchase->id, 'order_kind' => 'boxoffice-purchase' ];
+                if ($eventId != null) {
+                    $reservationPredicate['event_id'] = $eventId;
+                }
+                $reservations = $reservationMapper->where($reservationPredicate);
+                $tickets = [];
+                foreach ($reservations as $reservation) {
+                    $tickets[] = $reservation->unique_id;
+                }
+                $thinBoxofficePurchases[] = [
+                    'id' => $boxofficePurchase->id,
+                    'tickets' => $tickets
+                ];
+            }
+        }
+
+        return $response->withJson($thinBoxofficePurchases, 200);
+    }
+}
+
 class GetBoxofficePurchaseAction {
     private $orm;
     private $reservationConverter;
@@ -69,11 +107,13 @@ class GetBoxofficePurchaseAction {
 
 class CreateBoxofficePurchaseAction {
     private $mail;
+    private $pdfTicketWriter;
     private $reserver;
     private $tempDirectory;
 
     public function __construct(ContainerInterface $container) {
         $this->mail = $container->get('mail');
+        $this->pdfTicketWriter = $container->get('pdfTicketWriter');
         $this->reserver = $container->get('seatReserver');
         $this->boxofficeSettings = $container->get('settings')['boxoffice'];
         $this->tempDirectory = $container->get('settings')['tempDirectory'];
@@ -82,7 +122,7 @@ class CreateBoxofficePurchaseAction {
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
         $boxofficeName = $data['boxofficeName'];
-        $boxofficeType = $data['boxofficeType']; // [paper|pdf]
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout]
         $customerEmail = isset($data['email']) ? $data['email'] : null;
         $locale = $data['locale'];
         
@@ -95,6 +135,12 @@ class CreateBoxofficePurchaseAction {
 
         if ($boxofficeType == 'pdf') {
             $this->mail->sendBoxofficePurchaseConfirmation($boxofficeName, $customerEmail, $locale, $purchase->reservations, $totalPrice);
+        } else if ($boxofficeType == 'printout') {
+            foreach ($purchase->reservations as $reservation) {
+                $this->pdfTicketWriter->write($reservation, true, $locale);
+            }
+        } else {
+            // Neither a mail has to be delivered nor tickets have to be created
         }
 
         $this->mail->sendBoxofficePurchaseNotification($boxofficeName, $purchase->reservations, $totalPrice);
@@ -106,11 +152,13 @@ class CreateBoxofficePurchaseAction {
 class UpgradeOrderToBoxofficePurchaseAction {
     private $orm;
     private $mail;
+    private $pdfTicketWriter;
     private $orderToBoxofficePurchaseUpgrader;
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
         $this->mail = $container->get('mail');
+        $this->pdfTicketWriter = $container->get('pdfTicketWriter');
         $this->orderToBoxofficePurchaseUpgrader = $container->get('orderToBoxofficePurchaseUpgrader');
     }
 
@@ -120,7 +168,7 @@ class UpgradeOrderToBoxofficePurchaseAction {
 
         $data = $request->getParsedBody();
         $boxofficeName = $data['boxofficeName'];
-        $boxofficeType = $data['boxofficeType']; // [paper|pdf]
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout]
         $customerEmail = $order->email;
         $locale = $data['locale'];
 
@@ -133,11 +181,36 @@ class UpgradeOrderToBoxofficePurchaseAction {
 
         if ($boxofficeType == 'pdf') {
             $this->mail->sendBoxofficePurchaseConfirmation($boxofficeName, $customerEmail, $locale, $purchase->reservations, $totalPrice);
+        } else if ($boxofficeType == 'printout') {
+            foreach ($purchase->reservations as $reservation) {
+                $this->pdfTicketWriter->write($reservation, true, $locale);
+            }
+        } else {
+            // Neither a mail has to be delivered nor tickets have to be created
         }
 
         $this->mail->sendBoxofficePurchaseNotification($boxofficeName, $purchase->reservations, $totalPrice);
 
         return $response->withJson($purchase, 200);
+    }
+}
+
+class MarkBoxofficePurchasePrintStatusAction {
+    private $orm;
+    
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $boxofficePurchaseMapper = $this->orm->mapper('Model\BoxofficePurchase');
+        $boxofficePurchase = $boxofficePurchaseMapper->get($args['id']);
+
+        $data = $request->getParsedBody();
+        $boxofficePurchase->is_printed = $data['isPrinted'];
+        $boxofficePurchaseMapper->update($boxofficePurchase);
+
+        return $response->withStatus(200);
     }
 }
 
@@ -245,6 +318,41 @@ class CreateCustomerPurchaseAction {
             return $response->withJson($purchase, 201);
         } else {
             return $response->withStatus(400);
+        }
+    }
+}
+
+class GetPdfTicketAction {
+    private $ticketDirectoryPath;
+    private $filePersister;
+
+    public function __construct($container) {
+        $pathConverter = $container->get('pathConverter');
+        $this->ticketDirectoryPath = $pathConverter->convert($container->get('settings')['ticketDirectory']);
+        $this->filePersister = $container->get('filePersister');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $uniqueId = $args['unique_id'];
+        $filePath = $this->ticketDirectoryPath . '/' . $uniqueId . '_ticket.pdf';
+        if ($this->filePersister->exists($filePath)) {
+            // See http://discourse.slimframework.com/t/slim-3-download-files/224/2
+            $fh = fopen($filePath, 'rb');
+
+            $stream = new \Slim\Http\Stream($fh); // create a stream instance for the response body
+
+            return $response->withHeader('Content-Type', 'application/force-download')
+                            ->withHeader('Content-Type', 'application/octet-stream')
+                            ->withHeader('Content-Type', 'application/download')
+                            ->withHeader('Content-Description', 'File Transfer')
+                            ->withHeader('Content-Transfer-Encoding', 'binary')
+                            ->withHeader('Content-Disposition', 'attachment; filename="' . basename($filePath) . '"')
+                            ->withHeader('Expires', '0')
+                            ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+                            ->withHeader('Pragma', 'public')
+                            ->withBody($stream); // all stream contents will be sent to the response
+        } else {
+            return $response->withStatus(404);
         }
     }
 }

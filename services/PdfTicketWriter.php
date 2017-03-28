@@ -3,7 +3,7 @@
 namespace Services;
 
 interface PdfTicketWriterInterface {
-    function write(ExpandedReservationInterface $reservation, $locale);
+    function write(ExpandedReservationInterface $reservation, $printOrderId, $locale);
 }
 
 class PdfTicketWriter implements PdfTicketWriterInterface {
@@ -13,10 +13,10 @@ class PdfTicketWriter implements PdfTicketWriterInterface {
         $this->ticketPartWriters = $ticketPartWriters;
     }
 
-    public function write(ExpandedReservationInterface $reservation, $locale) {
+    public function write(ExpandedReservationInterface $reservation, $printOrderId, $locale) {
         $partFilePaths = [];
         foreach ($this->ticketPartWriters as $ticketPartWriter) {
-            $partFilePaths = $ticketPartWriter->write($reservation, $partFilePaths, $locale);
+            $partFilePaths = $ticketPartWriter->write($reservation, $partFilePaths, $printOrderId, $locale);
         }
         return $partFilePaths['pdf'];
     }

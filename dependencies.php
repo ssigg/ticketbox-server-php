@@ -134,12 +134,14 @@ $container['orderToBoxofficePurchaseUpgrader'] = function($container) {
     $orderMapper = $container['orm']->mapper('Model\Order');
     $boxofficePurchaseMapper = $container['orm']->mapper('Model\BoxofficePurchase');
     $reservationMapper = $container['orm']->mapper('Model\Reservation');
+    $uuidFactory = $container['uuidFactory'];
     $reservationConverter = $container['reservationConverter'];
     $priceModificators = $container['settings']['PriceModificators'];
     $orderToBoxofficePurchaseUpgrader = new Services\OrderToBoxofficePurchaseUpgrader(
         $orderMapper,
         $boxofficePurchaseMapper,
         $reservationMapper,
+        $uuidFactory,
         $reservationConverter,
         $priceModificators);
     return $orderToBoxofficePurchaseUpgrader;

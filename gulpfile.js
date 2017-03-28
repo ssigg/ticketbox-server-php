@@ -18,6 +18,8 @@ var paths = [
     '!customer/config',
     'scanner/**',
     '!scanner/config',
+    'printer/**',
+    '!printer/config',
     'model/*',
     'services/*',
     'vendor/**',

@@ -26,12 +26,12 @@ class QrCodeWriterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('writeFile')
             ->with($this->equalTo($this->reservation->unique_id), $this->equalTo($expectedOutputPath));
-        $this->writer->write($this->reservation, [], 'en');
+        $this->writer->write($this->reservation, [], false, 'en');
     }
 
     public function testFilePathIsAppendedToExistingFilePaths() {
         $expectedOutputPath = $this->outputDirectory . '/' . $this->unique_id . '_qr.png';
-        $filePaths = $this->writer->write($this->reservation, [], 'en');
+        $filePaths = $this->writer->write($this->reservation, [], false, 'en');
         $this->assertSame([ 'qr' => $expectedOutputPath ], $filePaths);
     }
 }

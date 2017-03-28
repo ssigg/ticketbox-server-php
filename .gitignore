@@ -12,3 +12,4 @@ common/templates
 customer/logs
 boxoffice/logs
 admin/logs
+printer/logs

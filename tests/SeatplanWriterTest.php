@@ -38,7 +38,7 @@ class SeatplanWriterTest extends \PHPUnit_Framework_TestCase {
             ->method('get')
             ->willReturn(new SeatplanWriterTestBlockStub('invalid'));
         $this->setExpectedException(\Exception::class);
-        $this->writer->write($this->reservation, [], 'en');
+        $this->writer->write($this->reservation, [], false, 'en');
     }
 
     public function testImageIsWrittenToCorrectPathWhenSeatplanIsValid() {
@@ -52,7 +52,7 @@ class SeatplanWriterTest extends \PHPUnit_Framework_TestCase {
             ->method('writePng')
             ->with($this->equalTo($expectedOutputPath));
 
-        $this->writer->write($this->reservation, [], 'en');
+        $this->writer->write($this->reservation, [], false, 'en');
     }
 
     public function testFilePathIsAppendedToExistingFilePaths() {
@@ -61,7 +61,7 @@ class SeatplanWriterTest extends \PHPUnit_Framework_TestCase {
             ->willReturn(new SeatplanWriterTestBlockStub($this->validImageDataUri));
 
         $expectedOutputPath = $this->outputDirectory . '/' . $this->unique_id . '_seatplan.png';
-        $filePaths = $this->writer->write($this->reservation, [], 'en');
+        $filePaths = $this->writer->write($this->reservation, [], false, 'en');
         $this->assertSame([ 'seatplan' => $expectedOutputPath ], $filePaths);
     }
 }

@@ -11,6 +11,7 @@ class BoxofficePurchase extends \Spot\Entity {
             'boxoffice' => ['type' => 'string', 'required' => true],
             'price' => ['type' => 'float', 'required' => true],
             'locale' => ['type' => 'string', 'required' => true],
+            'is_printed' => ['type' => 'boolean', 'required' => true],
             'timestamp' => ['type' => 'integer', 'required' => true]
         ];
     }

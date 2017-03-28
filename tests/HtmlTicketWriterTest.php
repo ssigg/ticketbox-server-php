@@ -47,7 +47,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('getPath')
             ->with($this->equalTo('ticket'), $this->equalTo($locale), $this->equalTo('html'));
-        $this->writer->write($this->reservation, $this->partFilePaths, $locale);
+        $this->writer->write($this->reservation, $this->partFilePaths, false, $locale);
     }
 
     public function testUseTwigToLoadTheTemplate() {
@@ -61,7 +61,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('loadTemplate')
             ->with($this->equalTo($templatePath));
-        $this->writer->write($this->reservation, $this->partFilePaths, 'en');
+        $this->writer->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
     public function testResultIsWrittenToTheCorrectLocation() {
@@ -74,11 +74,11 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('write')
             ->with($this->equalTo($expectedOutputPath), $this->equalTo('result'));
-        $this->writer->write($this->reservation, $this->partFilePaths, 'en');
+        $this->writer->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
     public function testFilePathIsAppendedToExistingFilePaths() {
-        $filePaths = $this->writer->write($this->reservation, $this->partFilePaths, 'en');
+        $filePaths = $this->writer->write($this->reservation, $this->partFilePaths, false, 'en');
         $expectedPartFilePaths = $this->partFilePaths;
         $expectedPartFilePaths['html'] = $this->outputDirectory . '/' . $this->unique_id . '_ticket.html';
         $this->assertSame($expectedPartFilePaths, $filePaths);

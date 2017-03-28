@@ -40,26 +40,26 @@ class TicketPartTempFilesRemoverTest extends \PHPUnit_Framework_TestCase {
                 [$this->equalTo($this->seatplanPath)],
                 [$this->equalTo($this->htmlPath)]);
 
-        $this->remover->write($this->reservation, $this->partFilePaths, 'en');
+        $this->remover->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
     public function testQrFileIsDeleted() {
-        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, 'en');
+        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, false, 'en');
         $this->assertNotContains($this->qrPath, $remainingFilePaths);
     }
 
     public function testSeatplanFileIsDeleted() {
-        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, 'en');
+        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, false, 'en');
         $this->assertNotContains($this->seatplanPath, $remainingFilePaths);
     }
 
     public function testHtmlFileIsDeleted() {
-        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, 'en');
+        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, false, 'en');
         $this->assertNotContains($this->htmlPath, $remainingFilePaths);
     }
 
     public function testPdfFileIsNotDeleted() {
-        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, 'en');
+        $remainingFilePaths = $this->remover->write($this->reservation, $this->partFilePaths, false, 'en');
         $this->assertContains($this->pdfPath, $remainingFilePaths);
     }
 }
