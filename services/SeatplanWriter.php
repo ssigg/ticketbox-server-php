@@ -14,7 +14,7 @@ class SeatplanWriter implements TicketPartWriterInterface {
         $this->settings = $settings;
     }
 
-    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
+    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
         $seatPlanFilePath = $this->markSeatOnSeatplanAndReturnImageFilePath($reservation);
         $partFilePaths["seatplan"] = $seatPlanFilePath;
         return $partFilePaths;

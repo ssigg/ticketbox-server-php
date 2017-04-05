@@ -10,6 +10,7 @@ class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgrad
     private $orderMapper;
     private $boxofficePurchaseMapper;
     private $reservationMapper;
+    private $uuidFactory;
     private $reservationConverter;
     private $priceModificators;
 
@@ -17,11 +18,13 @@ class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgrad
         \Spot\MapperInterface $orderMapper,
         \Spot\MapperInterface $boxofficePurchaseMapper,
         \Spot\MapperInterface $reservationMapper,
+        \Ramsey\Uuid\UuidFactoryInterface $uuidFactory,
         ReservationConverterInterface $reservationConverter,
         $priceModificators) {
         $this->orderMapper = $orderMapper;
         $this->boxofficePurchaseMapper = $boxofficePurchaseMapper;
         $this->reservationMapper = $reservationMapper;
+        $this->uuidFactory = $uuidFactory;
         $this->reservationConverter = $reservationConverter;
         $this->priceModificators = $priceModificators;
     }
@@ -34,9 +37,11 @@ class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgrad
             $totalPrice += $expandedReservation->price;
         }
         $data = [
+            'unique_id' => $this->uuidFactory->uuid1(),
             'boxoffice' => $boxofficeName,
             'price' => $totalPrice,
             'locale' => $locale,
+            'is_printed' => false,
             'timestamp' => time()
         ];
         $purchase = $this->boxofficePurchaseMapper->create($data);

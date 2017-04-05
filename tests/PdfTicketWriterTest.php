@@ -25,13 +25,13 @@ class PdfTicketWriterTest extends \PHPUnit_Framework_TestCase {
         $this->ticketPartWriterMock
             ->expects($this->once())
             ->method('write')
-            ->with($this->equalTo($this->reservation), $this->equalTo([]), $this->equalTo($locale));
+            ->with($this->equalTo($this->reservation), $this->equalTo([]), $this->equalTo(false), $this->equalTo($locale));
 
-        $this->writer->write($this->reservation, $locale);
+        $this->writer->write($this->reservation, false, $locale);
     }
 
     public function testReturnPdfFilePath() {
-        $result = $this->writer->write($this->reservation, 'en');
+        $result = $this->writer->write($this->reservation, false, 'en');
         $this->assertSame($this->pdfPath, $result);
     }
 }

@@ -101,7 +101,7 @@ class Mail implements MailInterface {
 
         $pdfFilePaths = [];
         foreach ($reservations as $reservation) {
-            $pdfFilePath = $this->pdfTicketWriter->write($reservation, $locale);
+            $pdfFilePath = $this->pdfTicketWriter->write($reservation, false, $locale);
             $pdfFilePaths[] = $pdfFilePath;
         }
 
@@ -162,7 +162,7 @@ class Mail implements MailInterface {
 
         $pdfFilePaths = [];
         foreach ($purchase->reservations as $reservation) {
-            $pdfFilePath = $this->pdfTicketWriter->write($reservation, $purchase->locale);
+            $pdfFilePath = $this->pdfTicketWriter->write($reservation, false, $purchase->locale);
             $pdfFilePaths[] = $pdfFilePath;
         }
 

@@ -150,6 +150,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
             'boxoffice' => 'Box Office',
             'price' => 42,
             'locale' => 'en',
+            'is_printed' => false,
             'timestamp' => 123
         ]);
 

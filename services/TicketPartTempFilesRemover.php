@@ -9,7 +9,7 @@ class TicketPartTempFilesRemover implements TicketPartWriterInterface {
         $this->filePersister = $filePersister;
     }
 
-    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
+    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
         $filePathKeysToBeRemoved = [ 'qr', 'seatplan', 'html' ];
 
         $remainingFilePaths = [];

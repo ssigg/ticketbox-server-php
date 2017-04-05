@@ -25,6 +25,7 @@ class ReservationConverter implements ReservationConverterInterface {
         foreach ($reservations as $reservation) {
             $id = $reservation->get('id');
             $unique_id = $reservation->get('unique_id');
+            $orderId = $reservation->get('order_id');
             $eventId = $reservation->get('event_id');
             $event = $this->eventMapper->get($eventId);
             $seat = $this->seatMapper->get($reservation->get('seat_id'));
@@ -32,7 +33,7 @@ class ReservationConverter implements ReservationConverterInterface {
             $isReduced = $reservation->get('is_reduced');
             $price = $isReduced ? $category->get('price_reduced') : $category->get('price');
             $modifiedPrice = ($price * $this->priceModificators['factor']) + $this->priceModificators['addend'];
-            $expandedReservations[] = new ExpandedReservation($id, $unique_id, $event, $seat, $category, $isReduced, $modifiedPrice);
+            $expandedReservations[] = new ExpandedReservation($id, $unique_id, $event, $seat, $category, $isReduced, $modifiedPrice, $orderId);
         }
         return $expandedReservations;
     }

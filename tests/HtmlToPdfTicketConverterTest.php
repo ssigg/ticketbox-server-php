@@ -36,7 +36,7 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->once())
             ->method('create');
         
-        $this->converter->write($this->reservation, $this->partFilePaths, 'en');
+        $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
     public function testAddGivenHtmlAsPage() {
@@ -45,7 +45,7 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->method('addPage')
             ->with($this->equalTo($this->partFilePaths['html']));
 
-        $this->converter->write($this->reservation, $this->partFilePaths, 'en');
+        $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
     public function testResultIsWrittenToTheCorrectLocation() {
@@ -55,11 +55,11 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->method('saveAs')
             ->with($this->equalTo($expectedPath));
 
-        $this->converter->write($this->reservation, $this->partFilePaths, 'en');
+        $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
     public function testFilePathIsAppendedToExistingFilePaths() {
-        $partFilePaths = $this->converter->write($this->reservation, $this->partFilePaths, 'en');
+        $partFilePaths = $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
         $expectedPartFilePaths = $this->partFilePaths;
         $expectedPartFilePaths['pdf'] = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
         $this->assertSame($expectedPartFilePaths, $partFilePaths);

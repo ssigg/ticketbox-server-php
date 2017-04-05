@@ -12,6 +12,11 @@ class PurchaseActionsTest extends DatabaseTestBase {
                 'sendCustomerPurchaseConfirmation'])
             ->getMock();
         $this->container['mail'] = $mailMock;
+
+        $pdfTicketWriterMock = $this->getMockBuilder(PdfTicketWriterInterface::class)
+            ->setMethods(['write'])
+            ->getMock();
+        $this->container['pdfTicketWriter'] = $pdfTicketWriterMock;
         
         $reserverMock = $this->getMockBuilder(SeatReserverInterface::class)
             ->setMethods(['boxofficePurchase', 'customerPurchase', 'getTotalPriceOfPendingReservations'])
@@ -170,6 +175,103 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $this->assertSame(42, $decodedResponse[0]['totalPrice']);
     }
 
+    public function testListThinBoxofficePurchases() {
+        $boxofficePurchaseMapper = $this->container->get('orm')->mapper('Model\BoxofficePurchase');
+        $action = new Actions\ListThinBoxofficePurchasesAction($this->container);
+
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $request = $this->getGetRequest('/boxoffice-purchases/Box%20Office');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, [ 'boxoffice_name' => 'Box Office' ]);
+        $this->assertSame(
+            '[{"id":1,"tickets":["unique_base_2"]}]',
+            (string)$response->getBody());
+    }
+
+    public function testListThinBoxofficePurchaseListsOnlyUnprintedBoxofficePurchases() {
+        $boxofficePurchaseMapper = $this->container->get('orm')->mapper('Model\BoxofficePurchase');
+        $boxofficePurchaseMapper->create([
+            'unique_id' => 'boxoffice-unique_base',
+            'boxoffice' => 'Box Office',
+            'price' => 42,
+            'locale' => 'en',
+            'is_printed' => true,
+            'timestamp' => 123
+        ]);
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $action = new Actions\ListThinBoxofficePurchasesAction($this->container);
+
+        $request = $this->getGetRequest('/boxoffice-purchases/Box%20Office');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, [ 'boxoffice_name' => 'Box Office' ]);
+        $this->assertSame(
+            '[{"id":1,"tickets":["unique_base_2"]}]',
+            (string)$response->getBody());
+    }
+
+    public function testListThinBoxofficePurchasesWithEventIdListsOnlyTicketsOfEvent() {
+        $boxofficePurchaseMapper = $this->container->get('orm')->mapper('Model\BoxofficePurchase');
+        $action = new Actions\ListThinBoxofficePurchasesAction($this->container);
+
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 2,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_3',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $request = $this->getGetRequest('/boxoffice-purchases/Box%20Office?event_id=1');
+        $response = new \Slim\Http\Response();
+
+        $response = $action($request, $response, [ 'boxoffice_name' => 'Box Office' ]);
+        $this->assertSame(
+            '[{"id":1,"tickets":["unique_base_3"]}]',
+            (string)$response->getBody());
+    }
+
     public function testGetBoxofficePurchaseWithKnownUniqueIdConvertsReservations() {
         $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
 
@@ -259,6 +361,36 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
+    public function testWriteTicketWhenBoxofficeIsPrintoutBoxoffice() {
+        $action = new Actions\CreateBoxofficePurchaseAction($this->container);
+
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "printout",
+            "locale" => "en"
+        ];
+        $request = $this->getPostRequest('/boxoffice-purchases', $data);
+        $response = new \Slim\Http\Response();
+
+        $pdfTicketWriterMock = $this->container->get('pdfTicketWriter');
+
+        $pdfTicketWriterMock->expects($this->once())->method('write');
+        $action($request, $response, []);
+    }
+
     public function testUseUpgraderToUpgradeOrderToBoxofficePurchase() {
         $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
 
@@ -307,6 +439,36 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $mailMock = $this->container->get('mail');
 
         $mailMock->expects($this->once())->method('sendBoxofficePurchaseConfirmation');
+        $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testWriteTicketWhileUpgradingOrderWhenBoxofficeIsPrintoutBoxoffice() {
+        $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
+
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "printout",
+            "locale" => "en"
+        ];
+        $request = $this->getPutRequest('/upgrade-order/1', $data);
+        $response = new \Slim\Http\Response();
+
+        $pdfTicketWriterMock = $this->container->get('pdfTicketWriter');
+
+        $pdfTicketWriterMock->expects($this->once())->method('write');
         $action($request, $response, [ 'id' => 1 ]);
     }
 

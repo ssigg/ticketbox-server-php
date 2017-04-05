@@ -11,7 +11,7 @@ class QrCodeWriter implements TicketPartWriterInterface {
         $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
-    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $locale) {
+    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
         $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_qr.png';
         $this->writer->writeFile($reservation->unique_id, $filePath);
 

@@ -4,6 +4,7 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
     private $orderMapperMock;
     private $boxofficePurchaseMapperMock;
     private $reservationMapperMock;
+    private $uuidFactoryMock;
     private $reservationConverterMock;
     private $upgrader;
 
@@ -17,6 +18,9 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
         $this->reservationMapperMock = $this->getMockBuilder(\Spot\MapperInterface::class)
             ->setMethods(['update'])
             ->getMockForAbstractClass();
+        $this->uuidFactoryMock = $this->getMockBuilder(\Ramsey\Uuid\UuidFactoryInterface::class)
+            ->setMethods(['uuid1'])
+            ->getMockForAbstractClass();
         $this->reservationConverterMock = $this->getMockBuilder(Services\ReservationConverterInterface::class)
             ->setMethods(['convert'])
             ->getMockForAbstractClass();
@@ -28,6 +32,7 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
             $this->orderMapperMock,
             $this->boxofficePurchaseMapperMock,
             $this->reservationMapperMock,
+            $this->uuidFactoryMock,
             $this->reservationConverterMock,
             $defaultPriceModificators);
     }

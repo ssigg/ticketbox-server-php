@@ -145,15 +145,21 @@ class SeatReserver implements SeatReserverInterface {
                 'boxoffice' => $boxofficeName,
                 'price' => $totalPrice,
                 'locale' => $locale,
+                'is_printed' => false,
                 'timestamp' => time()
             ];
             $purchase = $this->boxofficePurchaseMapper->create($data);
-            $purchase->reservations = $expandedReservations;
             foreach ($reservations as $reservation) {
                 $reservation->order_kind = 'boxoffice-purchase';
                 $reservation->order_id = $purchase->get('id');
                 $this->reservationMapper->update($reservation);
             }
+
+            foreach($expandedReservations as $k => $v) {
+                $expandedReservations[$k]->order_id = $purchase->get('id');
+            }
+            $purchase->reservations = $expandedReservations;
+            
             $this->log->info('Created boxoffice purchase with ' . count($expandedReservations) . ' seats.');
             return $purchase;
         } else {
