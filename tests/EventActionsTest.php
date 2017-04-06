@@ -1,6 +1,14 @@
 <?php
 
 class EventActionsTest extends DatabaseTestBase {
+    protected function setUp() {
+        parent::setUp();
+        $eventblockMerger = $this->getMockBuilder(EventblockMergerInterface::class)
+            ->setMethods(['merge'])
+            ->getMock();
+        $this->container['eventblockMerger'] = $eventblockMerger;
+    }
+
     public function testListAllEventsAction() {
         $action = new Actions\ListAllEventsAction($this->container);
 
@@ -43,7 +51,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"blocks":[{"id":1,"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}}]}',
+            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"blocks":null}',
             (string)$response->getBody());
     }
 

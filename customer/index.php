@@ -13,7 +13,7 @@ require '../dependencies.php';
 $app->get('/events', Actions\ListVisibleEventsAction::class);
 $app->get('/events/{id}', Actions\GetEventAction::class);
 
-$app->get('/eventblocks/{id}', Actions\GetEventblockAction::class);
+$app->get('/eventblocks/{key}', Actions\GetMergedEventblockAction::class);
 
 $app->get('/reservations', Actions\ListMyReservationsAction::class);
 $app->post('/reservations', Actions\CreateReservationAction::class);

@@ -37,9 +37,11 @@ class ListVisibleEventsAction {
 
 class GetEventAction {
     private $orm;
+    private $eventblockMerger;
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
+        $this->eventblockMerger = $container->get('eventblockMerger');
     }
     
     public function __invoke(Request $request, Response $response, $args = []) {
@@ -48,11 +50,8 @@ class GetEventAction {
         if ($event != null) {
             $eventblockMapper = $this->orm->mapper('Model\Eventblock');
             $eventblocks = $eventblockMapper->where(['event_id' => $event->id]);
-            $blocks = [];
-            foreach($eventblocks as $eventblock) {
-                $blocks[] = $this->convertOneEventblock($eventblock);
-            }
-            $event->blocks = $blocks;
+            $mergedEventblocks = $this->eventblockMerger->merge($eventblocks);
+            $event->blocks = $mergedEventblocks;
             return $response->withJson($event, 200);
         } else {
             return $response->withStatus(404);

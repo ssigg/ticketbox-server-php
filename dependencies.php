@@ -15,6 +15,7 @@ require 'services/ExpandedReservation.php';
 require 'services/TicketValidatorResult.php';
 require 'services/PathConverter.php';
 require 'services/Log.php';
+require 'services/EventblockMerger.php';
 require 'services/ReservationConverter.php';
 require 'services/OrderToBoxofficePurchaseUpgrader.php';
 require 'services/TokenProvider.php';
@@ -91,6 +92,17 @@ $container['orm'] = function($container) {
 $container['session'] = function($container) {
     $session = new duncan3dc\Sessions\SessionInstance('token');
     return $session;
+};
+
+$container['eventblockMerger'] = function($container) {
+    $eventMapper = $container['orm']->mapper('Model\Event');
+    $eventblockMapper = $container['orm']->mapper('Model\Eventblock');
+    $blockMapper = $container['orm']->mapper('Model\Block');
+    $categoryMapper = $container['orm']->mapper('Model\Category');
+    $seatMapper = $container['orm']->mapper('Model\Seat');
+    $seatConverter = $container['seatConverter'];
+    $eventblockMerger = new Services\EventblockMerger($eventMapper, $eventblockMapper, $blockMapper, $categoryMapper, $seatMapper, $seatConverter);
+    return $eventblockMerger;
 };
 
 $container['reservationConverter'] = function($container) {

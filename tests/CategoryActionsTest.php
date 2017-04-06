@@ -3,6 +3,10 @@
 class CategoryActionsTest extends DatabaseTestBase {
     protected function setUp() {
         parent::setUp();
+        $eventblockMerger = $this->getMockBuilder(EventblockMergerInterface::class)
+            ->setMethods(['merge'])
+            ->getMock();
+        $this->container['eventblockMerger'] = $eventblockMerger;
     }
 
     public function testListCategoriesAction() {
@@ -13,7 +17,7 @@ class CategoryActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"name":"Category 1","price":2,"price_reduced":1}]',
+            '[{"id":1,"name":"Category 1","color":"#000","price":2,"price_reduced":1}]',
             (string)$response->getBody());
     }
 
@@ -22,6 +26,7 @@ class CategoryActionsTest extends DatabaseTestBase {
 
         $category = [
             'name' => 'Test name',
+            'color' => '#fff',
             'price' => 10,
             'price_reduced' => 5 ];
         $request = $this->getPostRequest('/categories', $category);
@@ -65,7 +70,7 @@ class CategoryActionsTest extends DatabaseTestBase {
         $this->assertSame($categoryAfter->price_reduced, $newReducedPrice);
 
         $this->assertSame(
-            '{"id":1,"name":"New name","price":20,"price_reduced":10}',
+            '{"id":1,"name":"New name","color":"#000","price":20,"price_reduced":10}',
             (string)$response->getBody());
     }
 

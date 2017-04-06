@@ -117,6 +117,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
         $categoryMapper = $spot->mapper('Model\Category');
         $categoryMapper->create([
             'name' => 'Category 1',
+            'color' => '#000',
             'price' => 2,
             'price_reduced' => 1 ]);
 
