@@ -10,6 +10,10 @@ class EventblockActionsTest extends DatabaseTestBase {
             ->method('convert')
             ->will($this->returnArgument(0));
         $this->container['seatConverter'] = $seatConverterMock;
+        $eventblockMergerMock = $this->getMockBuilder(EventblockMergerInterface::class)
+            ->setMethods(['getMergedEventblock'])
+            ->getMock();
+        $this->container['eventblockMerger'] = $eventblockMergerMock;
     }
 
     public function testListEventblocksAction() {
@@ -55,6 +59,18 @@ class EventblockActionsTest extends DatabaseTestBase {
         $seatConverterMock = $this->container->get('seatConverter');
         $seatConverterMock->expects($this->once())->method('convert');
         $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testGetMergedEventblockActionCallsMerger() {
+        $action = new Actions\GetMergedEventblockAction($this->container);
+
+        $request = $this->getGetRequest('/eventblocks/key1-key2');
+        $response = new \Slim\Http\Response;
+
+        $eventblockMergerMock = $this->container->get('eventblockMerger');
+        $eventblockMergerMock->expects($this->once())->method('getMergedEventblock');
+
+        $action($request, $response, [ 'key' => 'key1-key2' ]);
     }
 
     public function testCreateEventblockAction() {

@@ -76,7 +76,7 @@ class ThinMergedEventblock {
 
     public static function createNew($eventBlock, $block) {
         $id = self::encodeId([ $eventBlock->get('id') ]);
-        return new ThinMergedEventBlock($id, $block->name, $block->seatplan_image_data_url);
+        return new ThinMergedEventBlock($id, $block->get('name'), $block->get('seatplan_image_data_url'));
     }
 
     private static function encodeId($eventblockIds) {
@@ -95,7 +95,7 @@ class ThinMergedEventblock {
     }
 
     public function tryMerge($eventblock, $block) {
-        if ($this->name == $block->name && $this->seatplan_image_data_url == $block->seatplan_image_data_url) {
+        if ($this->name == $block->get('name') && $this->seatplan_image_data_url == $block->get('seatplan_image_data_url')) {
             $this->eventblockIds[] = $eventblock->get('id');
             $this->id = self::encodeId($this->eventblockIds);
             return true;
