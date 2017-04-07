@@ -51,6 +51,20 @@ class GetEventblockAction {
     }
 }
 
+class GetMergedEventblockAction {
+    private $orm;
+
+    public function __construct(ContainerInterface $container) {
+        $this->eventblockMerger = $container->get('eventblockMerger');
+    }
+
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $key = $args['key'];
+        $mergedEventblock = $this->eventblockMerger->getMergedEventblock($key);
+        return $response->withJson($mergedEventblock, 200);
+    }
+}
+
 class CreateEventblockAction {
     private $orm;
 

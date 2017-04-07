@@ -37,9 +37,11 @@ class ListVisibleEventsAction {
 
 class GetEventAction {
     private $orm;
+    private $eventblockMerger;
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
+        $this->eventblockMerger = $container->get('eventblockMerger');
     }
     
     public function __invoke(Request $request, Response $response, $args = []) {
@@ -67,6 +69,30 @@ class GetEventAction {
         $category = $categoryMapper->get($eventblock->get('category_id'));
         $expandedEventblock = new ExpandedEventblock($eventblock->get('id'), $category, $block);
         return $expandedEventblock;
+    }
+}
+
+class GetEventWithMergedEventblocksAction {
+    private $orm;
+    private $eventblockMerger;
+
+    public function __construct(ContainerInterface $container) {
+        $this->orm = $container->get('orm');
+        $this->eventblockMerger = $container->get('eventblockMerger');
+    }
+    
+    public function __invoke(Request $request, Response $response, $args = []) {
+        $eventMapper = $this->orm->mapper('Model\Event');
+        $event = $eventMapper->get($args['id']);
+        if ($event != null) {
+            $eventblockMapper = $this->orm->mapper('Model\Eventblock');
+            $eventblocks = $eventblockMapper->where(['event_id' => $event->id]);
+            $mergedEventblocks = $this->eventblockMerger->merge($eventblocks);
+            $event->blocks = $mergedEventblocks;
+            return $response->withJson($event, 200);
+        } else {
+            return $response->withStatus(404);
+        }
     }
 }
 

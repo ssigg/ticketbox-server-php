@@ -8,6 +8,7 @@ class Category extends \Spot\Entity {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
             'name' => ['type' => 'string', 'required' => true],
+            'color' => ['type' => 'string', 'required' => true],
             'price' => ['type' => 'float', 'required' => true],
             'price_reduced' => ['type' => 'float', 'required' => true]
         ];

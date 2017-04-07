@@ -10,6 +10,10 @@ class EventblockActionsTest extends DatabaseTestBase {
             ->method('convert')
             ->will($this->returnArgument(0));
         $this->container['seatConverter'] = $seatConverterMock;
+        $eventblockMergerMock = $this->getMockBuilder(EventblockMergerInterface::class)
+            ->setMethods(['getMergedEventblock'])
+            ->getMock();
+        $this->container['eventblockMerger'] = $eventblockMergerMock;
     }
 
     public function testListEventblocksAction() {
@@ -42,7 +46,7 @@ class EventblockActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"event_id":1,"block_id":1,"category_id":1,"block":{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1"},"category":{"id":1,"name":"Category 1","price":2,"price_reduced":1},"event":{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true},"seats":[{"id":1,"block_id":1,"name":"Seat 1","x0":0,"y0":1,"x1":2,"y1":3,"x2":4,"y2":5,"x3":6,"y3":7}]}',
+            '{"id":1,"event_id":1,"block_id":1,"category_id":1,"block":{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1"},"category":{"id":1,"name":"Category 1","color":"#000","price":2,"price_reduced":1},"event":{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true},"seats":[{"id":1,"block_id":1,"name":"Seat 1","x0":0,"y0":1,"x1":2,"y1":3,"x2":4,"y2":5,"x3":6,"y3":7}]}',
             (string)$response->getBody());
     }
 
@@ -55,6 +59,18 @@ class EventblockActionsTest extends DatabaseTestBase {
         $seatConverterMock = $this->container->get('seatConverter');
         $seatConverterMock->expects($this->once())->method('convert');
         $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testGetMergedEventblockActionCallsMerger() {
+        $action = new Actions\GetMergedEventblockAction($this->container);
+
+        $request = $this->getGetRequest('/eventblocks/key1-key2');
+        $response = new \Slim\Http\Response;
+
+        $eventblockMergerMock = $this->container->get('eventblockMerger');
+        $eventblockMergerMock->expects($this->once())->method('getMergedEventblock');
+
+        $action($request, $response, [ 'key' => 'key1-key2' ]);
     }
 
     public function testCreateEventblockAction() {

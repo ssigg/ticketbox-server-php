@@ -11,9 +11,9 @@ require '../dependencies.php';
 // Routes
 // =============================================================
 $app->get('/events', Actions\ListVisibleEventsAction::class);
-$app->get('/events/{id}', Actions\GetEventAction::class);
+$app->get('/events/{id}', Actions\GetEventWithMergedEventblocksAction::class);
 
-$app->get('/eventblocks/{id}', Actions\GetEventblockAction::class);
+$app->get('/eventblocks/{key}', Actions\GetMergedEventblockAction::class);
 
 $app->get('/reservations', Actions\ListMyReservationsAction::class);
 $app->post('/reservations', Actions\CreateReservationAction::class);
