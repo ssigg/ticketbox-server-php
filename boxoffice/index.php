@@ -11,7 +11,7 @@ require '../dependencies.php';
 // Routes
 // =============================================================
 $app->get('/events', Actions\ListVisibleEventsAction::class);
-$app->get('/events/{id}', Actions\GetEventAction::class);
+$app->get('/events/{id}', Actions\GetEventWithMergedEventblocksAction::class);
 
 $app->get('/eventblocks/{key}', Actions\GetMergedEventblockAction::class);
 
