@@ -45,6 +45,7 @@ require dirname(__DIR__) . '/services/PdfRendererFactory.php';
 require dirname(__DIR__) . '/services/HtmlToPdfTicketConverter.php';
 require dirname(__DIR__) . '/services/TicketPartTempFilesRemover.php';
 require dirname(__DIR__) . '/services/PdfTicketWriter.php';
+require dirname(__DIR__) . '/services/PdfTicketMerger.php';
 require dirname(__DIR__) . '/services/TicketValidator.php';
 
 require dirname(__FILE__) . '/DatabaseTestBase.php';

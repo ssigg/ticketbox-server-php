@@ -17,6 +17,11 @@ class PurchaseActionsTest extends DatabaseTestBase {
             ->setMethods(['write'])
             ->getMock();
         $this->container['pdfTicketWriter'] = $pdfTicketWriterMock;
+
+        $pdfTicketMergerMock = $this->getMockBuilder(PdfTicketMergerInterface::class)
+            ->setMethods(['merge'])
+            ->getMock();
+        $this->container['pdfTicketMerger'] = $pdfTicketMergerMock;
         
         $reserverMock = $this->getMockBuilder(SeatReserverInterface::class)
             ->setMethods(['boxofficePurchase', 'customerPurchase', 'getTotalPriceOfPendingReservations'])
@@ -391,6 +396,38 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $action($request, $response, []);
     }
 
+    public function testWriteAndMergeTicketWhenBoxofficeIsDownloadBoxoffice() {
+        $action = new Actions\CreateBoxofficePurchaseAction($this->container);
+
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "download",
+            "locale" => "en"
+        ];
+        $request = $this->getPostRequest('/boxoffice-purchases', $data);
+        $response = new \Slim\Http\Response();
+
+        $pdfTicketWriterMock = $this->container->get('pdfTicketWriter');
+        $pdfTicketMergerMock = $this->container->get('pdfTicketMerger');
+
+        $pdfTicketWriterMock->expects($this->once())->method('write');
+        $pdfTicketMergerMock->expects($this->once())->method('merge');
+        $action($request, $response, []);
+    }
+
     public function testUseUpgraderToUpgradeOrderToBoxofficePurchase() {
         $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
 
@@ -470,6 +507,54 @@ class PurchaseActionsTest extends DatabaseTestBase {
 
         $pdfTicketWriterMock->expects($this->once())->method('write');
         $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testWriteAndMergeTicketWhileUpgradingOrderWhenBoxofficeIsDownloadBoxoffice() {
+        $action = new Actions\UpgradeOrderToBoxofficePurchaseAction($this->container);
+
+        $reservationMapper = $this->container->get('orm')->mapper('Model\Reservation');
+        $reservationMapper->create([
+            'unique_id' => 'unique_base_2',
+            'token' => 'abc',
+            'seat_id' => 2,
+            'event_id' => 1,
+            'category_id' => 1,
+            'order_id' => 1,
+            'order_kind' => 'boxoffice-purchase',
+            'is_reduced' => false,
+            'is_scanned' => false,
+            'timestamp' => time()]);
+
+        $data = [
+            "boxofficeName" => "Box Office",
+            "boxofficeType" => "download",
+            "locale" => "en"
+        ];
+        $request = $this->getPutRequest('/upgrade-order/1', $data);
+        $response = new \Slim\Http\Response();
+
+        $pdfTicketWriterMock = $this->container->get('pdfTicketWriter');
+        $pdfTicketMergerMock = $this->container->get('pdfTicketMerger');
+
+        $pdfTicketWriterMock->expects($this->once())->method('write');
+        $pdfTicketMergerMock->expects($this->once())->method('merge');
+        $action($request, $response, [ 'id' => 1 ]);
+    }
+
+    public function testMarkBoxofficePurchasePrintStatus() {
+        $action = new Actions\MarkBoxofficePurchasePrintStatusAction($this->container);
+
+        $boxofficePurchaseMapper = $this->container->get('orm')->mapper('Model\BoxofficePurchase');
+
+        $data = [
+            "isPrinted" => true
+        ];
+        $request = $this->getPutRequest('/boxoffice-purchases/1', $data);
+        $response = new \Slim\Http\Response();
+
+        $action($request, $response, [ 'id' => 1 ]);
+        $boxofficePurchase = $boxofficePurchaseMapper->get(1);
+        $this->assertSame(true, $boxofficePurchase->is_printed);
     }
 
     public function testExpandAllReservationsWhenListingCustomerPurchasesWithoutEventId() {
@@ -772,11 +857,13 @@ class PurchaseActionsTest extends DatabaseTestBase {
 
 class PurchaseActionsTestBoxofficePurchaseStub {
     public $reservations;
+    public $unique_id;
 
     public function __construct() {
         $this->reservations = [
             new PurchaseActionsTestExpandedReservationStub(1)
         ];
+        $this->unique_id = 'unique_id';
     }
 }
 
