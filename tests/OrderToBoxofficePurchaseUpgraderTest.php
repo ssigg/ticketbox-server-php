@@ -40,6 +40,7 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
     public function testReservationsAreFetchedOnceForTheOrderAndOnceForTheCreatedBoxofficePurchase() {
         $orderId = 42;
         $boxofficePurchaseId = 84;
+        $eventId = 77;
 
         $orderMock = $this->getEntityMock();
         $orderMock
@@ -63,17 +64,19 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
             ->willReturn($boxofficePurchaseMock);
         
         $this->reservationMapperMock
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('where')
             ->with($this->logicalOr(
+                [ 'order_id' => $orderId, 'order_kind' => 'reservation', 'event_id' => $eventId ],
                 [ 'order_id' => $orderId, 'order_kind' => 'reservation' ],
                 [ 'order_id' => $boxofficePurchaseId, 'order_kind' => 'boxoffice-purchase' ]
             ));
-        $this->upgrader->upgrade($orderMock, 'boxoffice', 'en');
+        $this->upgrader->upgrade($orderMock, $eventId, 'boxoffice', 'en');
     }
 
     public function testReservationsAreConvertedTwice() {
         $orderId = 42;
+        $eventId = 77;
 
         $orderMock = $this->getEntityMock();
         $orderMock
@@ -99,11 +102,12 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
             ->expects($this->exactly(2))
             ->method('convert')
             ->with($reservations);
-        $this->upgrader->upgrade($orderMock, 'boxoffice', 'en');
+        $this->upgrader->upgrade($orderMock, $eventId, 'boxoffice', 'en');
     }
 
     public function testBoxofficePurchaseIsCreated() {
         $orderId = 42;
+        $eventId = 77;
 
         $orderMock = $this->getEntityMock();
         $orderMock
@@ -126,11 +130,12 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
         $this->boxofficePurchaseMapperMock
             ->expects($this->once())
             ->method('create');
-        $this->upgrader->upgrade($orderMock, 'boxoffice', 'en');
+        $this->upgrader->upgrade($orderMock, $eventId, 'boxoffice', 'en');
     }
 
     public function testOrderIsDeleted() {
         $orderId = 42;
+        $eventId = 77;
 
         $orderMock = $this->getEntityMock();
         $orderMock
@@ -153,7 +158,81 @@ class OrderToBoxofficePurchaseUpgraderTest extends \PHPUnit_Framework_TestCase {
         $this->orderMapperMock
             ->expects($this->once())
             ->method('delete');
-        $this->upgrader->upgrade($orderMock, 'boxoffice', 'en');
+        $this->upgrader->upgrade($orderMock, $eventId, 'boxoffice', 'en');
+    }
+
+    public function testOrderIsNotDeletedWhenNotAllReservationsHaveBeenUpgraded() {
+        $orderId = 42;
+        $eventId = 77;
+
+        $orderMock = $this->getEntityMock();
+        $orderMock
+            ->method('get')
+            ->willReturn($orderId);
+        
+        $reservation1 = $this->getEntityMock();
+        $reservation2 = $this->getEntityMock();
+        
+        $findReservationsArguments = [ 'order_id' => $orderId, 'order_kind' => 'reservation', 'event_id' => $eventId ];
+        $findLeftoverReservationsArguments = [ 'order_id' => $orderId, 'order_kind' => 'reservation' ];
+        $map = [
+            [ $findReservationsArguments, [ $reservation1, $reservation2 ]],
+            [ $findLeftoverReservationsArguments, [ $reservation1 ] ]
+        ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->will($this->returnValueMap($map));
+
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
+
+        $boxofficePurchaseMock = $this->getEntityMock();
+        $this->boxofficePurchaseMapperMock
+            ->method('create')
+            ->willReturn($boxofficePurchaseMock);
+
+        $this->orderMapperMock
+            ->expects($this->never())
+            ->method('delete');
+        $this->upgrader->upgrade($orderMock, $eventId, 'boxoffice', 'en');
+    }
+
+    public function testOrderIsDeletedWhenAllReservationsHaveBeenUpgraded() {
+        $orderId = 42;
+        $eventId = 77;
+
+        $orderMock = $this->getEntityMock();
+        $orderMock
+            ->method('get')
+            ->willReturn($orderId);
+        
+        $reservation1 = $this->getEntityMock();
+        $reservation2 = $this->getEntityMock();
+        
+        $findReservationsArguments = [ 'order_id' => $orderId, 'order_kind' => 'reservation', 'event_id' => $eventId ];
+        $findLeftoverReservationsArguments = [ 'order_id' => $orderId, 'order_kind' => 'reservation' ];
+        $map = [
+            [ $findReservationsArguments, [ $reservation1, $reservation2 ]],
+            [ $findLeftoverReservationsArguments, [ ] ]
+        ];
+        $this->reservationMapperMock
+            ->method('where')
+            ->will($this->returnValueMap($map));
+
+        $this->reservationConverterMock
+            ->method('convert')
+            ->will($this->returnArgument(0));
+
+        $boxofficePurchaseMock = $this->getEntityMock();
+        $this->boxofficePurchaseMapperMock
+            ->method('create')
+            ->willReturn($boxofficePurchaseMock);
+
+        $this->orderMapperMock
+            ->expects($this->once())
+            ->method('delete');
+        $this->upgrader->upgrade($orderMock, $eventId, 'boxoffice', 'en');
     }
 
     private function getEntityMock() {

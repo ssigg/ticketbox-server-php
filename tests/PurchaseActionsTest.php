@@ -434,7 +434,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $data = [
             "boxofficeName" => "Box Office",
             "boxofficeType" => "paper",
-            "locale" => "en"
+            "locale" => "en",
+            "eventId" => 1
         ];
         $request = $this->getPutRequest('/upgrade-order/1', $data);
         $response = new \Slim\Http\Response();
@@ -451,7 +452,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $data = [
             "boxofficeName" => "Box Office",
             "boxofficeType" => "paper",
-            "locale" => "en"
+            "locale" => "en",
+            "eventId" => 1
         ];
         $request = $this->getPutRequest('/upgrade-order/1', $data);
         $response = new \Slim\Http\Response();
@@ -468,7 +470,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $data = [
             "boxofficeName" => "Box Office",
             "boxofficeType" => "pdf",
-            "locale" => "en"
+            "locale" => "en",
+            "eventId" => 1
         ];
         $request = $this->getPutRequest('/upgrade-order/1', $data);
         $response = new \Slim\Http\Response();
@@ -498,7 +501,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $data = [
             "boxofficeName" => "Box Office",
             "boxofficeType" => "printout",
-            "locale" => "en"
+            "locale" => "en",
+            "eventId" => 1
         ];
         $request = $this->getPutRequest('/upgrade-order/1', $data);
         $response = new \Slim\Http\Response();
@@ -528,7 +532,8 @@ class PurchaseActionsTest extends DatabaseTestBase {
         $data = [
             "boxofficeName" => "Box Office",
             "boxofficeType" => "download",
-            "locale" => "en"
+            "locale" => "en",
+            "eventId" => 1
         ];
         $request = $this->getPutRequest('/upgrade-order/1', $data);
         $response = new \Slim\Http\Response();

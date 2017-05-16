@@ -178,12 +178,13 @@ class UpgradeOrderToBoxofficePurchaseAction {
         $order = $mapper->get($args['id']);
 
         $data = $request->getParsedBody();
+        $eventId = $data['eventId'];
         $boxofficeName = $data['boxofficeName'];
         $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout|download]
         $customerEmail = $order->email;
         $locale = $data['locale'];
 
-        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $boxofficeName, $locale);
+        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $eventId, $boxofficeName, $locale);
 
         $totalPrice = 0;
         foreach ($purchase->reservations as $reservation) {

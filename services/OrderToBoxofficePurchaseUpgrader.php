@@ -3,7 +3,7 @@
 namespace Services;
 
 interface OrderToBoxofficePurchaseUpgraderInterface {
-    function upgrade($order, $boxofficeName, $locale);
+    function upgrade($order, $eventId, $boxofficeName, $locale);
 }
 
 class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgraderInterface {
@@ -29,8 +29,12 @@ class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgrad
         $this->priceModificators = $priceModificators;
     }
 
-    public function upgrade($order, $boxofficeName, $locale) {
-        $reservations = $this->reservationMapper->where([ 'order_id' => $order->get('id'), 'order_kind' => 'reservation' ]);
+    public function upgrade($order, $eventId, $boxofficeName, $locale) {
+        $reservationPredicate = [ 'order_id' => $order->get('id'), 'order_kind' => 'reservation' ];
+        if ($eventId != null) {
+            $reservationPredicate['event_id'] = $eventId;
+        }
+        $reservations = $this->reservationMapper->where($reservationPredicate);
         $expandedReservations = $this->reservationConverter->convert($reservations);
         $totalPrice = 0;
         foreach ($expandedReservations as $expandedReservation) {
@@ -50,7 +54,10 @@ class OrderToBoxofficePurchaseUpgrader implements OrderToBoxofficePurchaseUpgrad
             $reservation->order_id = $purchase->get('id');
             $this->reservationMapper->update($reservation);
         }
-        $this->orderMapper->delete([ 'id' => $order->get('id') ]);
+        $leftOverReservations = $this->reservationMapper->where([ 'order_id' => $order->get('id'), 'order_kind' => 'reservation' ]);
+        if (count($leftOverReservations) == 0) {
+            $this->orderMapper->delete([ 'id' => $order->get('id') ]);
+        }
 
         $reservations = $this->reservationMapper->where([ 'order_id' => $purchase->get('id'), 'order_kind' => 'boxoffice-purchase' ]);
         $expandedReservations = $this->reservationConverter->convert($reservations);
