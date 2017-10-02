@@ -34,6 +34,7 @@ require 'services/PdfRendererFactory.php';
 require 'services/HtmlToPdfTicketConverter.php';
 require 'services/TicketPartTempFilesRemover.php';
 require 'services/PdfTicketWriter.php';
+require 'services/PdfTicketMerger.php';
 require 'services/BraintreePaymentProvider.php';
 require 'services/TicketValidator.php';
 
@@ -270,6 +271,13 @@ $container['pdfTicketWriter'] = function($container) {
     ];
     $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters);
     return $pdfTicketWriter;
+};
+
+$container['pdfTicketMerger'] = function($container) {
+    $pathConverter = $container['pathConverter'];
+    $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
+    $pdfTicketMerger = new Services\PdfTicketMerger($outputDirectory);
+    return $pdfTicketMerger;
 };
 
 $container['mailer'] = function($container) {

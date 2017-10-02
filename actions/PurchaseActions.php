@@ -108,12 +108,14 @@ class GetBoxofficePurchaseAction {
 class CreateBoxofficePurchaseAction {
     private $mail;
     private $pdfTicketWriter;
+    private $pdfTicketMerger;
     private $reserver;
     private $tempDirectory;
 
     public function __construct(ContainerInterface $container) {
         $this->mail = $container->get('mail');
         $this->pdfTicketWriter = $container->get('pdfTicketWriter');
+        $this->pdfTicketMerger = $container->get('pdfTicketMerger');
         $this->reserver = $container->get('seatReserver');
         $this->boxofficeSettings = $container->get('settings')['boxoffice'];
         $this->tempDirectory = $container->get('settings')['tempDirectory'];
@@ -122,7 +124,7 @@ class CreateBoxofficePurchaseAction {
     public function __invoke(Request $request, Response $response, $args = []) {
         $data = $request->getParsedBody();
         $boxofficeName = $data['boxofficeName'];
-        $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout]
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout|download]
         $customerEmail = isset($data['email']) ? $data['email'] : null;
         $locale = $data['locale'];
         
@@ -139,6 +141,13 @@ class CreateBoxofficePurchaseAction {
             foreach ($purchase->reservations as $reservation) {
                 $this->pdfTicketWriter->write($reservation, true, $locale);
             }
+        } else if ($boxofficeType == 'download') {
+            $pdfFilePaths = [];
+            foreach ($purchase->reservations as $reservation) {
+                $pdfFilePath = $this->pdfTicketWriter->write($reservation, true, $locale);
+                $pdfFilePaths[] = $pdfFilePath;
+            }
+            $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '_ticket.pdf');
         } else {
             // Neither a mail has to be delivered nor tickets have to be created
         }
@@ -153,12 +162,14 @@ class UpgradeOrderToBoxofficePurchaseAction {
     private $orm;
     private $mail;
     private $pdfTicketWriter;
+    private $pdfTicketMerger;
     private $orderToBoxofficePurchaseUpgrader;
 
     public function __construct(ContainerInterface $container) {
         $this->orm = $container->get('orm');
         $this->mail = $container->get('mail');
         $this->pdfTicketWriter = $container->get('pdfTicketWriter');
+        $this->pdfTicketMerger = $container->get('pdfTicketMerger');
         $this->orderToBoxofficePurchaseUpgrader = $container->get('orderToBoxofficePurchaseUpgrader');
     }
 
@@ -167,12 +178,13 @@ class UpgradeOrderToBoxofficePurchaseAction {
         $order = $mapper->get($args['id']);
 
         $data = $request->getParsedBody();
+        $eventId = $data['eventId'];
         $boxofficeName = $data['boxofficeName'];
-        $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout]
+        $boxofficeType = $data['boxofficeType']; // [paper|pdf|printout|download]
         $customerEmail = $order->email;
         $locale = $data['locale'];
 
-        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $boxofficeName, $locale);
+        $purchase = $this->orderToBoxofficePurchaseUpgrader->upgrade($order, $eventId, $boxofficeName, $locale);
 
         $totalPrice = 0;
         foreach ($purchase->reservations as $reservation) {
@@ -185,6 +197,13 @@ class UpgradeOrderToBoxofficePurchaseAction {
             foreach ($purchase->reservations as $reservation) {
                 $this->pdfTicketWriter->write($reservation, true, $locale);
             }
+        } else if ($boxofficeType == 'download') {
+            $pdfFilePaths = [];
+            foreach ($purchase->reservations as $reservation) {
+                $pdfFilePath = $this->pdfTicketWriter->write($reservation, true, $locale);
+                $pdfFilePaths[] = $pdfFilePath;
+            }
+            $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '_ticket.pdf');
         } else {
             // Neither a mail has to be delivered nor tickets have to be created
         }

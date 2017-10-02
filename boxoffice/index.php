@@ -28,6 +28,8 @@ $app->post('/boxoffice-purchases', Actions\CreateBoxofficePurchaseAction::class)
 $app->get('/boxoffice-purchases/{unique_id}', Actions\GetBoxofficePurchaseAction::class);
 $app->put('/upgrade-order/{id}', Actions\UpgradeOrderToBoxofficePurchaseAction::class);
 
+$app->get('/tickets/{unique_id}', Actions\GetPdfTicketAction::class);
+
 $app->post('/log', Actions\LogClientMessageAction::class);
 // =============================================================
 
