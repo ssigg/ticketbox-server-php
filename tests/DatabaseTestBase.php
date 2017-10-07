@@ -112,7 +112,8 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
         $blockMapper = $spot->mapper('Model\Block');
         $blockMapper->create([
             'name' => 'Block 1',
-            'seatplan_image_data_url' => 'data_url' ]);
+            'seatplan_image_data_url' => 'data_url',
+            'numbered' => true ]);
 
         $categoryMapper = $spot->mapper('Model\Category');
         $categoryMapper->create([

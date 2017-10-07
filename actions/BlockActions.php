@@ -16,7 +16,7 @@ class ListBlocksAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $mapper = $this->orm->mapper('Model\Block');
-        $blocks = $mapper->select(['id', 'name']);
+        $blocks = $mapper->select(['id', 'name', 'numbered']);
         return $response->withJson($blocks, 200);
     }
 }
@@ -64,6 +64,7 @@ class ChangeBlockAction {
         $block = $mapper->get($args['id']);
         $block->seatplan_image_data_url = $data['seatplan_image_data_url'];
         $block->name = $data['name'];
+        $block->numbered = $data['numbered'];
         $mapper->update($block);
 
         return $response->withJson($block, 200);

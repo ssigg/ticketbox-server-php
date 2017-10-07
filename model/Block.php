@@ -8,7 +8,8 @@ class Block extends \Spot\Entity {
         return [
             'id' => ['type' => 'integer', 'primary' => true, 'autoincrement' => true],
             'seatplan_image_data_url' => ['type' => 'text', 'required' => true],
-            'name' => ['type' => 'string', 'required' => true]
+            'name' => ['type' => 'string', 'required' => true],
+            'numbered' => ['type' => 'boolean', 'required' => true, 'default' => true]
         ];
     }
 }
