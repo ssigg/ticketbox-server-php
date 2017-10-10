@@ -17,6 +17,7 @@ $app->get('/eventblocks/{key}', Actions\GetMergedEventblockAction::class);
 
 $app->get('/reservations', Actions\ListMyReservationsAction::class);
 $app->post('/reservations', Actions\CreateReservationAction::class);
+$app->post('/unspecified-reservations', Actions\CreateUnspecifiedReservationsAction::class);
 $app->put('/reservations/{id}', Actions\ChangeReductionForReservationAction::class);
 $app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
 
