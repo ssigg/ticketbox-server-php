@@ -53,7 +53,7 @@ class EventblockMerger implements EventblockMergerInterface {
             $mergedEventblockParts[] = $mergedEventblockPart;
         }
         
-        $mergedEventblock = new MergedEventblock(MergedEventblock::encodeId($eventblockIds), $block->get('name'), $event, $block->get('seatplan_image_data_url'), $mergedEventblockParts);
+        $mergedEventblock = new MergedEventblock(MergedEventblock::encodeId($eventblockIds), $block->get('name'), $block->get('numbered'), $event, $block->get('seatplan_image_data_url'), $mergedEventblockParts);
         return $mergedEventblock;
     }
 
@@ -70,13 +70,14 @@ class EventblockMerger implements EventblockMergerInterface {
 class ThinMergedEventblock {
     public $id;
     public $name;
+    public $numbered;
     
     private $seatplan_image_data_url;
     private $eventblockIds;
 
     public static function createNew($eventBlock, $block) {
         $id = self::encodeId([ $eventBlock->get('id') ]);
-        return new ThinMergedEventblock($id, $block->get('name'), $block->get('seatplan_image_data_url'));
+        return new ThinMergedEventblock($id, $block->get('name'), $block->get('numbered'), $block->get('seatplan_image_data_url'));
     }
 
     private static function encodeId($eventblockIds) {
@@ -87,15 +88,16 @@ class ThinMergedEventblock {
         return implode('-', $idParts);
     }
 
-    private function __construct($id, $name, $seatplan_image_data_url) {
+    private function __construct($id, $name, $numbered, $seatplan_image_data_url) {
         $this->id = $id;
         $this->name = $name;
+        $this->numbered = $numbered;
         $this->seatplan_image_data_url = $seatplan_image_data_url;
         $this->eventblockIds = [ $id ];
     }
 
     public function tryMerge($eventblock, $block) {
-        if ($this->name == $block->get('name') && $this->seatplan_image_data_url == $block->get('seatplan_image_data_url')) {
+        if ($this->name == $block->get('name') && $this->numbered == $block->get('numbered') && $this->seatplan_image_data_url == $block->get('seatplan_image_data_url')) {
             $this->eventblockIds[] = $eventblock->get('id');
             $this->id = self::encodeId($this->eventblockIds);
             return true;
@@ -108,6 +110,7 @@ class ThinMergedEventblock {
 class MergedEventblock {
     public $id;
     public $name;
+    public $numbered;
     public $event;
     public $seatplan_image_data_url;
     public $parts;
@@ -120,9 +123,10 @@ class MergedEventblock {
         return implode('-', $idParts);
     }
 
-    public function __construct($id, $name, $event, $seatplan_image_data_url, $parts) {
+    public function __construct($id, $name, $numbered, $event, $seatplan_image_data_url, $parts) {
         $this->id = $id;
         $this->name = $name;
+        $this->numbered = $numbered;
         $this->event = $event;
         $this->seatplan_image_data_url = $seatplan_image_data_url;
         $this->parts = $parts;

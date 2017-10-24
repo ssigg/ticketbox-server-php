@@ -13,7 +13,7 @@ class BlockActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"seatplan_image_data_url":null,"name":"Block 1"}]',
+            '[{"id":1,"seatplan_image_data_url":null,"name":"Block 1","numbered":true}]',
             (string)$response->getBody());
     }
 
@@ -28,14 +28,14 @@ class BlockActionsTest extends DatabaseTestBase {
         $response = $action($request, $response, [ 'id' => 1 ]);
         
         $this->assertSame(
-            '{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1"}',
+            '{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1","numbered":true}',
             (string)$response->getBody());
     }
 
     public function testCreateBlockAction() {
         $action = new Actions\CreateBlockAction($this->container);
 
-        $request = $this->getPostRequest('/blocks', [ 'name' => 'Test name', 'seatplan_image_data_url' => 'dataurl' ]);
+        $request = $this->getPostRequest('/blocks', [ 'name' => 'Test name', 'seatplan_image_data_url' => 'dataurl', 'numbered' => true ]);
         $response = new \Slim\Http\Response();
 
         $blockMapper = $this->container->orm->mapper('Model\Block');
@@ -54,7 +54,8 @@ class BlockActionsTest extends DatabaseTestBase {
         $newSeatplanImageDataUrl = "New dataurl";
         $data = [
             "name" => $newName,
-            "seatplan_image_data_url" => $newSeatplanImageDataUrl
+            "seatplan_image_data_url" => $newSeatplanImageDataUrl,
+            "numbered" => false
         ];
         $request = $this->getPutRequest('/blocks/1', $data);
         $response = new \Slim\Http\Response();
@@ -72,7 +73,7 @@ class BlockActionsTest extends DatabaseTestBase {
         $this->assertSame($blockAfter->seatplan_image_data_url, $newSeatplanImageDataUrl);
 
         $this->assertSame(
-            '{"id":1,"seatplan_image_data_url":"New dataurl","name":"New name"}',
+            '{"id":1,"seatplan_image_data_url":"New dataurl","name":"New name","numbered":false}',
             (string)$response->getBody());
     }
 

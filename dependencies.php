@@ -264,7 +264,7 @@ $container['pdfTicketWriter'] = function($container) {
     $ticketPartTempFilesRemover = $container['ticketPartTempFilesRemover'];
     $ticketPartWriters = [
         $qrCodeWriter,
-        $seatplanWriter,
+        // $seatplanWriter,
         $htmlTicketWriter,
         $htmlToPdfTicketConverter,
         $ticketPartTempFilesRemover

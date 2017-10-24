@@ -25,8 +25,7 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
             'printOrderId' => $printOrderId,
             'template_path' => $this->templatePath,
             'reservation' => $reservation,
-            'qr' => $partFilePaths['qr'],
-            'seatplan' => $partFilePaths['seatplan']
+            'qr' => $partFilePaths['qr']
         ];
         $result = $template->render($params);
 
