@@ -1,0 +1,23 @@
+# Compression:
+<IfModule mod_deflate.c>
+ SetOutputFilter DEFLATE 
+ # Don't gzip
+ SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+ SetEnvIfNoCase Request_URI \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary 
+#Dealing with proxy servers
+ <IfModule mod_headers.c>
+ Header append Vary User-Agent
+ </IfModule>
+</IfModule>
+
+# Password:
+Authtype Basic
+AuthName "Protected"
+AuthUserFile %ROOT%.htpasswd
+Require valid-user
+
+# Rewrite:
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ api.php [QSA,L]
