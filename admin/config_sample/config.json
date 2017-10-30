@@ -1,6 +1,7 @@
 {
     "displayErrorDetails": false,
     "addContentLengthHeader": false,
+    "ApiRoot": "%API_ROOT%",
     "Spot": {
         "dbsyntax": "sqlite",
         "path": "../data/database.db",

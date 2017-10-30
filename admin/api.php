@@ -1,12 +1,13 @@
 <?php
 
-require '../vendor/autoload.php';
-
 $config = json_decode(file_get_contents("config/config.json"), true);
+
+require $config['ApiRoot'] . '/vendor/autoload.php';
+
 $config['root'] = __DIR__;
 $app = new \Slim\App([ 'settings' => $config ]);
 
-require '../dependencies.php';
+require $config['ApiRoot'] . '/dependencies.php';
 
 // Routes
 // =============================================================
