@@ -2,14 +2,14 @@
   "name": "ticketbox-server-php",
   "description": "PHP server for ticket reservation system",
   "version": "0.1.0",
-  "homepage": "",
   "repository": "https://github.com/ssigg/ticketbox-server-php",
   "private": true,
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
-    "gulp-zip": "^3.2.0"
+    "gulp-zip": "^3.2.0",
+    "apidoc": "^0.17.6"
   },
   "dependencies": {
     "getcomposer": "^1.3.2"
@@ -19,7 +19,9 @@
     "prestart": "npm install",
     "start": "php -S localhost:8001",
     "test": "composer run test",
+    "posttest": "npm run documentation",
     "productioninstall": "composer install --no-dev --optimize-autoloader",
-    "deploy": "npm install; npm run productioninstall; gulp zip; npm install"
+    "deploy": "npm install; npm run productioninstall; gulp zip; npm install",
+    "documentation": "apidoc -i ./customer/ -o ./docs/"
   }
 }

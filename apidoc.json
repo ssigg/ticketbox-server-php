@@ -1,0 +1,29 @@
+{
+    "name": "Ticketbox API",
+    "version": "0.1.0",
+    "description": "Ticket reservation system API",
+    "title": "Ticketbox API",
+    "url" : "",
+    "order": [
+      "Event",
+      "GetEvents",
+      "GetEvent",
+      "GetBlock",
+      "Reservation",
+      "ListMyReservations",
+      "ReserveSeat",
+      "ReserveUnspecifiedSeats",
+      "ChangeReduction",
+      "DeleteReservation",
+      "GetReservationExpirationTimestamp",
+      "Order",
+      "CreateOrder",
+      "GetOrder",
+      "CustomerPurchase",
+      "GetCustomerPurchaseToken",
+      "CreateCustomerPurchase",
+      "GetCustomerPurchase",
+      "Log",
+      "SendLogMessage"
+    ]
+  }

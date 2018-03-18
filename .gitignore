@@ -6,6 +6,7 @@ config
 coverage.xml
 coverage
 dist
+docs
 temp
 common/tickets
 common/templates
