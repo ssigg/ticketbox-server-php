@@ -19,6 +19,7 @@ deploy:
   app: ticketbox-php-test
   on:
     repo: ssigg/ticketbox-server-php
+    branch: single-api
 
 addons:
     code_climate:
