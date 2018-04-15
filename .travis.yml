@@ -1,26 +1,21 @@
 language: php
-
 php:
-    - '5.6'
-    - '7.0'
-
-before_script:
-    mkdir tests/data & composer install -n
-
+- '5.6'
+- '7.0'
+before_script: mkdir tests/data & composer install -n
 script:
-    - phpunit --configuration tests/phpunit.xml --coverage-clover build/logs/clover.xml tests
-    - CODECLIMATE_REPO_TOKEN=ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
-    - ./vendor/bin/test-reporter
-
+- phpunit --configuration tests/phpunit.xml --coverage-clover build/logs/clover.xml
+  tests
+- CODECLIMATE_REPO_TOKEN=ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
+- "./vendor/bin/test-reporter"
 deploy:
   provider: heroku
   api_key:
-    secure: F7LgJU1kZGZo+IEuCUzqR0su4g+5ceXPfbhr1j4L2PW2itrAKl6a9bY4QgDuAsEAlzqqvXTkw7euvzvFlSkTa+iuyUcc+cYRInbLTFpaU0um7znqs7I+/8K9e32BZFn/QjodAG+orqDZ4VmSEylCsDHHK4jhawo4myRO8OtLHDLtZAnZs+bA6R5A4fJvbVVEBDDKcf+ejTKK85p3XA3Cy3xvF1gJ6JIpxEDuyAQQjhFC9CmQ4qC7jUtlq1X+UFTCzFGceo4Cy7zSiOZDLhkf9E2wTYKbZB/qDy2i4aLn8ZCJzT1wdeKFhqN+aF82qpGA287TTdtBUQNJFGynwQ9JwhfaG/8FS/h/tHK90kDslu0Tj3q9Xv32Pn+LH2PjidQ+qKS9U/4RqyGUPSe+eGMXB8ACFmx7lQAke6lFZ25Tcn5w+g7M33uLjpinq4gnpSm6dgsfy47Rhg/ghZ5mjQNVbMitaCBzj1bGL/ei+BScsfTBueBX8rG4PAQyTTZ/SRG4zKb3JEVgQdGmhsn0UABxQdRMmRsIuHpFCx/Klf+Sg5jKTAFpUFGpsRIqqpjOQEwPjdMGl7qMP3E/N7Fcx1nqZsRX0Gda8KkF0WZ1PpPrzL1Q0qaQsnR4xBqeIJipHu6rUK6JSzxIZ21zmaFdlpwqn2iP3otmmknCa8C1koNHahQ=
+    secure: R9jCnMNGAhjEbTgYwYPhZDn+kinPH2LsrdKsFI4DHEpyrwJJpiFpSPRquPi06jzyuscfP/gVS3cayP4cgjTQ1MthubBIcF41nckeKJZos57m8fQSFOSivib86+IOF/99ADVNOWufN2m6zuJ2B2yNDTCQOsJVDaN7+8RgdlgKIFqQ/Vq2jq6PqpdDAm97hx8PvC3mBrVj9kmvYd/2VjunZFGcFkgCXui7RXWb+HghbmN2rL9U2pFo0NfgjPXlWkoFzgWRj6vm647KjQH/0jLlRz28mCEed9RMmnT+Kp7cwnoBQy1BpZm4A8ap8TPy6wb/Jz+RkSlU+DxTDZ7xYj/ulkcUvMI7kcDa4fwN0gEqug5s8n2a/r2P6PY8LCPNp/Vke9KMZHdgtcpUszimyNwFnh3wTG/keODax2xgbMTStV20jKptdf2HH2bDZKfdDo2DV6f0n55mhb256uAMhettcuNq+3UCQJU3aNkV9W0DYJUQ20vLEHq7VZd829QTrdrKDI44c2Jijtj1pTog13Bw+sD4hcHjLFLAf9rCT65KEknAAWephgQRMROwFQEyc5fgb829jWCboUoGBt7cAkCUCyHixhYhjDetd49Vu7IgXOMOqUfHMeGSqiKsvrje7KcpeMVxP/zSyMm1J9MpNuBEHhqS5bAkD2Eqzk//ffKrEnc=
   app: ticketbox-php-test
   on:
     repo: ssigg/ticketbox-server-php
     branch: single-api
-
 addons:
-    code_climate:
-        repo_token: ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
+  code_climate:
+    repo_token: ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
