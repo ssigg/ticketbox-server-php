@@ -1,0 +1,391 @@
+<?php
+
+/**
+ * @api {get} /reservations List user reservations
+ * @apiName ListMyReservations
+ * @apiGroup Reservation
+ * @apiVersion 0.1.0
+ * 
+ * @apiSuccess {Number} id Reservation id
+ * @apiSuccess {String} unique_id Reservation's unique id
+ * @apiSuccess {Event} event Reservation event
+ * @apiSuccess {Number} event.id Event id
+ * @apiSuccess {String} event.location Location name
+ * @apiSuccess {String} event.location_address Location address
+ * @apiSuccess {String} event.location_directions_public_transport Directions for users of public transport
+ * @apiSuccess {String} event.location_directions_car Directions for car drivers
+ * @apiSuccess {String} event.dateandtime Textual description of the event date and time
+ * @apiSuccess {Boolean} event.visible Visibility of the event
+ * @apiSuccess {Seat} seat Reservation seat
+ * @apiSuccess {Number} seat.id Seat id
+ * @apiSuccess {Number} seat.block_id Seats block id
+ * @apiSuccess {String} seat.name Seat name
+ * @apiSuccess {Number} seat.x0 Coordinate
+ * @apiSuccess {Number} seat.y0 Coordinate
+ * @apiSuccess {Number} seat.x1 Coordinate
+ * @apiSuccess {Number} seat.y1 Coordinate
+ * @apiSuccess {Number} seat.x2 Coordinate
+ * @apiSuccess {Number} seat.y2 Coordinate
+ * @apiSuccess {Number} seat.x3 Coordinate
+ * @apiSuccess {Number} seat.y3 Coordinate
+ * @apiSuccess {Category} category Reservation category
+ * @apiSuccess {Number} category.id Category id
+ * @apiSuccess {String} category.name Category name
+ * @apiSuccess {String} category.color Category color
+ * @apiSuccess {String} category.price Category price
+ * @apiSuccess {String} category.price_reduced Category price (reduced)
+ * @apiSuccess {Boolean} isReduced Is this reservation reduced?
+ * @apiSuccess {Number} price Reservation's price
+ * @apiSuccess {Number} order_id Reservation order id (null if not ordered yet)
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * [
+ *   {
+ *     "id": 3869,
+ *     "unique_id": "3e51b64c-29e1-11e8-b4f8-002590daa0f6",
+ *     "event": {
+ *       "id": 1,
+ *       "name": "Example Event",
+ *       "location": "Example Hall",
+ *       "location_address": "42 Example Street",
+ *       "location_directions_public_transport": "Use the example line",
+ *       "location_directions_car": "Turn left, then right.",
+ *       "dateandtime": "First sunday in march at 9 am",
+ *       "visible": true,
+ *     },
+ *     "seat": {
+ *        "id": 77,
+ *        "block_id": 22,
+ *        "name": "Seat One",
+ *        "x0": null,
+ *        "y0": null,
+ *        "x1": null,
+ *        "y1": null,
+ *        "x2": null,
+ *        "y2": null,
+ *        "x3": null,
+ *        "y3": null
+ *     },
+ *     "category": {
+ *       "id": 3,
+ *       "name": "Block One",
+ *       "color": "#000",
+ *       "price": 30,
+ *       "price_reduced": 20
+ *     },
+ *     "isReduced": false,
+ *     "price": 30,
+ *     "order_id": null
+ *   }
+ * ]
+ */
+$app->get('/reservations', Actions\ListMyReservationsAction::class);
+
+/**
+ * @api {post} /reservations Reserve a specific seat
+ * @apiName ReserveSeat
+ * @apiGroup Reservation
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {Number} event_id: Event id
+ * @apiParam {Number} seat_id: Seat id
+ * @apiParam {Number} category_id: Category id
+ * 
+ * @apiParamExample {json} Request-Example:
+ * {
+ *   "event_id": 1,
+ *   "seat_id": 22,
+ *   "category_id": 77
+ * }
+ * 
+ * @apiSuccess (Created 201) {Number} id Reservation id
+ * @apiSuccess (Created 201) {String} unique_id Reservation's unique id
+ * @apiSuccess (Created 201) {Event} event Reservation event
+ * @apiSuccess (Created 201) {Number} event.id Event id
+ * @apiSuccess (Created 201) {String} event.location Location name
+ * @apiSuccess (Created 201) {String} event.location_address Location address
+ * @apiSuccess (Created 201) {String} event.location_directions_public_transport Directions for users of public transport
+ * @apiSuccess (Created 201) {String} event.location_directions_car Directions for car drivers
+ * @apiSuccess (Created 201) {String} event.dateandtime Textual description of the event date and time
+ * @apiSuccess (Created 201) {Boolean} event.visible Visibility of the event
+ * @apiSuccess (Created 201) {Seat} seat Reservation seat
+ * @apiSuccess (Created 201) {Number} seat.id Seat id
+ * @apiSuccess (Created 201) {Number} seat.block_id Seats block id
+ * @apiSuccess (Created 201) {String} seat.name Seat name
+ * @apiSuccess (Created 201) {Number} seat.x0 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y0 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.x1 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y1 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.x2 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y2 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.x3 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y3 Coordinate
+ * @apiSuccess (Created 201) {Category} category Reservation category
+ * @apiSuccess (Created 201) {Number} category.id Category id
+ * @apiSuccess (Created 201) {String} category.name Category name
+ * @apiSuccess (Created 201) {String} category.color Category color
+ * @apiSuccess (Created 201) {String} category.price Category price
+ * @apiSuccess (Created 201) {String} category.price_reduced Category price (reduced)
+ * @apiSuccess (Created 201) {Boolean} isReduced Is this reservation reduced?
+ * @apiSuccess (Created 201) {Number} price Reservation's price
+ * @apiSuccess (Created 201) {Number} order_id Reservation order id (null if not ordered yet)
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 201 Created
+ * {
+ *   "id": 3869,
+ *   "unique_id": "3e51b64c-29e1-11e8-b4f8-002590daa0f6",
+ *   "event": {
+ *     "id": 1,
+ *     "name": "Example Event",
+ *     "location": "Example Hall",
+ *     "location_address": "42 Example Street",
+ *     "location_directions_public_transport": "Use the example line",
+ *     "location_directions_car": "Turn left, then right.",
+ *     "dateandtime": "First sunday in march at 9 am",
+ *     "visible": true,
+ *   },
+ *   "seat": {
+ *      "id": 77,
+ *      "block_id": 22,
+ *      "name": "Seat One",
+ *      "x0": null,
+ *      "y0": null,
+ *      "x1": null,
+ *      "y1": null,
+ *      "x2": null,
+ *      "y2": null,
+ *      "x3": null,
+ *      "y3": null
+ *   },
+ *   "category": {
+ *     "id": 3,
+ *     "name": "Block One",
+ *     "color": "#000",
+ *     "price": 30,
+ *     "price_reduced": 20
+ *   },
+ *   "isReduced": false,
+ *   "price": 30,
+ *   "order_id": null
+ * }
+ * 
+ * @apiError (SeatAlreadyReserved) 409 This seat cannot be reserved because a different user has it reserved already.
+ * 
+ * @apiErrorExample {json} Error-Response:
+ * HTTP/1.1 409 Conflict
+ */
+$app->post('/reservations', Actions\CreateReservationAction::class);
+
+/**
+ * @api {post} /unspecified-reservations Reserve amount of unspecified seats
+ * @apiName ReserveUnspecifiedSeats
+ * @apiGroup Reservation
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {Number} eventblock_id: Block id
+ * @apiParam {Number} number_of_seats: Number of seats to be reserved
+ * 
+ * @apiParamExample {json} Request-Example:
+ * {
+ *   "eventblock_id": 2,
+ *   "number_of_seats": 42
+ * }
+ * 
+ * @apiSuccess (Created 201) {Number} id Reservation id
+ * @apiSuccess (Created 201) {String} unique_id Reservation's unique id
+ * @apiSuccess (Created 201) {Event} event Reservation event
+ * @apiSuccess (Created 201) {Number} event.id Event id
+ * @apiSuccess (Created 201) {String} event.location Location name
+ * @apiSuccess (Created 201) {String} event.location_address Location address
+ * @apiSuccess (Created 201) {String} event.location_directions_public_transport Directions for users of public transport
+ * @apiSuccess (Created 201) {String} event.location_directions_car Directions for car drivers
+ * @apiSuccess (Created 201) {String} event.dateandtime Textual description of the event date and time
+ * @apiSuccess (Created 201) {Boolean} event.visible Visibility of the event
+ * @apiSuccess (Created 201) {Seat} seat Reservation seat
+ * @apiSuccess (Created 201) {Number} seat.id Seat id
+ * @apiSuccess (Created 201) {Number} seat.block_id Seats block id
+ * @apiSuccess (Created 201) {String} seat.name Seat name
+ * @apiSuccess (Created 201) {Number} seat.x0 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y0 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.x1 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y1 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.x2 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y2 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.x3 Coordinate
+ * @apiSuccess (Created 201) {Number} seat.y3 Coordinate
+ * @apiSuccess (Created 201) {Category} category Reservation category
+ * @apiSuccess (Created 201) {Number} category.id Category id
+ * @apiSuccess (Created 201) {String} category.name Category name
+ * @apiSuccess (Created 201) {String} category.color Category color
+ * @apiSuccess (Created 201) {String} category.price Category price
+ * @apiSuccess (Created 201) {String} category.price_reduced Category price (reduced)
+ * @apiSuccess (Created 201) {Boolean} isReduced Is this reservation reduced?
+ * @apiSuccess (Created 201) {Number} price Reservation's price
+ * @apiSuccess (Created 201) {Number} order_id Reservation order id (null if not ordered yet)
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 201 Created
+ * [
+ *   {
+ *     "id": 3869,
+ *     "unique_id": "3e51b64c-29e1-11e8-b4f8-002590daa0f6",
+ *     "event": {
+ *       "id": 1,
+ *       "name": "Example Event",
+ *       "location": "Example Hall",
+ *       "location_address": "42 Example Street",
+ *       "location_directions_public_transport": "Use the example line",
+ *       "location_directions_car": "Turn left, then right.",
+ *       "dateandtime": "First sunday in march at 9 am",
+ *       "visible": true,
+ *     },
+ *     "seat": {
+ *        "id": 77,
+ *        "block_id": 22,
+ *        "name": "Seat One",
+ *        "x0": null,
+ *        "y0": null,
+ *        "x1": null,
+ *        "y1": null,
+ *        "x2": null,
+ *        "y2": null,
+ *        "x3": null,
+ *        "y3": null
+ *     },
+ *     "category": {
+ *       "id": 3,
+ *       "name": "Block One",
+ *       "color": "#000",
+ *       "price": 30,
+ *       "price_reduced": 20
+ *     },
+ *     "isReduced": false,
+ *     "price": 30,
+ *     "order_id": null
+ *   }
+ * ]
+ */
+$app->post('/unspecified-reservations', Actions\CreateUnspecifiedReservationsAction::class);
+
+/**
+ * @api {put} /reservations Change reduction
+ * @apiName ChangeReduction
+ * @apiGroup Reservation
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {Boolean} isReduced: New value of the reduction property
+ * 
+ * @apiParamExample {json} Request-Example:
+ * {
+ *   "isReduced": true
+ * }
+ * 
+ * @apiSuccess {Number} id Reservation id
+ * @apiSuccess {String} unique_id Reservation's unique id
+ * @apiSuccess {Event} event Reservation event
+ * @apiSuccess {Number} event.id
+ * @apiSuccess {String} event.location Location name
+ * @apiSuccess {String} event.location_address Location address
+ * @apiSuccess {String} event.location_directions_public_transport Directions for users of public transport
+ * @apiSuccess {String} event.location_directions_car Directions for car drivers
+ * @apiSuccess {String} event.dateandtime Textual description of the event date and time
+ * @apiSuccess {Boolean} event.visible Visibility of the event
+ * @apiSuccess {Seat} seat Reservation seat
+ * @apiSuccess {Number} seat.id Seat id
+ * @apiSuccess {Number} seat.block_id Seats block id
+ * @apiSuccess {String} seat.name Seat name
+ * @apiSuccess {Number} seat.x0 Coordinate
+ * @apiSuccess {Number} seat.y0 Coordinate
+ * @apiSuccess {Number} seat.x1 Coordinate
+ * @apiSuccess {Number} seat.y1 Coordinate
+ * @apiSuccess {Number} seat.x2 Coordinate
+ * @apiSuccess {Number} seat.y2 Coordinate
+ * @apiSuccess {Number} seat.x3 Coordinate
+ * @apiSuccess {Number} seat.y3 Coordinate
+ * @apiSuccess {Category} category Reservation category
+ * @apiSuccess {Number} category.id Category id
+ * @apiSuccess {String} category.name Category name
+ * @apiSuccess {String} category.color Category color
+ * @apiSuccess {String} category.price Category price
+ * @apiSuccess {String} category.price_reduced Category price (reduced)
+ * @apiSuccess {Boolean} isReduced Is this reservation reduced?
+ * @apiSuccess {Number} price Reservation's price
+ * @apiSuccess {Number} order_id Reservation order id (null if not ordered yet)
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *   "id": 3869,
+ *   "unique_id": "3e51b64c-29e1-11e8-b4f8-002590daa0f6",
+ *   "event": {
+ *     "id": 1,
+ *     "name": "Example Event",
+ *     "location": "Example Hall",
+ *     "location_address": "42 Example Street",
+ *     "location_directions_public_transport": "Use the example line",
+ *     "location_directions_car": "Turn left, then right.",
+ *     "dateandtime": "First sunday in march at 9 am",
+ *     "visible": true,
+ *   },
+ *   "seat": {
+ *      "id": 77,
+ *      "block_id": 22,
+ *      "name": "Seat One",
+ *      "x0": null,
+ *      "y0": null,
+ *      "x1": null,
+ *      "y1": null,
+ *      "x2": null,
+ *      "y2": null,
+ *      "x3": null,
+ *      "y3": null
+ *   },
+ *   "category": {
+ *     "id": 3,
+ *     "name": "Block One",
+ *     "color": "#000",
+ *     "price": 30,
+ *     "price_reduced": 20
+ *   },
+ *   "isReduced": true,
+ *   "price": 30,
+ *   "order_id": null
+ * }
+ */
+$app->put('/reservations/{id}', Actions\ChangeReductionForReservationAction::class);
+
+/**
+ * @api {delete} /reservations/:id Delete reservation
+ * @apiName DeleteReservation
+ * @apiGroup Reservation
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {Number} id Reservation id
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ */
+$app->delete('/reservations/{id}', Actions\DeleteReservationAction::class);
+
+/**
+ * @api {get} /reservations-expiration-timestamp Get reservation expiration timestamp
+ * @apiName GetReservationExpirationTimestamp
+ * @apiGroup Reservation
+ * @apiVersion 0.1.0
+ * 
+ * @apiSuccess {Number} value Unix timestamp when reservations will expire
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *   "value": 1521293290
+ * }
+ */
+$app->get('/reservations-expiration-timestamp', Actions\GetReservationsExpirationTimestampAction::class);
+
+/**
+ * 
+ */
+$app->get('/admin/reservations', Actions\ListAllReservationsAction::class);

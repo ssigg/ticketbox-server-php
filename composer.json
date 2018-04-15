@@ -12,8 +12,8 @@
         "jurosh/pdf-merge": "^1.0.0",
         "tivie/php-os-detector": "dev-master",
         "braintree/braintree_php": "^3.20.0",
-        "katzgrau/klogger": "dev-master"
-
+        "katzgrau/klogger": "dev-master",
+        "tuupola/slim-basic-auth": "^2.3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0",
