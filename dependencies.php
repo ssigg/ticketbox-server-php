@@ -80,12 +80,9 @@ $container['uuidFactory'] = function($container) {
 };
 
 $container['orm'] = function($container) {
-    $pathConverter = $container['pathConverter'];
-    $spotSettings = $container['settings']['Spot'];
-    $spotSettings['path'] = $pathConverter->convert($spotSettings['path']);
-
     $spotConfig = new \Spot\Config();
-    $spotConfig->addConnection('sqlite', $spotSettings);
+    $dsn = getenv("DATABASE_URL");
+    $spotConfig->addConnection('heroku', $dsn);
     $spot = new \Spot\Locator($spotConfig);
     return $spot;
 };
