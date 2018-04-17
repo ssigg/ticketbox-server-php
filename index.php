@@ -2,6 +2,8 @@
 
 require 'vendor/autoload.php';
 
+echo "https: " . $_SERVER['HTTPS'];
+
 $app = new \Slim\App(["settings" => [ "displayErrorDetails" => true ]]);
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
