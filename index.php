@@ -4,6 +4,8 @@ require 'vendor/autoload.php';
 
 $app = new \Slim\App(["settings" => [ "displayErrorDetails" => true ]]);
 
+$app->add(new Tuupola\Middleware\CorsMiddleware);
+
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "secure" => true,
