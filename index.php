@@ -2,9 +2,6 @@
 
 require 'vendor/autoload.php';
 
-echo "server: ";
-print_r($_SERVER);
-
 $app = new \Slim\App(["settings" => [ "displayErrorDetails" => true ]]);
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
