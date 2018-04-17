@@ -81,7 +81,7 @@ $container['uuidFactory'] = function($container) {
 
 $container['orm'] = function($container) {
     $spotConfig = new \Spot\Config();
-    $dsn = getenv("DATABASE_URL");
+    $dsn = str_replace('postgres://', 'pgsql://', getenv("DATABASE_URL"));
     $spotConfig->addConnection('heroku', $dsn);
     $spot = new \Spot\Locator($spotConfig);
     return $spot;

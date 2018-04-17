@@ -2,9 +2,7 @@
 
 require 'vendor/autoload.php';
 
-$config = json_decode(file_get_contents("config/config.json"), true);
-$config['root'] = __DIR__;
-$app = new \Slim\App([ 'settings' => $config ]);
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
