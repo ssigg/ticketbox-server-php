@@ -2,7 +2,8 @@
 
 require 'vendor/autoload.php';
 
-echo "https: " . $_SERVER['HTTPS'];
+echo "server: ";
+print_r($_SERVER);
 
 $app = new \Slim\App(["settings" => [ "displayErrorDetails" => true ]]);
 
