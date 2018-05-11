@@ -10,7 +10,7 @@ before_script:
     mkdir tests/data & composer install -n
 
 script:
-    - phpunit --configuration tests/phpunit.xml --coverage-clover build/logs/clover.xml tests
+    - ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover build/logs/clover.xml tests
     - CODECLIMATE_REPO_TOKEN=ea35a3cdfec0b65d58fe2c9808a95936252826f9aaf567c5bdb4a3c9b251abdc
     - ./vendor/bin/test-reporter
 
