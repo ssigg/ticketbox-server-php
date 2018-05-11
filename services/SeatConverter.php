@@ -42,7 +42,7 @@ class SeatConverter implements SeatConverterInterface {
             } else if ($reservation->get('order_kind') == 'customer-purchase') {
                 $state = 'sold';
             } else {
-                throw new \Exception('Unknown Reservations->order_kind: ' + $reservation->get('order_kind'));
+                throw new \Exception('Unknown Reservations->order_kind: ' . $reservation->get('order_kind'));
             }
         } else if ($reservation->get('token') == $this->tokenProvider->provide()) {
             $state = 'reservedbymyself';
