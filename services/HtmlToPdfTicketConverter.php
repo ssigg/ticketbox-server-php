@@ -3,19 +3,29 @@
 namespace Services;
 
 class HtmlToPdfTicketConverter implements TicketPartWriterInterface {
-    private $pdfRendererFactory;
+    private $getClient;
+    private $postClient;
     private $outputDirectoryPath;
+    private $postUrl;
 
-    public function __construct(PdfRendererFactoryInterface $pdfRendererFactory, $outputDirectoryPath) {
-        $this->pdfRendererFactory = $pdfRendererFactory;
+    public function __construct(\GuzzleHttp\Client $getClient, \GuzzleHttp\Client $postClient, $outputDirectoryPath, $settings) {
+        $this->getClient = $getClient;
+        $this->postClient = $postClient;
         $this->outputDirectoryPath = $outputDirectoryPath;
+        $this->postUrl = $settings['postUrl'];
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
-        $pdfRenderer = $this->pdfRendererFactory->create();
-        $pdfRenderer->addPage($partFilePaths['html']);
+        $postResponse = $this->postClient->post($this->postUrl, [ 
+            'json' => [
+                'html' => file_get_contents($partFilePaths['html']),
+                'fileName' => $reservation->unique_id . '_ticket.pdf'
+            ]
+        ]);
+
+        $pdfUrl = json_decode((string)$postResponse->getBody(), true)['pdf'];
         $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.pdf';
-        $pdfRenderer->saveAs($filePath);
+        $pdf = $this->getClient->get($pdfUrl, [ 'sink' => $filePath ]);
 
         $partFilePaths['pdf'] = $filePath;
         return $partFilePaths;

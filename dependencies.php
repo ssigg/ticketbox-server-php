@@ -230,11 +230,27 @@ $container['pdfRendererFactory'] = function($container) {
     return $pdfRendererFactory;
 };
 
+$container['getClient'] = function($container) {
+    $getClient = new \GuzzleHttp\Client();
+    return $getClient;
+};
+
+$container['postClient'] = function($container) {
+    $postClient = new \GuzzleHttp\Client([
+        'headers' => [
+            'Authorization' => $container['settings']['PdfConverter']['settings']['key']
+        ] 
+    ]);
+    return $postClient;
+};
+
 $container['htmlToPdfTicketConverter'] = function($container) {
     $pathConverter = $container['pathConverter'];
-    $pdfRendererFactory = $container['pdfRendererFactory'];
+    $getClient = $container['getClient'];
+    $postClient = $container['postClient'];
     $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
-    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($pdfRendererFactory, $outputDirectory);
+    $settings = $container['settings']['PdfConverter']['settings'];
+    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $outputDirectory, $settings);
     return $htmlToPdfTicketConverter;
 };
 
