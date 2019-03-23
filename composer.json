@@ -12,7 +12,8 @@
         "jurosh/pdf-merge": "^1.0.0",
         "tivie/php-os-detector": "dev-master",
         "braintree/braintree_php": "^3.20.0",
-        "katzgrau/klogger": "dev-master"
+        "katzgrau/klogger": "dev-master",
+        "guzzlehttp/guzzle": "~6.0"
 
     },
     "require-dev": {
