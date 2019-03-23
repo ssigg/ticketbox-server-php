@@ -39,8 +39,6 @@ require dirname(__DIR__) . '/services/FilePersister.php';
 require dirname(__DIR__) . '/services/QrCodeWriter.php';
 require dirname(__DIR__) . '/services/TemplateProvider.php';
 require dirname(__DIR__) . '/services/HtmlTicketWriter.php';
-require dirname(__DIR__) . '/services/PdfRendererBinary.php';
-require dirname(__DIR__) . '/services/PdfRendererFactory.php';
 require dirname(__DIR__) . '/services/HtmlToPdfTicketConverter.php';
 require dirname(__DIR__) . '/services/PdfTicketWriter.php';
 require dirname(__DIR__) . '/services/PdfTicketMerger.php';

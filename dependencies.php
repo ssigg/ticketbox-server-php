@@ -28,8 +28,6 @@ require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
 require 'services/TemplateProvider.php';
 require 'services/HtmlTicketWriter.php';
-require 'services/PdfRendererBinary.php';
-require 'services/PdfRendererFactory.php';
 require 'services/HtmlToPdfTicketConverter.php';
 require 'services/PdfTicketWriter.php';
 require 'services/PdfTicketMerger.php';
@@ -212,22 +210,6 @@ $container['htmlTicketWriter'] = function($container) {
     $tempDirectory = $pathConverter->convert($container['settings']['tempDirectory']);
     $htmlTicketWriter = new Services\HtmlTicketWriter($twig, $templateProvider, $filePersister, $templateDirectory, $tempDirectory);
     return $htmlTicketWriter;
-};
-
-$container['operatingSystem'] = function($container) {
-    $operatingSystem = new \Tivie\OS\Detector();
-    return $operatingSystem;
-};
-
-$container['pdfRendererBinary'] = function($container) {
-    $pdfRendererBinary = new Services\PdfRendererBinary($container['operatingSystem']);
-    return $pdfRendererBinary;
-};
-
-$container['pdfRendererFactory'] = function($container) {
-    $pdfRendererBinary = $container['pdfRendererBinary'];
-    $pdfRendererFactory = new Services\PdfRendererFactory($pdfRendererBinary);
-    return $pdfRendererFactory;
 };
 
 $container['getClient'] = function($container) {
