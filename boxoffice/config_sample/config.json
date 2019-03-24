@@ -39,6 +39,13 @@
     "tempDirectory": "temp",
     "logDirectory": "logs",
     "ticketDirectory": "../common/tickets",
+    "PdfConverter": {
+        "service": "Api2Pdf",
+        "settings": {
+            "postUrl": "https://v2018.api2pdf.com/chrome/html",
+            "key": "apiKey"
+        }
+    },
     "Reservations": {
         "lifetimeInSeconds": 600
     },

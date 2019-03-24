@@ -26,13 +26,9 @@ require 'services/Mail.php';
 require 'services/Page.php';
 require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
-require 'services/SeatplanWriter.php';
 require 'services/TemplateProvider.php';
 require 'services/HtmlTicketWriter.php';
-require 'services/PdfRendererBinary.php';
-require 'services/PdfRendererFactory.php';
 require 'services/HtmlToPdfTicketConverter.php';
-require 'services/TicketPartTempFilesRemover.php';
 require 'services/PdfTicketWriter.php';
 require 'services/PdfTicketMerger.php';
 require 'services/BraintreePaymentProvider.php';
@@ -189,16 +185,6 @@ $container['qrCodeWriter'] = function($container) {
     return $qrCodeWriter;
 };
 
-$container['seatplanWriter'] = function($container) {
-    $pathConverter = $container['pathConverter'];
-    $blockMapper = $container['orm']->mapper('Model\Block');
-    $filePersister = $container['filePersister'];
-    $tempDirectory = $pathConverter->convert($container['settings']['tempDirectory']);
-    $settings = $container['settings']['SeatplanWriter'];
-    $seatplanWriter = new Services\SeatplanWriter($blockMapper, $filePersister, $tempDirectory, $settings);
-    return $seatplanWriter;
-};
-
 $container['twig'] = function($container) {
     $pathConverter = $container['pathConverter'];
     $templateDirectoryPath = $pathConverter->convert($container['settings']['templateDirectory']);
@@ -226,50 +212,40 @@ $container['htmlTicketWriter'] = function($container) {
     return $htmlTicketWriter;
 };
 
-$container['operatingSystem'] = function($container) {
-    $operatingSystem = new \Tivie\OS\Detector();
-    return $operatingSystem;
+$container['getClient'] = function($container) {
+    $getClient = new \GuzzleHttp\Client();
+    return $getClient;
 };
 
-$container['pdfRendererBinary'] = function($container) {
-    $pdfRendererBinary = new Services\PdfRendererBinary($container['operatingSystem']);
-    return $pdfRendererBinary;
-};
-
-$container['pdfRendererFactory'] = function($container) {
-    $pdfRendererBinary = $container['pdfRendererBinary'];
-    $pdfRendererFactory = new Services\PdfRendererFactory($pdfRendererBinary);
-    return $pdfRendererFactory;
+$container['postClient'] = function($container) {
+    $postClient = new \GuzzleHttp\Client([
+        'headers' => [
+            'Authorization' => $container['settings']['PdfConverter']['settings']['key']
+        ] 
+    ]);
+    return $postClient;
 };
 
 $container['htmlToPdfTicketConverter'] = function($container) {
     $pathConverter = $container['pathConverter'];
-    $pdfRendererFactory = $container['pdfRendererFactory'];
-    $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
-    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($pdfRendererFactory, $outputDirectory);
-    return $htmlToPdfTicketConverter;
-};
-
-$container['ticketPartTempFilesRemover'] = function($container) {
+    $getClient = $container['getClient'];
+    $postClient = $container['postClient'];
     $filePersister = $container['filePersister'];
-    $ticketPartTempFilesRemover = new Services\TicketPartTempFilesRemover($filePersister);
-    return $ticketPartTempFilesRemover;
+    $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
+    $settings = $container['settings']['PdfConverter']['settings'];
+    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $filePersister, $outputDirectory, $settings);
+    return $htmlToPdfTicketConverter;
 };
 
 $container['pdfTicketWriter'] = function($container) {
     $qrCodeWriter = $container['qrCodeWriter'];
-    $seatplanWriter = $container['seatplanWriter'];
     $htmlTicketWriter = $container['htmlTicketWriter'];
     $htmlToPdfTicketConverter = $container['htmlToPdfTicketConverter'];
-    $ticketPartTempFilesRemover = $container['ticketPartTempFilesRemover'];
     $ticketPartWriters = [
         $qrCodeWriter,
-        // $seatplanWriter,
-        $htmlTicketWriter,
-        $htmlToPdfTicketConverter,
-        $ticketPartTempFilesRemover
+        $htmlTicketWriter
     ];
-    $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters);
+    $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters, $htmlToPdfTicketConverter);
     return $pdfTicketWriter;
 };
 

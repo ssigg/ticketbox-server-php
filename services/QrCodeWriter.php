@@ -12,10 +12,9 @@ class QrCodeWriter implements TicketPartWriterInterface {
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
-        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_qr.png';
-        $this->writer->writeFile($reservation->unique_id, $filePath);
+        $dataUrl = 'data:image/png;base64,' . base64_encode($this->writer->writeString($reservation->unique_id));
 
-        $partFilePaths['qr'] = $filePath;
+        $partFilePaths['qr'] = $dataUrl;
         return $partFilePaths;
     }
 }
