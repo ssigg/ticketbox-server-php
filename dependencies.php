@@ -230,9 +230,10 @@ $container['htmlToPdfTicketConverter'] = function($container) {
     $pathConverter = $container['pathConverter'];
     $getClient = $container['getClient'];
     $postClient = $container['postClient'];
+    $filePersister = $container['filePersister'];
     $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
     $settings = $container['settings']['PdfConverter']['settings'];
-    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $outputDirectory, $settings);
+    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $filePersister, $outputDirectory, $settings);
     return $htmlToPdfTicketConverter;
 };
 

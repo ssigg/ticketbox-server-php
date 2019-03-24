@@ -1,67 +1,96 @@
 <?php
 
 class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
-    private $wkhtmltopdfMock;
-    private $pdfRendererFactoryMock;
+    private $postResponseMock;
     private $outputDirectory;
+    private $settings;
     private $unique_id;
     private $reservation;
     private $partFilePaths;
 
     protected function setUp() {
-        $this->wkhtmltopdfMock = $this->getMockBuilder(\mikehaertl\wkhtmlto\Pdf::class)
-            ->setMethods(['addPage', 'saveAs'])
+        $this->postResponseMock = $this->getMockBuilder(\Psr\Http\Message\ResponseInterface::class)
+            ->setMethods(['getBody'])
             ->getMockForAbstractClass();
 
-        $this->pdfRendererFactoryMock = $this->getMockBuilder(Services\PdfRendererFactory::class)
+        $this->postClientMock = $this->getMockBuilder(\GuzzleHttp\Client::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->setMethods(['post'])
             ->getMockForAbstractClass();
-        $this->pdfRendererFactoryMock
-            ->method('create')
-            ->willReturn($this->wkhtmltopdfMock);
+        $this->postClientMock
+            ->method('post')
+            ->willReturn($this->postResponseMock);
 
+        $this->getClientMock = $this->getMockBuilder(\GuzzleHttp\Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get'])
+            ->getMockForAbstractClass();
+
+        $this->filePersisterMock = $this->getMockBuilder(Services\FilePersisterInterface::class)
+            ->setMethods(['read'])
+            ->getMockForAbstractClass();
+        
         $this->outputDirectory = 'output';
-
-        $this->converter = new Services\HtmlToPdfTicketConverter($this->pdfRendererFactoryMock, $this->outputDirectory);
+        $this->settings = [ 'postUrl' => 'postUrl' ];
+        $this->converter = new Services\HtmlToPdfTicketConverter($this->getClientMock, $this->postClientMock, $this->filePersisterMock, $this->outputDirectory, $this->settings);
 
         $this->unique_id = 'unique';
         $this->reservation = new HtmlToPdfTicketConverterTestReservationStub($this->unique_id);
 
-        $this->partFilePaths = [ 'qr' => 'qr.png', 'seatplan' => 'seatplan.png', 'html' => 'ticket.html' ];
+        $this->partFilePaths = [ 'qr' => 'qrdataurl', 'html' => 'ticket.html' ];
     }
 
-    public function testUsePdfRendererFactoryToCreatePdfRenderer() {
-        $this->pdfRendererFactoryMock
+    public function testPostDataToApi() {
+        $this->filePersisterMock
+            ->method('read')
+            ->willReturn('htmlToRender');
+        $expectedPostPayload = [
+            'json' => [
+                'html' => 'htmlToRender',
+                'fileName' => $this->unique_id . '_ticket.pdf'
+            ]
+        ];
+        $this->postClientMock
             ->expects($this->once())
-            ->method('create');
+            ->method('post')
+            ->with($this->equalTo($this->settings['postUrl']), $this->equalTo($expectedPostPayload));
+        
+        $this->postResponseMock
+            ->method('getBody')
+            ->willReturn('{ "pdf": "PdfUrl" }');
         
         $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
-    public function testAddGivenHtmlAsPage() {
-        $this->wkhtmltopdfMock
+    public function testGetCreatedPdf() {
+        $this->filePersisterMock
+            ->method('read')
+            ->willReturn('htmlToRender');
+        $this->postResponseMock
+            ->method('getBody')
+            ->willReturn('{ "pdf": "PdfUrl" }');
+        
+        $pdfFilePath = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
+        $this->getClientMock
             ->expects($this->once())
-            ->method('addPage')
-            ->with($this->equalTo($this->partFilePaths['html']));
-
+            ->method('get')
+            ->with($this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath ]));
+        
         $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
     }
 
-    public function testResultIsWrittenToTheCorrectLocation() {
-        $expectedPath = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
-        $this->wkhtmltopdfMock
-            ->expects($this->once())
-            ->method('saveAs')
-            ->with($this->equalTo($expectedPath));
-
-        $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
-    }
-
-    public function testFilePathIsAppendedToExistingFilePaths() {
+    public function testAddPdfPathToFilePaths() {
+        $this->filePersisterMock
+            ->method('read')
+            ->willReturn('htmlToRender');
+        $this->postResponseMock
+            ->method('getBody')
+            ->willReturn('{ "pdf": "PdfUrl" }');
+        
         $partFilePaths = $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
-        $expectedPartFilePaths = $this->partFilePaths;
-        $expectedPartFilePaths['pdf'] = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
+
+        $pdfFilePath = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
+        $expectedPartFilePaths = [ 'qr' => 'qrdataurl', 'html' => 'ticket.html', 'pdf' => $pdfFilePath ];
         $this->assertSame($expectedPartFilePaths, $partFilePaths);
     }
 }

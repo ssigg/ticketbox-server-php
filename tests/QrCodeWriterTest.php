@@ -10,7 +10,7 @@ class QrCodeWriterTest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->qrWriterMock = $this->getMockBuilder(\BaconQrCode\Writer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['writeFile'])
+            ->setMethods(['writeString'])
             ->getMock();
 
         $this->outputDirectory = 'directory';
@@ -21,18 +21,20 @@ class QrCodeWriterTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testUseQrWriterToWriteQrCode() {
-        $expectedOutputPath = $this->outputDirectory . '/' . $this->unique_id . '_qr.png';
         $this->qrWriterMock
             ->expects($this->once())
-            ->method('writeFile')
-            ->with($this->equalTo($this->reservation->unique_id), $this->equalTo($expectedOutputPath));
+            ->method('writeString')
+            ->with($this->equalTo($this->reservation->unique_id));
         $this->writer->write($this->reservation, [], false, 'en');
     }
 
     public function testFilePathIsAppendedToExistingFilePaths() {
-        $expectedOutputPath = $this->outputDirectory . '/' . $this->unique_id . '_qr.png';
+        $this->qrWriterMock
+            ->method('writeString')
+            ->willReturn('QrCodeString');
+        $expectedQrCodeString = 'data:image/png;base64,UXJDb2RlU3RyaW5n';
         $filePaths = $this->writer->write($this->reservation, [], false, 'en');
-        $this->assertSame([ 'qr' => $expectedOutputPath ], $filePaths);
+        $this->assertSame([ 'qr' => $expectedQrCodeString ], $filePaths);
     }
 }
 
