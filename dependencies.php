@@ -243,10 +243,9 @@ $container['pdfTicketWriter'] = function($container) {
     $htmlToPdfTicketConverter = $container['htmlToPdfTicketConverter'];
     $ticketPartWriters = [
         $qrCodeWriter,
-        $htmlTicketWriter,
-        $htmlToPdfTicketConverter
+        $htmlTicketWriter
     ];
-    $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters);
+    $pdfTicketWriter = new Services\PdfTicketWriter($ticketPartWriters, $htmlToPdfTicketConverter);
     return $pdfTicketWriter;
 };
 

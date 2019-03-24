@@ -2,7 +2,11 @@
 
 namespace Services;
 
-class HtmlToPdfTicketConverter implements TicketPartWriterInterface {
+interface HtmlToPdfTicketConverterInterface {
+    function convert(array $htmlFilePaths);
+}
+
+class HtmlToPdfTicketConverter implements HtmlToPdfTicketConverterInterface {
     private $getClient;
     private $postClient;
     private $filePersister;
@@ -17,19 +21,29 @@ class HtmlToPdfTicketConverter implements TicketPartWriterInterface {
         $this->postUrl = $settings['postUrl'];
     }
 
-    public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
+    public function convert(array $htmlFilePaths) {
+        $pdfFilePaths = [];
+        foreach($htmlFilePaths as $htmlFilePath) {
+            $pdfFilePaths[] = $this->convertOneFile($htmlFilePath);
+        }
+        return $pdfFilePaths;
+    }
+
+    private function convertOneFile($htmlFilePath) {
+        $htmlFilePathParts = pathinfo($htmlFilePath);
+        $pdfFileName = $htmlFilePathParts['filename'] . '.pdf';
+
         $postResponse = $this->postClient->post($this->postUrl, [ 
             'json' => [
-                'html' => $this->filePersister->read($partFilePaths['html']),
-                'fileName' => $reservation->unique_id . '_ticket.pdf'
+                'html' => $this->filePersister->read($htmlFilePath),
+                'fileName' => $pdfFileName
             ]
         ]);
 
         $pdfUrl = json_decode((string)$postResponse->getBody(), true)['pdf'];
-        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.pdf';
-        $pdf = $this->getClient->get($pdfUrl, [ 'sink' => $filePath ]);
-
-        $partFilePaths['pdf'] = $filePath;
-        return $partFilePaths;
+        $pdfFilePath = $this->outputDirectoryPath . '/' . $pdfFileName;
+        $this->getClient->get($pdfUrl, [ 'sink' => $pdfFilePath ]);
+        
+        return $pdfFilePath;
     }
 }

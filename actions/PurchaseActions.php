@@ -138,15 +138,9 @@ class CreateBoxofficePurchaseAction {
         if ($boxofficeType == 'pdf') {
             $this->mail->sendBoxofficePurchaseConfirmation($boxofficeName, $customerEmail, $locale, $purchase->reservations, $totalPrice);
         } else if ($boxofficeType == 'printout') {
-            foreach ($purchase->reservations as $reservation) {
-                $this->pdfTicketWriter->write($reservation, true, $locale);
-            }
+            $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
         } else if ($boxofficeType == 'download') {
-            $pdfFilePaths = [];
-            foreach ($purchase->reservations as $reservation) {
-                $pdfFilePath = $this->pdfTicketWriter->write($reservation, true, $locale);
-                $pdfFilePaths[] = $pdfFilePath;
-            }
+            $pdfFilePaths = $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
             $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '_ticket.pdf');
         } else {
             // Neither a mail has to be delivered nor tickets have to be created
@@ -194,15 +188,9 @@ class UpgradeOrderToBoxofficePurchaseAction {
         if ($boxofficeType == 'pdf') {
             $this->mail->sendBoxofficePurchaseConfirmation($boxofficeName, $customerEmail, $locale, $purchase->reservations, $totalPrice);
         } else if ($boxofficeType == 'printout') {
-            foreach ($purchase->reservations as $reservation) {
-                $this->pdfTicketWriter->write($reservation, true, $locale);
-            }
+            $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
         } else if ($boxofficeType == 'download') {
-            $pdfFilePaths = [];
-            foreach ($purchase->reservations as $reservation) {
-                $pdfFilePath = $this->pdfTicketWriter->write($reservation, true, $locale);
-                $pdfFilePaths[] = $pdfFilePath;
-            }
+            $pdfFilePaths = $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
             $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '_ticket.pdf');
         } else {
             // Neither a mail has to be delivered nor tickets have to be created

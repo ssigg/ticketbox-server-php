@@ -99,11 +99,7 @@ class Mail implements MailInterface {
         $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-confirmation', $locale, 'txt');
         $template = $this->twig->loadTemplate($templateFileName);
 
-        $pdfFilePaths = [];
-        foreach ($reservations as $reservation) {
-            $pdfFilePath = $this->pdfTicketWriter->write($reservation, false, $locale);
-            $pdfFilePaths[] = $pdfFilePath;
-        }
+        $pdfFilePaths = $this->pdfTicketWriter->write($reservations, false, $locale);
 
         $params = [
             'boxoffice' => $boxoffice,
@@ -160,11 +156,7 @@ class Mail implements MailInterface {
         $templateFileName = $this->templateProvider->getPath('customer-purchase-confirmation', $purchase->locale, 'txt');
         $template = $this->twig->loadTemplate($templateFileName);
 
-        $pdfFilePaths = [];
-        foreach ($purchase->reservations as $reservation) {
-            $pdfFilePath = $this->pdfTicketWriter->write($reservation, false, $purchase->locale);
-            $pdfFilePaths[] = $pdfFilePath;
-        }
+        $pdfFilePaths = $this->pdfTicketWriter->write($purchase->reservations, false, $purchase->locale);
 
         $params = [
             'purchase' => $purchase,

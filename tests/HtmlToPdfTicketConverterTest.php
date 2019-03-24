@@ -5,8 +5,7 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
     private $outputDirectory;
     private $settings;
     private $unique_id;
-    private $reservation;
-    private $partFilePaths;
+    private $htmlFilePaths;
 
     protected function setUp() {
         $this->postResponseMock = $this->getMockBuilder(\Psr\Http\Message\ResponseInterface::class)
@@ -31,35 +30,41 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->getMockForAbstractClass();
         
         $this->outputDirectory = 'output';
-        $this->settings = [ 'postUrl' => 'postUrl' ];
-        $this->converter = new Services\HtmlToPdfTicketConverter($this->getClientMock, $this->postClientMock, $this->filePersisterMock, $this->outputDirectory, $this->settings);
+        $settings = [ 'postUrl' => 'postUrl' ];
+        $this->converter = new Services\HtmlToPdfTicketConverter($this->getClientMock, $this->postClientMock, $this->filePersisterMock, $this->outputDirectory, $settings);
 
-        $this->unique_id = 'unique';
-        $this->reservation = new HtmlToPdfTicketConverterTestReservationStub($this->unique_id);
-
-        $this->partFilePaths = [ 'qr' => 'qrdataurl', 'html' => 'ticket.html' ];
+        $this->htmlFilePaths = [ 'ticket1.html', 'ticket2.html' ];
     }
 
     public function testPostDataToApi() {
         $this->filePersisterMock
             ->method('read')
             ->willReturn('htmlToRender');
-        $expectedPostPayload = [
+        $expectedPostPayload1 = [
             'json' => [
                 'html' => 'htmlToRender',
-                'fileName' => $this->unique_id . '_ticket.pdf'
+                'fileName' => 'ticket1.pdf'
+            ]
+        ];
+        $expectedPostPayload2 = [
+            'json' => [
+                'html' => 'htmlToRender',
+                'fileName' => 'ticket2.pdf'
             ]
         ];
         $this->postClientMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('post')
-            ->with($this->equalTo($this->settings['postUrl']), $this->equalTo($expectedPostPayload));
+            ->withConsecutive(
+                [ $this->equalTo('postUrl'), $this->equalTo($expectedPostPayload1) ],
+                [ $this->equalTo('postUrl'), $this->equalTo($expectedPostPayload2) ]
+            );
         
         $this->postResponseMock
             ->method('getBody')
             ->willReturn('{ "pdf": "PdfUrl" }');
         
-        $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
+        $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
 
     public function testGetCreatedPdf() {
@@ -70,13 +75,17 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->method('getBody')
             ->willReturn('{ "pdf": "PdfUrl" }');
         
-        $pdfFilePath = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
+        $pdfFilePath1 = $this->outputDirectory . '/ticket1.pdf';
+        $pdfFilePath2 = $this->outputDirectory . '/ticket2.pdf';
         $this->getClientMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with($this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath ]));
+            ->withConsecutive(
+                [ $this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath1 ]) ],
+                [ $this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath2 ]) ]
+            );
         
-        $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
+        $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
 
     public function testAddPdfPathToFilePaths() {
@@ -87,18 +96,8 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->method('getBody')
             ->willReturn('{ "pdf": "PdfUrl" }');
         
-        $partFilePaths = $this->converter->write($this->reservation, $this->partFilePaths, false, 'en');
-
-        $pdfFilePath = $this->outputDirectory . '/' . $this->unique_id . '_ticket.pdf';
-        $expectedPartFilePaths = [ 'qr' => 'qrdataurl', 'html' => 'ticket.html', 'pdf' => $pdfFilePath ];
-        $this->assertSame($expectedPartFilePaths, $partFilePaths);
-    }
-}
-
-class HtmlToPdfTicketConverterTestReservationStub implements Services\ExpandedReservationInterface {
-    public $unique_id;
-    
-    public function __construct($unique_id) {
-        $this->unique_id = $unique_id;
+        $pdfFilePaths = $this->converter->convert($this->htmlFilePaths, false, 'en');
+        $expectedPdfFilePaths = [ $this->outputDirectory . '/ticket1.pdf', $this->outputDirectory . '/ticket2.pdf' ];
+        $this->assertSame($expectedPdfFilePaths, $pdfFilePaths);
     }
 }
