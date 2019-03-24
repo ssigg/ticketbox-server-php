@@ -8,17 +8,18 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
     private $htmlFilePaths;
 
     protected function setUp() {
-        $this->postResponseMock = $this->getMockBuilder(\Psr\Http\Message\ResponseInterface::class)
-            ->setMethods(['getBody'])
-            ->getMockForAbstractClass();
-
         $this->postClientMock = $this->getMockBuilder(\GuzzleHttp\Client::class)
             ->disableOriginalConstructor()
-            ->setMethods(['post'])
+            ->setMethods(['postAsync'])
             ->getMockForAbstractClass();
+
+        // See https://gist.github.com/lubomir-haralampiev/890f5778f8e71e597329f471e5ce8556
+        $promise = new \GuzzleHttp\Promise\Promise(function () use (&$promise) {
+            $promise->resolve(new \GuzzleHttp\Psr7\Response(200, [], '{ "pdf": "PdfUrl" }'));
+        });
         $this->postClientMock
-            ->method('post')
-            ->willReturn($this->postResponseMock);
+            ->method('postAsync')
+            ->willReturn($promise);
 
         $this->getClientMock = $this->getMockBuilder(\GuzzleHttp\Client::class)
             ->disableOriginalConstructor()
@@ -36,10 +37,11 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
         $this->htmlFilePaths = [ 'ticket1.html', 'ticket2.html' ];
     }
 
-    public function testPostDataToApi() {
+    public function testPostDataToApiSuccessfully() {
         $this->filePersisterMock
             ->method('read')
             ->willReturn('htmlToRender');
+
         $expectedPostPayload1 = [
             'json' => [
                 'html' => 'htmlToRender',
@@ -54,15 +56,11 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
         ];
         $this->postClientMock
             ->expects($this->exactly(2))
-            ->method('post')
+            ->method('postAsync')
             ->withConsecutive(
                 [ $this->equalTo('postUrl'), $this->equalTo($expectedPostPayload1) ],
                 [ $this->equalTo('postUrl'), $this->equalTo($expectedPostPayload2) ]
             );
-        
-        $this->postResponseMock
-            ->method('getBody')
-            ->willReturn('{ "pdf": "PdfUrl" }');
         
         $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
@@ -71,9 +69,6 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
         $this->filePersisterMock
             ->method('read')
             ->willReturn('htmlToRender');
-        $this->postResponseMock
-            ->method('getBody')
-            ->willReturn('{ "pdf": "PdfUrl" }');
         
         $pdfFilePath1 = $this->outputDirectory . '/ticket1.pdf';
         $pdfFilePath2 = $this->outputDirectory . '/ticket2.pdf';
@@ -92,9 +87,6 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
         $this->filePersisterMock
             ->method('read')
             ->willReturn('htmlToRender');
-        $this->postResponseMock
-            ->method('getBody')
-            ->willReturn('{ "pdf": "PdfUrl" }');
         
         $pdfFilePaths = $this->converter->convert($this->htmlFilePaths, false, 'en');
         $expectedPdfFilePaths = [ $this->outputDirectory . '/ticket1.pdf', $this->outputDirectory . '/ticket2.pdf' ];

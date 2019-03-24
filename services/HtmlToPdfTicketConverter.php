@@ -22,28 +22,37 @@ class HtmlToPdfTicketConverter implements HtmlToPdfTicketConverterInterface {
     }
 
     public function convert(array $htmlFilePaths) {
-        $pdfFilePaths = [];
-        foreach($htmlFilePaths as $htmlFilePath) {
-            $pdfFilePaths[] = $this->convertOneFile($htmlFilePath);
+        $promises = [];
+        foreach ($htmlFilePaths as $htmlFilePath) {
+            $htmlFilePathParts = pathinfo($htmlFilePath);
+            $pdfFileName = $htmlFilePathParts['filename'] . '.pdf';
+            $promises[$pdfFileName] = $this->postOneHtmlFile($htmlFilePath, $pdfFileName);
         }
+        
+        $results = \GuzzleHttp\Promise\settle($promises)->wait();
+        $pdfFilePaths = [];
+        foreach ($results as $pdfFileName => $result) {
+            $pdfUrl = json_decode((string)$result['value']->getBody(), true)['pdf'];
+            $pdfFilePaths[] = $this->getOnePdfFile($pdfUrl, $pdfFileName);
+        }
+
         return $pdfFilePaths;
     }
 
-    private function convertOneFile($htmlFilePath) {
-        $htmlFilePathParts = pathinfo($htmlFilePath);
-        $pdfFileName = $htmlFilePathParts['filename'] . '.pdf';
-
-        $postResponse = $this->postClient->post($this->postUrl, [ 
+    private function postOneHtmlFile($htmlFilePath, $pdfFileName) {
+        $promise = $this->postClient->postAsync($this->postUrl, [ 
             'json' => [
                 'html' => $this->filePersister->read($htmlFilePath),
                 'fileName' => $pdfFileName
             ]
         ]);
 
-        $pdfUrl = json_decode((string)$postResponse->getBody(), true)['pdf'];
+        return $promise;
+    }
+
+    private function getOnePdfFile($pdfUrl, $pdfFileName) {
         $pdfFilePath = $this->outputDirectoryPath . '/' . $pdfFileName;
         $this->getClient->get($pdfUrl, [ 'sink' => $pdfFilePath ]);
-        
         return $pdfFilePath;
     }
 }
