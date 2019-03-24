@@ -7,10 +7,7 @@
         "ramsey/uuid": "^3.6.0",
         "duncan3dc/sessions": "^1.0",
         "bacon/bacon-qr-code": "^1.0.1",
-        "message/wkhtmltopdf": "dev-master",
-        "mikehaertl/phpwkhtmltopdf": "^2.2.0",
         "jurosh/pdf-merge": "^1.0.0",
-        "tivie/php-os-detector": "dev-master",
         "braintree/braintree_php": "^3.20.0",
         "katzgrau/klogger": "dev-master",
         "guzzlehttp/guzzle": "~6.0"
