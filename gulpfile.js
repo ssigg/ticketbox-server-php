@@ -32,13 +32,15 @@ gulp.task('clean', function() {
         .pipe(clean());
 });
 
-gulp.task('collect', [ 'clean' ], function() {
+gulp.task('collect', function() {
     return gulp.src(paths, { base: './' })
         .pipe(gulp.dest(bases.root));
 });
 
-gulp.task('zip', [ 'collect' ], function() {
+gulp.task('zip', function() {
     return gulp.src(bases.root + '**')
         .pipe(zip('ticketbox-server-php.zip'))
         .pipe(gulp.dest(bases.root));
 });
+
+gulp.task('default', gulp.series('clean', 'collect', 'zip'));
