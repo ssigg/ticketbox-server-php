@@ -15,7 +15,13 @@ engines:
   phpmd:
     enabled: true
     checks:
+      Controversial/CamelCaseParameterName:
+        enabled: false
       CleanCode/ElseExpression:
+        enabled: false
+      CleanCode/StaticAccess:
+        enabled: false
+      Naming/ConstantNamingConventions:
         enabled: false
       Naming/LongVariable:
         enabled: false

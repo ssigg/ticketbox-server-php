@@ -52,8 +52,6 @@ class GetEventblockAction {
 }
 
 class GetMergedEventblockAction {
-    private $orm;
-
     public function __construct(ContainerInterface $container) {
         $this->eventblockMerger = $container->get('eventblockMerger');
     }
