@@ -29,7 +29,7 @@ var paths = [
 
 gulp.task('clean', function() {
     return gulp.src(bases.root)
-        .pipe(clean());
+        .pipe(clean({}));
 });
 
 gulp.task('collect', function() {
