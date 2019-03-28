@@ -6,7 +6,7 @@ date_default_timezone_set('America/New_York');
 ini_set('session.use_cookies', 0);
 
 // Enable Composer autoloader
-$autoloader = require dirname(__DIR__) . '/vendor/autoload.php';
+$autoloader = require dirname(__DIR__) . '/../vendor/autoload.php';
 
 // Register actions
 require dirname(__DIR__) . '/actions/EventActions.php';

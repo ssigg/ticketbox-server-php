@@ -3,7 +3,7 @@
     "addContentLengthHeader": false,
     "Spot": {
         "dbsyntax": "sqlite",
-        "path": "../data/database.db",
+        "path": "../../core/data/database.db",
         "driver": "pdo_sqlite"
     },
     "Mailer": {

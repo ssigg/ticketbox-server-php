@@ -8,8 +8,8 @@ var bases = {
 };
 
 var paths = [
-    'actions/*',
-    'common/**',
+    'core/actions/*',
+    'core/common/**',
     'admin/**',
     '!admin/config/*',
     'boxoffice/**',
@@ -20,11 +20,11 @@ var paths = [
     '!scanner/config/*',
     'printer/**',
     '!printer/config/*',
-    'model/*',
-    'services/*',
+    'core/model/*',
+    'core/services/*',
     'vendor/**',
     'composer.lock',
-    'dependencies.php'
+    'core/dependencies.php'
 ];
 
 gulp.task('clean', function() {
