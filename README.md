@@ -6,13 +6,13 @@
 Use this server together with the web client available at https://github.com/ssigg/ticketbox-client-angularjs
 
 ## Available endpoints
-* `/customer`: Endpoint for customer interface available to all visitors.
-* `/boxoffice`: Endpoint for the box office or ticket agencies.
-* `/admin`: Administration interface endpoint.
+* `/customer/api`: Endpoint for customer interface available to all visitors.
+* `/boxoffice/api`: Endpoint for the box office or ticket agencies.
+* `/admin/api`: Administration interface endpoint.
 
 
 ## Installation
-* Copy `customer/config_sample` to `customer/config` and adjust the values
-* Copy `boxoffice/config_sample` to `boxoffice/config` and adjust the values
-* Copy `admin/config_sample` to `admin/config` and adjust the values
+* Copy `customer/api/config_sample` to `customer/api/config` and adjust the values
+* Copy `boxoffice/api/config_sample` to `boxoffice/api/config` and adjust the values
+* Copy `admin/api/config_sample` to `admin/api/config` and adjust the values
 * If you decide to use a server based database, set up the database
