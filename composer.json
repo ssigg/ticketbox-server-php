@@ -22,6 +22,6 @@
         "test": [
             "@phpunit"
         ],
-        "phpunit": "php vendor/bin/phpunit --configuration core/tests/phpunit.xml --coverage-html coverage --coverage-clover coverage.xml core/tests"
+        "phpunit": "php vendor/bin/phpunit --configuration core/tests/phpunit.xml --coverage-html ../coverage --coverage-clover ../coverage.xml core/tests"
     }
 }
