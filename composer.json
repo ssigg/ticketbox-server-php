@@ -10,7 +10,8 @@
         "jurosh/pdf-merge": "^1.0.0",
         "braintree/braintree_php": "^3.20.0",
         "katzgrau/klogger": "dev-master",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "tuupola/cors-middleware": "^0.5.2"
 
     },
     "require-dev": {
