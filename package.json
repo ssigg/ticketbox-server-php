@@ -20,6 +20,6 @@
     "start": "php -S localhost:8001",
     "test": "composer run test",
     "productioninstall": "composer install --no-dev --optimize-autoloader",
-    "deploy": "npm install; npm run productioninstall; gulp; npm install"
+    "build": "npm install; npm run productioninstall; gulp; npm install"
   }
 }
