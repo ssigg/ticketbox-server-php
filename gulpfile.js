@@ -33,7 +33,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('collect', function() {
-    return gulp.src(paths, { base: './' })
+    return gulp.src(paths, { base: './', dot: true })
         .pipe(gulp.dest(bases.root));
 });
 
