@@ -24,7 +24,8 @@ var paths = [
     'core/services/*',
     'vendor/**',
     'composer.lock',
-    'core/dependencies.php'
+    'core/dependencies.php',
+    'core/.htaccess'
 ];
 
 gulp.task('clean', function() {
