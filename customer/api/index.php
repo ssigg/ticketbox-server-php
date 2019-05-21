@@ -1,12 +1,14 @@
 <?php
 
-require '../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 $config = json_decode(file_get_contents("config/config.json"), true);
 $config['root'] = __DIR__;
 $app = new \Slim\App([ 'settings' => $config ]);
 
-require '../dependencies.php';
+$app->add(new Tuupola\Middleware\Cors([]));
+
+require '../../core/dependencies.php';
 
 // Routes
 // =============================================================

@@ -69,7 +69,7 @@ abstract class DatabaseTestBase extends \PHPUnit_Framework_TestCase {
     private function configureSpot() {
         $testDbConnection = [
             'dbsyntax' => 'sqlite',
-            'path' => 'tests/data/database.db',
+            'path' => 'core/tests/data/database.db',
             'driver' => 'pdo_sqlite'
         ];
         $spotConfig = new \Spot\Config();
