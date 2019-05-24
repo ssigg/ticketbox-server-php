@@ -110,7 +110,6 @@ class CreateBoxofficePurchaseAction {
     private $pdfTicketWriter;
     private $pdfTicketMerger;
     private $reserver;
-    private $tempDirectory;
 
     public function __construct(ContainerInterface $container) {
         $this->mail = $container->get('mail');
@@ -118,7 +117,6 @@ class CreateBoxofficePurchaseAction {
         $this->pdfTicketMerger = $container->get('pdfTicketMerger');
         $this->reserver = $container->get('seatReserver');
         $this->boxofficeSettings = $container->get('settings')['boxoffice'];
-        $this->tempDirectory = $container->get('settings')['tempDirectory'];
     }
 
     public function __invoke(Request $request, Response $response, $args = []) {
@@ -141,7 +139,7 @@ class CreateBoxofficePurchaseAction {
             $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
         } else if ($boxofficeType == 'download') {
             $pdfFilePaths = $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
-            $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '_ticket.pdf');
+            $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '.pdf');
         } else {
             // Neither a mail has to be delivered nor tickets have to be created
         }
@@ -191,7 +189,7 @@ class UpgradeOrderToBoxofficePurchaseAction {
             $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
         } else if ($boxofficeType == 'download') {
             $pdfFilePaths = $this->pdfTicketWriter->write($purchase->reservations, true, $locale);
-            $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '_ticket.pdf');
+            $this->pdfTicketMerger->merge($pdfFilePaths, $purchase->unique_id . '.pdf');
         } else {
             // Neither a mail has to be delivered nor tickets have to be created
         }
@@ -341,7 +339,7 @@ class GetPdfTicketAction {
 
     public function __invoke(Request $request, Response $response, $args = []) {
         $uniqueId = $args['unique_id'];
-        $filePath = $this->ticketDirectoryPath . '/' . $uniqueId . '_ticket.pdf';
+        $filePath = $this->ticketDirectoryPath . '/' . $uniqueId . '.pdf';
         if ($this->filePersister->exists($filePath)) {
             // See http://discourse.slimframework.com/t/slim-3-download-files/224/2
             $fh = fopen($filePath, 'rb');

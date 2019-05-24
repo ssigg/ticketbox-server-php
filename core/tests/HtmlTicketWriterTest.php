@@ -69,7 +69,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
             ->method('render')
             ->willReturn('result');
 
-        $expectedOutputPath = $this->outputDirectory . '/' . $this->unique_id . '_ticket.html';
+        $expectedOutputPath = $this->outputDirectory . '/' . $this->unique_id . '.html';
         $this->filePersisterMock
             ->expects($this->once())
             ->method('write')
@@ -80,7 +80,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
     public function testFilePathIsAppendedToExistingFilePaths() {
         $filePaths = $this->writer->write($this->reservation, $this->partFilePaths, false, 'en');
         $expectedPartFilePaths = $this->partFilePaths;
-        $expectedPartFilePaths['html'] = $this->outputDirectory . '/' . $this->unique_id . '_ticket.html';
+        $expectedPartFilePaths['html'] = $this->outputDirectory . '/' . $this->unique_id . '.html';
         $this->assertSame($expectedPartFilePaths, $filePaths);
     }
 }

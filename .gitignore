@@ -6,7 +6,6 @@ core/data
 coverage.xml
 coverage
 dist
-temp
-core/common/tickets
-core/common/templates
+tickets
+templates
 logs

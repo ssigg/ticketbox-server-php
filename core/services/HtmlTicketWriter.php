@@ -29,7 +29,7 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
         ];
         $result = $template->render($params);
 
-        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.html';
+        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '.html';
         $this->filePersister->write($filePath, $result);
         
         $partFilePaths['html'] = $filePath;
