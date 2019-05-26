@@ -8,24 +8,29 @@ var bases = {
 };
 
 var paths = [
-    'core/actions/*',
-    'core/common/**',
+    'core/**',
+    '!core/data',
+    '!core/data/**/*',
+    '!core/logs/**/*.txt',
+    '!core/logs/**/*.pdf',
+    '!core/logs/**/*.html',
+    '!core/tests',
+    '!core/tests/**/*',
     'admin/**',
-    '!admin/config/*',
+    '!admin/api/config',
+    '!admin/api/config/**/*',
     'boxoffice/**',
-    '!boxoffice/config/*',
+    '!boxoffice/api/config',
+    '!boxoffice/api/config/**/*',
     'customer/**',
-    '!customer/config/*',
+    '!customer/api/config',
+    '!customer/api/config/**/*',
     'scanner/**',
-    '!scanner/config/*',
+    '!scanner/api/config',
+    '!scanner/api/config/**/*',
     'printer/**',
-    '!printer/config/*',
-    'core/model/*',
-    'core/services/*',
-    'vendor/**',
-    'composer.lock',
-    'core/dependencies.php',
-    'core/.htaccess'
+    '!printer/api/config',
+    '!printer/api/config/**/*'
 ];
 
 gulp.task('clean', function() {
