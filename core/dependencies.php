@@ -277,7 +277,9 @@ $container['mail'] = function($container) {
     $pdfTicketWriter = $container['pdfTicketWriter'];
     $log = $container['log'];
     $settings = $container['settings']['Mailer'];
-    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings);
+    $hostName = $container['settings']['HostName'];
+    $administrator = $container['settings']['Administrator'];
+    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings, $hostName, $administrator);
     return $mail;
 };
 
