@@ -19,6 +19,8 @@ class Mail implements MailInterface {
     private $pdfTicketWriter;
     private $log;
     private $settings;
+    private $hostName;
+    private $administrator;
 
     public function __construct(
         \Twig_Environment $twig,
@@ -27,7 +29,9 @@ class Mail implements MailInterface {
         \Nette\Mail\IMailer $mailer,
         PdfTicketWriterInterface $pdfTicketWriter,
         LogInterface $log,
-        $settings) {
+        $settings,
+        $hostName,
+        $administrator) {
         $this->twig = $twig;
         $this->templateProvider = $templateProvider;
         $this->messageFactory = $messageFactory;
@@ -35,6 +39,8 @@ class Mail implements MailInterface {
         $this->pdfTicketWriter = $pdfTicketWriter;
         $this->log = $log;
         $this->settings = $settings;
+        $this->hostName = $hostName;
+        $this->administrator = $administrator;
     }
 
     public function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice) {
@@ -47,7 +53,9 @@ class Mail implements MailInterface {
             'lastname' => $lastname,
             'email' => $email,
             'reservations' => $reservations,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
         $body = $template->render($params);
 
@@ -105,7 +113,9 @@ class Mail implements MailInterface {
             'boxoffice' => $boxoffice,
             'reservations' => $reservations,
             'pdfFilePaths' => $pdfFilePaths,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
         $body = $template->render($params);
 
@@ -162,7 +172,9 @@ class Mail implements MailInterface {
             'purchase' => $purchase,
             'reservations' => $purchase->reservations,
             'pdfFilePaths' => $pdfFilePaths,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
         $body = $template->render($params);
 

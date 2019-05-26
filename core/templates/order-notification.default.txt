@@ -1,0 +1,11 @@
+{{firstname}} {{lastname}} hat Tickets bestellt. Die unten aufgelisteten Plätze
+sind jetzt reserviert, aber noch nicht verkauft. Sie müssen an der Abendkasse
+noch bezahlt werden.
+
+Reservierte Plätze
+==================
+{% for reservation in reservations %}
+{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}}  CHF {% if reservation.isReduced %}(Kinder){% endif %}
+{% endfor %}
+
+Total: {{total}} CHF

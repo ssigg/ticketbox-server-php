@@ -1,0 +1,11 @@
+{{purchase.firstname}} {{purchase.lastname}} hat Tickets gekauft. Die unten aufgelisteten Plätze
+sind nun definitiv verkauft.
+
+Verkaufte Plätze
+================
+{% for reservation in reservations %}
+{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+
+{% endfor %}
+
+Total: {{total}} CHF

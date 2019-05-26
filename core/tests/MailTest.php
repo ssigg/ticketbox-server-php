@@ -65,7 +65,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->once())->method('send');
 
@@ -99,7 +101,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->once())->method('send');
 
@@ -133,7 +137,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -171,7 +177,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -204,7 +212,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -242,7 +252,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -278,7 +290,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->once())->method('send');
 
@@ -320,7 +334,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->once())->method('send');
 
@@ -358,7 +374,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -401,7 +419,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->exactly(2))->method('send');
 
@@ -439,7 +459,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->once())->method('send');
 
@@ -482,7 +504,9 @@ class MailTest extends \PHPUnit_Framework_TestCase {
             $this->mailerMock,
             $this->pdfTicketWriterMock,
             $this->logMock,
-            $settings);
+            $settings,
+            'Host Name',
+            [ 'firstname' => 'Admi', 'lastname' => 'Nistrator', 'email' => 'admin@example.com' ]);
 
         $this->mailerMock->expects($this->once())->method('send');
 

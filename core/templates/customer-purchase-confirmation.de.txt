@@ -1,0 +1,23 @@
+{% if purchase.title == 'm' %}
+Sehr geehrter Herr {{purchase.lastname}}
+{% else %}
+Sehr geehrte Frau {{purchase.lastname}}
+{% endif %}
+
+Vielen Dank für Ihren Ticketkauf. Die Tickets finden Sie im Anhang
+dieser Nachricht. Mit diesen Tickets müssen Sie nicht an der
+Abendkasse anstehen und können direkt zum Konzert gehen.
+
+Gekaufte Plätze
+===============
+{% for reservation in purchase.reservations %}
+{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+
+{% endfor %}
+
+Total: {{total}} CHF
+
+Falls Sie Fragen haben, kontaktieren Sie bitte {{administrator.firstname}} {{administrator.lastname}} ({{administrator.email}}).
+
+Freundliche Grüsse und viel Spass am Konzert!
+{{hostName}}
