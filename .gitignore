@@ -6,4 +6,6 @@ core/data
 coverage.xml
 coverage
 dist
-logs
+core/logs/logfiles/*.txt
+core/logs/tickets/html/*.html
+core/logs/tickets/pdf/*.pdf
