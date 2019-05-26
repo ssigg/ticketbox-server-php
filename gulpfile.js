@@ -25,12 +25,13 @@ var paths = [
     'customer/**',
     '!customer/api/config',
     '!customer/api/config/**/*',
+    'printer/**',
+    '!printer/api/config',
+    '!printer/api/config/**/*',
     'scanner/**',
     '!scanner/api/config',
     '!scanner/api/config/**/*',
-    'printer/**',
-    '!printer/api/config',
-    '!printer/api/config/**/*'
+    'vendor/**'
 ];
 
 gulp.task('clean', function() {
