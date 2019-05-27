@@ -9,7 +9,7 @@ dieser Nachricht.
 Gekaufte Plätze
 ===============
 {% for reservation in reservations %}
-{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Reduziert){% endif %}
 
 {% endfor %}
 

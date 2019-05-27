@@ -12,7 +12,7 @@ box office for you. Please fetch and pay the tickets at least
 Reserved seats
 ==============
 {% for reservation in reservations %}
-{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(reduced){% endif %}
 
 {% endfor %}
 

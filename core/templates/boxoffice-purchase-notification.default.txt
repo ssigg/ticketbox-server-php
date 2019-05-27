@@ -7,7 +7,7 @@ sind nun definitiv verkauft.
 Verkaufte Plätze
 ================
 {% for reservation in reservations %}
-{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(reduced){% endif %}
 
 {% endfor %}
 

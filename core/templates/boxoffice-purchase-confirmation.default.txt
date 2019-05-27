@@ -9,7 +9,7 @@ of this message.
 Purchased Seats
 ===============
 {% for reservation in reservations %}
-{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(reduced){% endif %}
 
 {% endfor %}
 

@@ -14,7 +14,7 @@ Abendkasse anstehen und können direkt zum Konzert gehen.
 Gekaufte Plätze
 ===============
 {% for reservation in purchase.reservations %}
-{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Legi){% endif %}
+{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(Reduziert){% endif %}
 
 {% endfor %}
 
