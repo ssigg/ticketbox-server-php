@@ -1,0 +1,197 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <style>
+            .clearfix {
+                clear:both;
+            }
+
+            body {
+                font-family: Georgia;
+            }
+
+            .content {
+                width:85%;
+                margin:0 auto;
+            }
+
+            .header {
+                border-bottom:1pt solid #000;
+            }
+
+            .header img {
+                height:1.8cm;
+            }
+
+            .event {
+                margin-top:2pt;
+                border-top:1pt solid #000;
+                border-bottom:1pt solid #000;
+            }
+
+            .event h1 {
+                font-size:3.5em;
+                line-height:1.5em;
+                margin:0;
+                margin-top:3mm;
+                padding:0;
+            }
+
+            .event p {
+                margin:0;
+                padding:0;
+            }
+
+            .event .barcode {
+                float:right;
+                margin-top:2mm;
+                margin-bottom:2mm;
+            }
+
+            .seat {
+                margin-top:2pt;
+                border-top:1pt solid #000;
+                border-bottom:1pt solid #000;
+                padding-bottom:0.5cm;
+            }
+
+            .seat h1 {
+                font-size:1.8em;
+                margin:0;
+                padding:0;
+                line-height:2em;
+            }
+
+            .seat p {
+                margin:0;
+                padding:0;
+            }
+
+            .seatplan {
+                padding-left: 1cm;
+                float:right;
+                margin-bottom:1px;
+            }
+
+            .barcode-image {
+                width:4cm;
+            }
+
+            .info {
+                border-bottom:1pt solid #000;
+            }
+
+            .info h1 {
+                margin-top:0.5cm;
+                font-size:1em;
+                line-height:2.5em;
+            }
+
+            .info dl {
+                font-size:0.8em;
+            }
+
+            .info dt {
+                width:3.5cm;
+                float:left;
+                text-align:right;
+                font-weight:700;
+            }
+            
+            .info dd {
+                margin-left:3.8cm;
+                padding-bottom:0.3cm;
+            }
+
+            .location h1 {
+                margin-top:0.5cm;
+                font-size:1em;
+                line-height:2.5em;
+            }
+
+            .location dl {
+                font-size:0.8em;
+            }
+
+            .location dt {
+                width:3.5cm;
+                float:left;
+                text-align:right;
+                font-weight:700;
+            }
+            
+            .location dd {
+                margin-left:3.8cm;
+                padding-bottom:0.3cm;
+            }
+
+            .purchase-number {
+                padding-top:5mm;
+            }
+
+            .purchase-number span {
+                font-size:3em;
+                font-family: "Courier New", Courier, monospace;
+                border-radius:.05em;
+                border:1pt solid #333;
+                padding:.2em;
+                color:#000;
+            }
+        </style>
+    </head>
+    <body>
+        {% if printOrderId %}
+        <div class="purchase-number">
+            <span>{{ "%04d"|format(reservation.order_id) }}</span>
+        </div>
+        {% endif %}
+        <div class="content">
+            <div class="header">
+                {% if reservation.event.logo_image_data_url != null %}
+                <p><img src="{{reservation.event.logo_image_data_url}}"></p>
+                {% endif %}
+            </div>
+            <div class="event">
+                <p class="barcode"><img src="{{qr}}" class="barcode-image"></p>
+                <h1>{{reservation.event.name}}</h1>
+                <p>{{reservation.event.location}}</p>
+                <p>{{reservation.event.dateandtime}}</p>
+                <div class="clearfix"></div>
+            </div>
+            <div class="seat">
+                <h1>{{reservation.seat.name}}</h1>
+                <p>{{reservation.category.name}} | {{reservation.price}} CHF{% if reservation.isReduced %} | <strong>Reduced</strong>{% endif %}</p>
+            </div>
+            <div class="info">
+                <h1>Information</h1>
+                <dl>
+                    {% if reservation.event.works != null and reservation.event.works != '' %}
+                    <dt>Works</dt>
+                    <dd>{{reservation.event.works | nl2br}}</dd>
+                    {% endif %}
+
+                    {% if reservation.event.conductor != null and reservation.event.conductor != '' %}
+                    <dt>Conductor</dt>
+                    <dd>{{reservation.event.conductor | nl2br}}</dd>
+                    {% endif %}
+
+                    {% if reservation.event.soloists != null and reservation.event.soloists != '' %}
+                    <dt>Solo</dt>
+                    <dd>{{reservation.event.soloists | nl2br }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+            <div class="location">
+                <h1>Event location</h1>
+                <dl>
+                    <dt>Address</dt>
+                    <dd>{{reservation.event.location_address | nl2br}}</dd>
+                    <dt>Public transport</dt>
+                    <dd>{{reservation.event.location_directions_public_transport | nl2br}}</dd>
+                    <dt>Parking</dt>
+                    <dd>{{reservation.event.location_directions_car | nl2br}}</dd>
+                </dl>
+            </div>
+        </div>
+    </body>
+</html>

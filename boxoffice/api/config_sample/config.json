@@ -3,47 +3,37 @@
     "addContentLengthHeader": false,
     "Spot": {
         "dbsyntax": "sqlite",
-        "path": "../data/database.db",
+        "path": "../../core/data/database.db",
         "driver": "pdo_sqlite"
     },
+    "HostName": "Host Name",
+    "Administrator": {
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "john.doe@example.com"
+    },
     "Mailer": {
-        "tempDirectory": "temp",
         "from": "From <from@example.com>",
         "replyTo": {
             "name": "Reply To",
             "email": "reply@example.com"
         },
-        "confirmation": {
-            "subject": "Your ticket purchase at %s"
-        },
         "notification": {
-            "subject": "Ticket purchase at %s",
             "listeners": [
                 "listener1@example.com",
                 "listener2@example.com"
             ]
         }
     },
-    "SeatplanWriter": {
-        "markerColor": {
-            "R": 255,
-            "G": 50,
-            "B": 50
-        }
-    },
     "PriceModificators": {
         "addend": 0,
         "factor": 1
     },
-    "templateDirectory": "../common/templates",
-    "tempDirectory": "temp",
-    "logDirectory": "logs",
-    "ticketDirectory": "../common/tickets",
     "PdfConverter": {
         "service": "Api2Pdf",
         "settings": {
             "postUrl": "https://v2018.api2pdf.com/chrome/html",
-            "key": "apiKey"
+            "key": "<apiKey>"
         }
     },
     "Reservations": {

@@ -4,11 +4,9 @@ namespace Services;
 
 class QrCodeWriter implements TicketPartWriterInterface {
     private $writer;
-    private $outputDirectoryPath;
 
-    public function __construct(\BaconQrCode\Writer $writer, $outputDirectoryPath) {
+    public function __construct(\BaconQrCode\Writer $writer) {
         $this->writer = $writer;
-        $this->outputDirectoryPath = $outputDirectoryPath;
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {

@@ -6,56 +6,38 @@
         "path": "../data/database.db",
         "driver": "pdo_sqlite"
     },
+    "HostName": "Host Name",
+    "Administrator": {
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "john.doe@example.com"
+    },
     "Mailer": {
         "from": "From <from@example.com>",
         "replyTo": {
             "name": "Reply To",
             "email": "reply@example.com"
         },
-        "order-confirmation": {
-            "subject": "Ticket order confirmation"
-        },
-        "order-notification": {
-            "subject": "Ticket order notification",
+        "notification": {
             "listeners": [
                 "listener@example.com"
             ]
-        },
-        "purchase-confirmation": {
-            "subject": "Ticket purchase confirmation"
-        },
-        "purchase-notification": {
-            "subject": "Ticket purchase notification",
-            "listeners": [
-                "listener@example.com"
-            ]
-        }
-    },
-    "SeatplanWriter": {
-        "markerColor": {
-            "R": 255,
-            "G": 50,
-            "B": 50
         }
     },
     "PaymentProvider": {
         "gateway": "Braintree",
         "settings": {
             "environment": "sandbox",
-            "merchantId": "merchantId",
-            "publicKey": "publicKey",
-            "privateKey": "privateKey"
+            "merchantId": "<merchantId>",
+            "publicKey": "<publicKey>",
+            "privateKey": "<privateKey>"
         }
     },
-    "templateDirectory": "../common/templates",
-    "tempDirectory": "temp",
-    "logDirectory": "logs",
-    "ticketDirectory": "../common/tickets",
     "PdfConverter": {
         "service": "Api2Pdf",
         "settings": {
             "postUrl": "https://v2018.api2pdf.com/chrome/html",
-            "key": "apiKey"
+            "key": "<apiKey>"
         }
     },
     "Reservations": {

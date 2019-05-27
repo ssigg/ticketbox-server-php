@@ -14,7 +14,7 @@
     stopOnFailure="false"
     bootstrap="./bootstrap.php">
     <testsuites>
-        <testsuite name="Tickets Test Suite">
+        <testsuite name="Ticketbox Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

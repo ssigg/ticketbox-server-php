@@ -1,9 +1,0 @@
-Boxoffice {{boxoffice}} sold some tickets. The seats listed below are now purchased.
-
-Purchased Seats
-===============
-{% for reservation in reservations %}
-{{reservation.event.name}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}}  $ {% if reservation.isReduced}}(reduced){% endif %}
-{% endfor %}
-
-Total: $ {{total}}

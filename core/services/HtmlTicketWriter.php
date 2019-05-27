@@ -18,7 +18,7 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
     }
 
     public function write(ExpandedReservationInterface $reservation, array $partFilePaths, $printOrderId, $locale) {
-        $templateFileName = $this->templateProvider->getPath('ticket', $locale, 'html');
+        $templateFileName = $this->templateProvider->getFileName('ticket', $locale, 'html');
         $template = $this->twig->loadTemplate($templateFileName);
 
         $params = [
@@ -29,7 +29,7 @@ class HtmlTicketWriter implements TicketPartWriterInterface {
         ];
         $result = $template->render($params);
 
-        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '_ticket.html';
+        $filePath = $this->outputDirectoryPath . '/' . $reservation->unique_id . '.html';
         $this->filePersister->write($filePath, $result);
         
         $partFilePaths['html'] = $filePath;

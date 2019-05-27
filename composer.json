@@ -11,7 +11,8 @@
         "braintree/braintree_php": "^3.20.0",
         "katzgrau/klogger": "dev-master",
         "guzzlehttp/guzzle": "~6.0",
-        "tuupola/cors-middleware": "^0.5.2"
+        "tuupola/cors-middleware": "^0.5.2",
+        "webuni/front-matter": "^1.1"
 
     },
     "require-dev": {

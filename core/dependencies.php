@@ -27,6 +27,7 @@ require 'services/Page.php';
 require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
 require 'services/TemplateProvider.php';
+require 'services/MailTemplateParser.php';
 require 'services/HtmlTicketWriter.php';
 require 'services/HtmlToPdfTicketConverter.php';
 require 'services/PdfTicketWriter.php';
@@ -48,15 +49,20 @@ require 'actions/ScannerActions.php';
 
 $container = $app->getContainer();
 
-$container['pathConverter'] = function($container) {
-    $root = $container['settings']['root'];
-    $converter = new Services\PathConverter($root);
+$container['endpointPathConverter'] = function($container) {
+    $endpointDirectory = $container['settings']['root'];
+    $converter = new Services\PathConverter($endpointDirectory);
+    return $converter;
+};
+
+$container['corePathConverter'] = function($container) {
+    $converter = new Services\PathConverter(__DIR__);
     return $converter;
 };
 
 $container['logger'] = function($container) {
-    $pathConverter = $container['pathConverter'];
-    $logDirectory = $pathConverter->convert($container['settings']['logDirectory']);
+    $corePathConverter = $container['corePathConverter'];
+    $logDirectory = $corePathConverter->convert('logs/logfiles');
     $logger = new Katzgrau\KLogger\Logger($logDirectory);
     return $logger;
 };
@@ -76,9 +82,9 @@ $container['uuidFactory'] = function($container) {
 };
 
 $container['orm'] = function($container) {
-    $pathConverter = $container['pathConverter'];
+    $endpointPathConverter = $container['endpointPathConverter'];
     $spotSettings = $container['settings']['Spot'];
-    $spotSettings['path'] = $pathConverter->convert($spotSettings['path']);
+    $spotSettings['path'] = $endpointPathConverter->convert($spotSettings['path']);
 
     $spotConfig = new \Spot\Config();
     $spotConfig->addConnection('sqlite', $spotSettings);
@@ -178,37 +184,54 @@ $container['qrWriter'] = function($container) {
 };
 
 $container['qrCodeWriter'] = function($container) {
-    $pathConverter = $container['pathConverter'];
     $qrWriter = $container['qrWriter'];
-    $tempDirectory = $pathConverter->convert($container['settings']['tempDirectory']);
-    $qrCodeWriter = new Services\QrCodeWriter($qrWriter, $tempDirectory);
+    $qrCodeWriter = new Services\QrCodeWriter($qrWriter);
     return $qrCodeWriter;
 };
 
+$container['frontMatter'] = function($container) {
+    $frontMatter = new \Webuni\FrontMatter\FrontMatter();
+    return $frontMatter;
+};
+
 $container['twig'] = function($container) {
-    $pathConverter = $container['pathConverter'];
-    $templateDirectoryPath = $pathConverter->convert($container['settings']['templateDirectory']);
-    $loader = new \Twig_Loader_Filesystem($templateDirectoryPath);
+    $corePathConverter = $container['corePathConverter'];
+    $templateDirectory = $corePathConverter->convert('templates');
+    $loader = new \Twig_Loader_Filesystem($templateDirectory);
+    $twig = new \Twig_Environment($loader, [ 'cache' => false ]);
+    return $twig;
+};
+
+$container['fromStringTwig'] = function($container) {
+    $loader = new \Twig_Loader_String();
     $twig = new \Twig_Environment($loader, [ 'cache' => false ]);
     return $twig;
 };
 
 $container['templateProvider'] = function($container) {
-    $pathConverter = $container['pathConverter'];
+    $corePathConverter = $container['corePathConverter'];
     $filePersister = $container['filePersister'];
-    $templateDirectory = $pathConverter->convert($container['settings']['templateDirectory']);
+    $templateDirectory = $corePathConverter->convert('templates');
     $templateProvider = new Services\TemplateProvider($filePersister, $templateDirectory);
     return $templateProvider;
 };
 
+$container['mailTemplateParser'] = function($container) {
+    $filePersister = $container['filePersister'];
+    $frontMatter = $container['frontMatter'];
+    $fromStringTwig = $container['fromStringTwig'];
+    $mailTemplateParser = new Services\MailTemplateParser($filePersister, $frontMatter, $fromStringTwig);
+    return $mailTemplateParser;
+};
+
 $container['htmlTicketWriter'] = function($container) {
-    $pathConverter = $container['pathConverter'];
+    $corePathConverter = $container['corePathConverter'];
     $twig = $container['twig'];
     $templateProvider = $container['templateProvider'];
     $filePersister = $container['filePersister'];
-    $templateDirectory = $pathConverter->convert($container['settings']['templateDirectory']);
-    $tempDirectory = $pathConverter->convert($container['settings']['tempDirectory']);
-    $htmlTicketWriter = new Services\HtmlTicketWriter($twig, $templateProvider, $filePersister, $templateDirectory, $tempDirectory);
+    $templateDirectory = $corePathConverter->convert('templates');
+    $outputDirectory = $corePathConverter->convert('logs/tickets/html');
+    $htmlTicketWriter = new Services\HtmlTicketWriter($twig, $templateProvider, $filePersister, $templateDirectory, $outputDirectory);
     return $htmlTicketWriter;
 };
 
@@ -227,13 +250,14 @@ $container['postClient'] = function($container) {
 };
 
 $container['htmlToPdfTicketConverter'] = function($container) {
-    $pathConverter = $container['pathConverter'];
+    $corePathConverter = $container['corePathConverter'];
     $getClient = $container['getClient'];
     $postClient = $container['postClient'];
     $filePersister = $container['filePersister'];
-    $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
+    $log = $container['log'];
+    $outputDirectory = $corePathConverter->convert('logs/tickets/pdf');
     $settings = $container['settings']['PdfConverter']['settings'];
-    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $filePersister, $outputDirectory, $settings);
+    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $filePersister, $log, $outputDirectory, $settings);
     return $htmlToPdfTicketConverter;
 };
 
@@ -250,8 +274,8 @@ $container['pdfTicketWriter'] = function($container) {
 };
 
 $container['pdfTicketMerger'] = function($container) {
-    $pathConverter = $container['pathConverter'];
-    $outputDirectory = $pathConverter->convert($container['settings']['ticketDirectory']);
+    $corePathConverter = $container['corePathConverter'];
+    $outputDirectory = $corePathConverter->convert('logs/tickets/pdf');
     $pdfTicketMerger = new Services\PdfTicketMerger($outputDirectory);
     return $pdfTicketMerger;
 };
@@ -267,14 +291,16 @@ $container['messageFactory'] = function($container) {
 };
 
 $container['mail'] = function($container) {
-    $twig = $container['twig'];
     $templateProvider = $container['templateProvider'];
+    $mailTemplateParser = $container['mailTemplateParser'];
     $messageFactory = $container['messageFactory'];
     $mailer = $container['mailer'];
     $pdfTicketWriter = $container['pdfTicketWriter'];
     $log = $container['log'];
     $settings = $container['settings']['Mailer'];
-    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings);
+    $hostName = $container['settings']['HostName'];
+    $administrator = $container['settings']['Administrator'];
+    $mail = new Services\Mail($templateProvider, $mailTemplateParser, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings, $hostName, $administrator);
     return $mail;
 };
 

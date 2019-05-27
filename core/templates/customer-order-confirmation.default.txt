@@ -1,0 +1,24 @@
+---
+subject: "{{hostName}}: Your ticket reservation"
+---
+{# Your reservation at {{hostName}} #}
+Dear {{firstname}}
+
+Thank you for your reservation. The tickets will be ready at the
+box office for you. Please fetch and pay the tickets at least
+30 minutes before the concert starts. We will release the reservations
+15 minutes before the concert starts.
+
+Reserved seats
+==============
+{% for reservation in reservations %}
+{{reservation.event.name}} - {{reservation.event.location}}, {{reservation.event.dateandtime}} - {{reservation.seat.name}}: {{reservation.price}} CHF {% if reservation.isReduced %}(reduced){% endif %}
+
+{% endfor %}
+
+Total: {{total}} CHF
+
+If you have any questions, please contact {{administrator.firstname}} {{administrator.lastname}} ({{administrator.email}}).
+
+Kind Regards
+{{hostName}}

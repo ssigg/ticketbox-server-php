@@ -12,51 +12,58 @@ interface MailInterface {
 }
 
 class Mail implements MailInterface {
-    private $twig;
     private $templateProvider;
+    private $mailTemplateParser;
     private $messageFactory;
     private $mailer;
     private $pdfTicketWriter;
     private $log;
     private $settings;
+    private $hostName;
+    private $administrator;
 
     public function __construct(
-        \Twig_Environment $twig,
         TemplateProviderInterface $templateProvider,
+        MailTemplateParserInterface $mailTemplateParser,
         MessageFactoryInterface $messageFactory,
         \Nette\Mail\IMailer $mailer,
         PdfTicketWriterInterface $pdfTicketWriter,
         LogInterface $log,
-        $settings) {
-        $this->twig = $twig;
+        $settings,
+        $hostName,
+        $administrator) {
         $this->templateProvider = $templateProvider;
+        $this->mailTemplateParser = $mailTemplateParser;
         $this->messageFactory = $messageFactory;
         $this->mailer = $mailer;
         $this->pdfTicketWriter = $pdfTicketWriter;
         $this->log = $log;
         $this->settings = $settings;
+        $this->hostName = $hostName;
+        $this->administrator = $administrator;
     }
 
     public function sendOrderConfirmation($title, $firstname, $lastname, $email, $locale, $reservations, $totalPrice) {
-        $templateFileName = $this->templateProvider->getPath('order-confirmation', $locale, 'txt');
-        $template = $this->twig->loadTemplate($templateFileName);
-
+        $templatePath = $this->templateProvider->getPath('customer-order-confirmation', $locale, 'txt');
+        
         $params = [
             'title' => $title,
             'firstname' => $firstname,
             'lastname' => $lastname,
             'email' => $email,
             'reservations' => $reservations,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
-        $body = $template->render($params);
+
+        $mailContents = $this->mailTemplateParser->parse($templatePath, $params);
 
         $from = $this->settings['from'];
         $to = $email;
         $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
-        $subject = $this->settings['order-confirmation']['subject'];
         $attachments = [];
-        $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+        $message = $this->messageFactory->create($from, $to, $replyTo, $mailContents->subject, $mailContents->body, $attachments);
         
         try {
             $this->mailer->send($message);
@@ -67,24 +74,25 @@ class Mail implements MailInterface {
     }
 
     public function sendOrderNotification($firstname, $lastname, $email, $reservations, $totalPrice) {
-        $templateFileName = $this->templateProvider->getPath('order-notification', 'default', 'txt');
-        $template = $this->twig->loadTemplate($templateFileName);
+        $templatePath = $this->templateProvider->getPath('customer-order-notification', 'default', 'txt');
 
         $params = [
             'firstname' => $firstname,
             'lastname' => $lastname,
             'reservations' => $reservations,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
-        $body = $template->render($params);
 
-        foreach ($this->settings['order-notification']['listeners'] as $listener) {
+        $mailContents = $this->mailTemplateParser->parse($templatePath, $params);
+
+        foreach ($this->settings['notification']['listeners'] as $listener) {
             $from = $this->settings['from'];
             $to = $listener;
             $replyTo = $firstname . ' ' . $lastname . ' <' . $email . '>';
-            $subject = $this->settings['order-notification']['subject'];
             $attachments = [];
-            $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+            $message = $this->messageFactory->create($from, $to, $replyTo, $mailContents->subject, $mailContents->body, $attachments);
 
             try {
                 $this->mailer->send($message);
@@ -96,8 +104,7 @@ class Mail implements MailInterface {
     }
 
     public function sendBoxofficePurchaseConfirmation($boxoffice, $email, $locale, $reservations, $totalPrice) {
-        $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-confirmation', $locale, 'txt');
-        $template = $this->twig->loadTemplate($templateFileName);
+        $templatePath = $this->templateProvider->getPath('boxoffice-purchase-confirmation', $locale, 'txt');
 
         $pdfFilePaths = $this->pdfTicketWriter->write($reservations, false, $locale);
 
@@ -105,16 +112,18 @@ class Mail implements MailInterface {
             'boxoffice' => $boxoffice,
             'reservations' => $reservations,
             'pdfFilePaths' => $pdfFilePaths,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
-        $body = $template->render($params);
+
+        $mailContents = $this->mailTemplateParser->parse($templatePath, $params);
 
         $from = $this->settings['from'];
         $to = $email;
         $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
-        $subject = sprintf($this->settings['confirmation']['subject'], $boxoffice);
         $attachments = $pdfFilePaths;
-        $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+        $message = $this->messageFactory->create($from, $to, $replyTo, $mailContents->subject, $mailContents->body, $attachments);
 
         try {
             $this->mailer->send($message);
@@ -125,23 +134,24 @@ class Mail implements MailInterface {
     }
 
     public function sendBoxofficePurchaseNotification($boxoffice, $reservations, $totalPrice) {
-        $templateFileName = $this->templateProvider->getPath('boxoffice-purchase-notification', 'default', 'txt');
-        $template = $this->twig->loadTemplate($templateFileName);
+        $templatePath = $this->templateProvider->getPath('boxoffice-purchase-notification', 'default', 'txt');
 
         $params = [
             'boxoffice' => $boxoffice,
             'reservations' => $reservations,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
-        $body = $template->render($params);
+
+        $mailContents = $this->mailTemplateParser->parse($templatePath, $params);
 
         foreach ($this->settings['notification']['listeners'] as $listener) {
             $from = $this->settings['from'];
             $to = $listener;
             $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
-            $subject = sprintf($this->settings['notification']['subject'], $boxoffice);
             $attachments = [];
-            $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+            $message = $this->messageFactory->create($from, $to, $replyTo, $mailContents->subject, $mailContents->body, $attachments);
 
             try {
                 $this->mailer->send($message);
@@ -153,8 +163,7 @@ class Mail implements MailInterface {
     }
 
     public function sendCustomerPurchaseConfirmation($purchase, $totalPrice) {
-        $templateFileName = $this->templateProvider->getPath('customer-purchase-confirmation', $purchase->locale, 'txt');
-        $template = $this->twig->loadTemplate($templateFileName);
+        $templatePath = $this->templateProvider->getPath('customer-purchase-confirmation', $purchase->locale, 'txt');
 
         $pdfFilePaths = $this->pdfTicketWriter->write($purchase->reservations, false, $purchase->locale);
 
@@ -162,16 +171,18 @@ class Mail implements MailInterface {
             'purchase' => $purchase,
             'reservations' => $purchase->reservations,
             'pdfFilePaths' => $pdfFilePaths,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
-        $body = $template->render($params);
+        
+        $mailContents = $this->mailTemplateParser->parse($templatePath, $params);
 
         $from = $this->settings['from'];
         $to = $purchase->email;
         $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
-        $subject = $this->settings['purchase-confirmation']['subject'];
         $attachments = $pdfFilePaths;
-        $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+        $message = $this->messageFactory->create($from, $to, $replyTo, $mailContents->subject, $mailContents->body, $attachments);
 
         try {
             $this->mailer->send($message);
@@ -182,23 +193,24 @@ class Mail implements MailInterface {
     }
 
     public function sendCustomerPurchaseNotification($purchase, $totalPrice) {
-        $templateFileName = $this->templateProvider->getPath('customer-purchase-notification', 'default', 'txt');
-        $template = $this->twig->loadTemplate($templateFileName);
+        $templatePath = $this->templateProvider->getPath('customer-purchase-notification', 'default', 'txt');
 
         $params = [
             'purchase' => $purchase,
             'reservations' => $purchase->reservations,
-            'total' => $totalPrice
+            'total' => $totalPrice,
+            'hostName' => $this->hostName,
+            'administrator' => $this->administrator
         ];
-        $body = $template->render($params);
+        
+        $mailContents = $this->mailTemplateParser->parse($templatePath, $params);
 
-        foreach ($this->settings['purchase-notification']['listeners'] as $listener) {
+        foreach ($this->settings['notification']['listeners'] as $listener) {
             $from = $this->settings['from'];
             $to = $listener;
             $replyTo = $this->settings['replyTo']['name'] . ' <' . $this->settings['replyTo']['email'] . '>';
-            $subject = $this->settings['purchase-notification']['subject'];
             $attachments = [];
-            $message = $this->messageFactory->create($from, $to, $replyTo, $subject, $body, $attachments);
+            $message = $this->messageFactory->create($from, $to, $replyTo, $mailContents->subject, $mailContents->body, $attachments);
 
             try {
                 $this->mailer->send($message);

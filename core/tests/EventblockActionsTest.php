@@ -46,7 +46,7 @@ class EventblockActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"event_id":1,"block_id":1,"category_id":1,"block":{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1","numbered":true},"category":{"id":1,"name":"Category 1","color":"#000","price":2,"price_reduced":1},"event":{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true},"seats":[{"id":1,"block_id":1,"name":"Seat 1","x0":0,"y0":1,"x1":2,"y1":3,"x2":4,"y2":5,"x3":6,"y3":7}]}',
+            '{"id":1,"event_id":1,"block_id":1,"category_id":1,"block":{"id":1,"seatplan_image_data_url":"data_url","name":"Block 1","numbered":true},"category":{"id":1,"name":"Category 1","color":"#000","price":2,"price_reduced":1},"event":{"id":1,"name":"Event 1","works":null,"conductor":null,"soloists":null,"location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"logo_image_data_url":null},"seats":[{"id":1,"block_id":1,"name":"Seat 1","x0":0,"y0":1,"x1":2,"y1":3,"x2":4,"y2":5,"x3":6,"y3":7}]}',
             (string)$response->getBody());
     }
 
