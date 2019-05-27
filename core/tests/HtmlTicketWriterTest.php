@@ -23,7 +23,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
         $this->twigMock->method('loadTemplate')->willReturn($this->templateMock);
 
         $this->templateProviderMock = $this->getMockBuilder(Services\TemplateProviderInterface::class)
-            ->setMethods(['getPath'])
+            ->setMethods(['getFileName'])
             ->getMockForAbstractClass();
 
         $this->filePersisterMock = $this->getMockBuilder(Services\FilePersisterInterface::class)
@@ -45,7 +45,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
 
         $this->templateProviderMock
             ->expects($this->once())
-            ->method('getPath')
+            ->method('getFileName')
             ->with($this->equalTo('ticket'), $this->equalTo($locale), $this->equalTo('html'));
         $this->writer->write($this->reservation, $this->partFilePaths, false, $locale);
     }
@@ -54,7 +54,7 @@ class HtmlTicketWriterTest extends \PHPUnit_Framework_TestCase {
         $templatePath = 'template.html';
 
         $this->templateProviderMock
-            ->method('getPath')
+            ->method('getFileName')
             ->willReturn($templatePath);
 
         $this->twigMock
