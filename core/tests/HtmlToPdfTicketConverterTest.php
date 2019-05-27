@@ -111,6 +111,7 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->method('error')
             ->with('Error(s) during Html to Pdf conversion: {"foo":"bar"}, {"foo":"bar"}');
         
+        $this->setExpectedException(\Exception::class);
         $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
 
@@ -153,6 +154,7 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
             ->method('error')
             ->with('Error(s) during Html to Pdf conversion: Foo! Bar!, Foo! Bar!');
         
+        $this->setExpectedException(\Exception::class);
         $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
 
@@ -194,6 +196,7 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
                 [ $this->equalTo('Error(s) during Html to Pdf conversion: Exception!') ],
                 [ $this->equalTo('Error(s) during Html to Pdf conversion: Unknown Error, Unknown Error') ]);
         
+        $this->setExpectedException(\Exception::class);
         $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
 
@@ -239,21 +242,21 @@ class HtmlToPdfTicketConverterTest extends \PHPUnit_Framework_TestCase {
         $pdfFilePath1 = $this->outputDirectory . '/ticket1.pdf';
         $pdfFilePath2 = $this->outputDirectory . '/ticket2.pdf';
         $this->getClientMock
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('get')
             ->withConsecutive(
-                [ $this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath1 ]) ],
-                [ $this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath2 ]) ]
+                [ $this->equalTo('PdfUrl'), $this->equalTo([ 'sink' => $pdfFilePath1 ]) ]
             );
         $this->getClientMock
             ->method('get')
             ->will($this->throwException(new \GuzzleHttp\Exception\TransferException('Exception!')));
 
         $this->logMock
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('error')
             ->with('Error(s) during Html to Pdf conversion: Exception!');
         
+        $this->setExpectedException(\Exception::class);
         $this->converter->convert($this->htmlFilePaths, false, 'en');
     }
 

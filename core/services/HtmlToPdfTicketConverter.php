@@ -52,6 +52,7 @@ class HtmlToPdfTicketConverter implements HtmlToPdfTicketConverterInterface {
 
         if (count($errors) > 0) {
             $this->log->error('Error(s) during Html to Pdf conversion: ' . implode(', ', $errors));
+            throw new \Exception('Errors during ticket creation.');
         }
 
         return $pdfFilePaths;
@@ -79,6 +80,7 @@ class HtmlToPdfTicketConverter implements HtmlToPdfTicketConverterInterface {
             return $pdfFilePath;
         } catch (\GuzzleHttp\Exception\TransferException $e) {
             $this->log->error('Error(s) during Html to Pdf conversion: ' . $e->getMessage());
+            throw new \Exception('Errors during ticket creation.');
         }
     }
 }
