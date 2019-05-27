@@ -254,9 +254,10 @@ $container['htmlToPdfTicketConverter'] = function($container) {
     $getClient = $container['getClient'];
     $postClient = $container['postClient'];
     $filePersister = $container['filePersister'];
+    $log = $container['log'];
     $outputDirectory = $corePathConverter->convert('logs/tickets/pdf');
     $settings = $container['settings']['PdfConverter']['settings'];
-    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $filePersister, $outputDirectory, $settings);
+    $htmlToPdfTicketConverter = new Services\HtmlToPdfTicketConverter($getClient, $postClient, $filePersister, $log, $outputDirectory, $settings);
     return $htmlToPdfTicketConverter;
 };
 
