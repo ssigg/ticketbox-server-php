@@ -130,6 +130,7 @@ class ChangeEventAction {
         $event->location_directions_car = $data['location_directions_car'];
         $event->dateandtime = $data['dateandtime'];
         $event->visible = $data['visible'];
+        $event->logo_image_data_url = $data['logo_image_data_url'];
         $mapper->update($event);
 
         return $response->withJson($event, 200);
