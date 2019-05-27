@@ -169,16 +169,20 @@
             <div class="info">
                 <h1>Informationen</h1>
                 <dl>
+                    {% if reservation.event.works != null and reservation.event.works != '' %}
                     <dt>Werke</dt>
-                    <dd>
-                        xxx<br>
-                        xxx<br>
-                        xxx
-                    </dd>
+                    <dd>{{reservation.event.works | nl2br}}</dd>
+                    {% endif %}
+
+                    {% if reservation.event.conductor != null and reservation.event.conductor != '' %}
                     <dt>Leitung</dt>
-                    <dd>xxx</dd>
-                    <dt>Solistin</dt>
-                    <dd>xxx</dd>
+                    <dd>{{reservation.event.conductor | nl2br}}</dd>
+                    {% endif %}
+
+                    {% if reservation.event.soloists != null and reservation.event.soloists != '' %}
+                    <dt>Solo</dt>
+                    <dd>{{reservation.event.soloists | nl2br }}</dd>
+                    {% endif %}
                 </dl>
             </div>
             <div class="location">

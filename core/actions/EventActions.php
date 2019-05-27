@@ -124,6 +124,9 @@ class ChangeEventAction {
 
         $event = $mapper->get($args['id']);
         $event->name = $data['name'];
+        $event->works = $data['works'];
+        $event->conductor = $data['conductor'];
+        $event->soloists = $data['soloists'];
         $event->location = $data['location'];
         $event->location_address = $data['location_address'];
         $event->location_directions_public_transport = $data['location_directions_public_transport'];
