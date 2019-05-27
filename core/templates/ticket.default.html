@@ -19,13 +19,7 @@
                 border-bottom:1pt solid #000;
             }
 
-            .header-column {
-                width:33%;
-                float:left;
-                text-align:center;
-            }
-
-            .header-column img {
+            .header img {
                 height:1.8cm;
             }
 
@@ -153,10 +147,9 @@
         {% endif %}
         <div class="content">
             <div class="header">
-                <div class="header-column">
-                    <p><img src="{{reservation.event.logo_image_data_url}}"></p>
-                </div>
-                <div class="clearfix"></div>
+                {% if reservation.event.logo_image_data_url != null %}
+                <p><img src="{{reservation.event.logo_image_data_url}}"></p>
+                {% endif %}
             </div>
             <div class="event">
                 <p class="barcode"><img src="{{qr}}" class="barcode-image"></p>
