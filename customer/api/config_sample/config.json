@@ -18,20 +18,7 @@
             "name": "Reply To",
             "email": "reply@example.com"
         },
-        "order-confirmation": {
-            "subject": "Ticket order confirmation"
-        },
-        "order-notification": {
-            "subject": "Ticket order notification",
-            "listeners": [
-                "listener@example.com"
-            ]
-        },
-        "purchase-confirmation": {
-            "subject": "Ticket purchase confirmation"
-        },
-        "purchase-notification": {
-            "subject": "Ticket purchase notification",
+        "notification": {
             "listeners": [
                 "listener@example.com"
             ]

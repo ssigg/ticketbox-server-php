@@ -18,11 +18,7 @@
             "name": "Reply To",
             "email": "reply@example.com"
         },
-        "confirmation": {
-            "subject": "Your ticket purchase at %s"
-        },
         "notification": {
-            "subject": "Ticket purchase at %s",
             "listeners": [
                 "listener1@example.com",
                 "listener2@example.com"

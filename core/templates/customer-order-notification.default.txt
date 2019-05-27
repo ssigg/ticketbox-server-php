@@ -1,5 +1,5 @@
 ---
-subject: [{{hostName}}-Ticketsystem] Ticket-Bestellung
+subject: "[{{hostName}}-Ticketsystem] Ticket-Bestellung"
 ---
 {{firstname}} {{lastname}} hat Tickets bestellt. Die unten aufgelisteten Plätze
 sind jetzt reserviert, aber noch nicht verkauft. Sie müssen an der Abendkasse

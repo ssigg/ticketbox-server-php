@@ -1,5 +1,5 @@
 ---
-subject: Your ticket reservation at {{hostName}}
+subject: "{{hostName}}: Your ticket reservation"
 ---
 {# Your reservation at {{hostName}} #}
 Dear {{firstname}}

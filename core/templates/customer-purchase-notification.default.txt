@@ -1,5 +1,5 @@
 ---
-subject: [{{hostName}}-Ticketsystem] Ticket purchase
+subject: "[{{hostName}}-Ticketsystem] Ticketkauf"
 ---
 {{purchase.firstname}} {{purchase.lastname}} hat Tickets gekauft. Die unten aufgelisteten Plätze
 sind nun definitiv verkauft.

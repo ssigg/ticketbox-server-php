@@ -1,5 +1,5 @@
 ---
-subject: [{{hostName}}-Ticketsystem] Ticketkauf bei {{boxoffice}}
+subject: "[{{hostName}}-Ticketsystem] Ticketkauf bei {{boxoffice}}"
 ---
 Die Vorverkaufsstelle {{boxoffice}} hat Tickets verkauft. Die unten aufgelisteten Plätze
 sind nun definitiv verkauft.

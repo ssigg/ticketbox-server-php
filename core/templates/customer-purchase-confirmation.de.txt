@@ -1,5 +1,5 @@
 ---
-subject: Ihr Ticketkauf bei {{hostName}}
+subject: "{{hostName}}: Ihr Ticketkauf"
 ---
 {% if purchase.title == 'm' %}
 Sehr geehrter Herr {{purchase.lastname}}

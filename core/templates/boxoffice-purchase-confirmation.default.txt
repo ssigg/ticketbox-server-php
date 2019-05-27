@@ -1,5 +1,5 @@
 ---
-subject: Your ticket purchase at {{boxoffice}}
+subject: "{{hostName}}: Your ticket purchase at {{boxoffice}}"
 ---
 Dear customer of {{boxoffice}}
 
