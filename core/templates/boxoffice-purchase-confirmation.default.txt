@@ -1,3 +1,6 @@
+---
+subject: Your ticket purchase at {{boxoffice}}
+---
 Dear customer of {{boxoffice}}
 
 Thank you for your purchase. Please find the tickets in the attachement

@@ -1,3 +1,6 @@
+---
+subject: Ihr Ticketkauf bei {{boxoffice}}
+---
 Lieber Kunde / Liebe Kundin von {{boxoffice}}
 
 Vielen Dank für Ihren Ticketkauf. Die Tickets finden Sie im Anhang

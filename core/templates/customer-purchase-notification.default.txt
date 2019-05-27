@@ -1,3 +1,6 @@
+---
+subject: [{{hostName}}-Ticketsystem] Ticket purchase
+---
 {{purchase.firstname}} {{purchase.lastname}} hat Tickets gekauft. Die unten aufgelisteten Plätze
 sind nun definitiv verkauft.
 

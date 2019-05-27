@@ -27,6 +27,7 @@ require 'services/Page.php';
 require 'services/FilePersister.php';
 require 'services/QrCodeWriter.php';
 require 'services/TemplateProvider.php';
+require 'services/MailTemplateParser.php';
 require 'services/HtmlTicketWriter.php';
 require 'services/HtmlToPdfTicketConverter.php';
 require 'services/PdfTicketWriter.php';
@@ -188,10 +189,21 @@ $container['qrCodeWriter'] = function($container) {
     return $qrCodeWriter;
 };
 
+$container['frontMatter'] = function($container) {
+    $frontMatter = new \Webuni\FrontMatter\FrontMatter();
+    return $frontMatter;
+};
+
 $container['twig'] = function($container) {
     $corePathConverter = $container['corePathConverter'];
     $templateDirectory = $corePathConverter->convert('templates');
     $loader = new \Twig_Loader_Filesystem($templateDirectory);
+    $twig = new \Twig_Environment($loader, [ 'cache' => false ]);
+    return $twig;
+};
+
+$container['fromStringTwig'] = function($container) {
+    $loader = new \Twig_Loader_String();
     $twig = new \Twig_Environment($loader, [ 'cache' => false ]);
     return $twig;
 };
@@ -202,6 +214,14 @@ $container['templateProvider'] = function($container) {
     $templateDirectory = $corePathConverter->convert('templates');
     $templateProvider = new Services\TemplateProvider($filePersister, $templateDirectory);
     return $templateProvider;
+};
+
+$container['mailTemplateParser'] = function($container) {
+    $filePersister = $container['filePersister'];
+    $frontMatter = $container['frontMatter'];
+    $fromStringTwig = $container['fromStringTwig'];
+    $mailTemplateParser = new Services\MailTemplateParser($filePersister, $frontMatter, $fromStringTwig);
+    return $mailTemplateParser;
 };
 
 $container['htmlTicketWriter'] = function($container) {
@@ -270,6 +290,7 @@ $container['messageFactory'] = function($container) {
 };
 
 $container['mail'] = function($container) {
+    $frontMatter = $container['frontMatter'];
     $twig = $container['twig'];
     $templateProvider = $container['templateProvider'];
     $messageFactory = $container['messageFactory'];
@@ -279,7 +300,7 @@ $container['mail'] = function($container) {
     $settings = $container['settings']['Mailer'];
     $hostName = $container['settings']['HostName'];
     $administrator = $container['settings']['Administrator'];
-    $mail = new Services\Mail($twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings, $hostName, $administrator);
+    $mail = new Services\Mail($frontMatter, $twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings, $hostName, $administrator);
     return $mail;
 };
 

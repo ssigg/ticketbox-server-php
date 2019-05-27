@@ -1,3 +1,6 @@
+---
+subject: Ihr Ticketkauf bei {{hostName}}
+---
 {% if purchase.title == 'm' %}
 Sehr geehrter Herr {{purchase.lastname}}
 {% else %}

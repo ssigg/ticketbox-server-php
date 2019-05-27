@@ -1,3 +1,6 @@
+---
+subject: Your ticket purchase at {{hostName}}
+---
 Dear {{purchase.firstname}}
 
 Thank you for your purchase. Please find the tickets in the attachement

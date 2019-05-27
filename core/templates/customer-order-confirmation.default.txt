@@ -1,3 +1,7 @@
+---
+subject: Your ticket reservation at {{hostName}}
+---
+{# Your reservation at {{hostName}} #}
 Dear {{firstname}}
 
 Thank you for your reservation. The tickets will be ready at the

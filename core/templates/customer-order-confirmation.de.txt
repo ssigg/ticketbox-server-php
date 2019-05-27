@@ -1,3 +1,6 @@
+---
+subject: Ihre Ticketreservation bei {{hostName}}
+---
 {% if title == 'm' %}
 Sehr geehrter Herr {{lastname}}
 {% else %}
