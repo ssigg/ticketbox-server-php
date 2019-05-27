@@ -17,7 +17,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true},{"id":2,"name":"Event 2","location":"Location 2","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 2","visible":false}]',
+            '[{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"logo_image_data_url":null},{"id":2,"name":"Event 2","location":"Location 2","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 2","visible":false,"logo_image_data_url":null}]',
             (string)$response->getBody());
     }
 
@@ -29,7 +29,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, []);
         $this->assertSame(
-            '[{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true}]',
+            '[{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"logo_image_data_url":null}]',
             (string)$response->getBody());
     }
 
@@ -51,7 +51,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"blocks":[{"id":1,"category":{"id":1,"name":"Category 1","color":"#000","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1","numbered":true}}]}',
+            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"logo_image_data_url":null,"blocks":[{"id":1,"category":{"id":1,"name":"Category 1","color":"#000","price":2,"price_reduced":1},"block":{"id":1,"seatplan_image_data_url":null,"name":"Block 1","numbered":true}}]}',
             (string)$response->getBody());
     }
 
@@ -78,7 +78,7 @@ class EventActionsTest extends DatabaseTestBase {
 
         $response = $action($request, $response, [ 'id' => 1 ]);
         $this->assertSame(
-            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"blocks":"mergedEventblocks"}',
+            '{"id":1,"name":"Event 1","location":"Location 1","location_address":null,"location_directions_public_transport":null,"location_directions_car":null,"dateandtime":"Date and Time 1","visible":true,"logo_image_data_url":null,"blocks":"mergedEventblocks"}',
             (string)$response->getBody());
     }
 
@@ -107,6 +107,7 @@ class EventActionsTest extends DatabaseTestBase {
         $newLocationDirectionsCar = "New location directions car";
         $newDateandtime = "New date and time";
         $newVisible = false;
+        $newLogoImageDataUrl = "logoimagedataurl";
         $data = [
             "name" => $newName,
             "location" => $newLocation,
@@ -114,7 +115,8 @@ class EventActionsTest extends DatabaseTestBase {
             "location_directions_public_transport" => $newLocationDirectionsPublicTransport,
             "location_directions_car" => $newLocationDirectionsCar,
             "dateandtime" => $newDateandtime,
-            "visible" => $newVisible
+            "visible" => $newVisible,
+            "logo_image_data_url" => $newLogoImageDataUrl
         ];
         $request = $this->getPutRequest('/events/1', $data);
         $response = new \Slim\Http\Response();
@@ -129,6 +131,7 @@ class EventActionsTest extends DatabaseTestBase {
         $this->assertNotSame($eventBefore->location_directions_car, $newLocationDirectionsCar);
         $this->assertNotSame($eventBefore->dateandtime, $newDateandtime);
         $this->assertNotSame($eventBefore->visible, $newVisible);
+        $this->assertNotSame($eventBefore->logo_image_data_url, $newLogoImageDataUrl);
 
         $response = $action($request, $response, [ 'id' => 1 ]);
 
@@ -140,9 +143,10 @@ class EventActionsTest extends DatabaseTestBase {
         $this->assertSame($eventAfter->location_directions_car, $newLocationDirectionsCar);
         $this->assertSame($eventAfter->dateandtime, $newDateandtime);
         $this->assertSame($eventAfter->visible, $newVisible);
+        $this->assertSame($eventAfter->logo_image_data_url, $newLogoImageDataUrl);
 
         $this->assertSame(
-            '{"id":1,"name":"New name","location":"New location","location_address":"New location address","location_directions_public_transport":"New location directions public transport","location_directions_car":"New location directions car","dateandtime":"New date and time","visible":false}',
+            '{"id":1,"name":"New name","location":"New location","location_address":"New location address","location_directions_public_transport":"New location directions public transport","location_directions_car":"New location directions car","dateandtime":"New date and time","visible":false,"logo_image_data_url":"logoimagedataurl"}',
             (string)$response->getBody());
     }
 
