@@ -290,9 +290,8 @@ $container['messageFactory'] = function($container) {
 };
 
 $container['mail'] = function($container) {
-    $frontMatter = $container['frontMatter'];
-    $twig = $container['twig'];
     $templateProvider = $container['templateProvider'];
+    $mailTemplateParser = $container['mailTemplateParser'];
     $messageFactory = $container['messageFactory'];
     $mailer = $container['mailer'];
     $pdfTicketWriter = $container['pdfTicketWriter'];
@@ -300,7 +299,7 @@ $container['mail'] = function($container) {
     $settings = $container['settings']['Mailer'];
     $hostName = $container['settings']['HostName'];
     $administrator = $container['settings']['Administrator'];
-    $mail = new Services\Mail($frontMatter, $twig, $templateProvider, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings, $hostName, $administrator);
+    $mail = new Services\Mail($templateProvider, $mailTemplateParser, $messageFactory, $mailer, $pdfTicketWriter, $log, $settings, $hostName, $administrator);
     return $mail;
 };
 
